@@ -1,6 +1,7 @@
 import re
 import logging
 import sys
+import traceback
 from datetime import datetime
 from utils.format_date import clean_and_convert_date
 
@@ -21,7 +22,18 @@ def extractor_error_handler(site_name):
             try:
                 return func(article)
             except Exception as e:
-                logger.error(f"Error extracting {site_name} article: {e}")
+                # Try to get a snippet of the article HTML for context
+                snippet = None
+                try:
+                    snippet = str(article)[:300].replace("\n", " ")
+                except Exception:
+                    snippet = "<unavailable>"
+                tb = traceback.format_exc()
+                logger.error(
+                    f"Error extracting {site_name} article: {e}\n"
+                    f"Article snippet: {snippet}\n"
+                    f"Traceback: {tb}"
+                )
                 raise
 
         return wrapper
@@ -69,19 +81,16 @@ def extract_shopify_articles(article):
     """
     Extracts article information from a Shopify article element.
     """
-    title_element = article.find(
-        "a",
-        {
-            "class": lambda x: x
-            and "tracking-[-.02em]" in x
-            and "pb-4" in x
-            and "hover:underline" in x,
-            "target": "_self",
-            "rel": "",
-        },
+    title_div = article.find(
+        "div",
+        class_=lambda x: x
+        and "tracking-[-.02em]" in x
+        and "pb-4" in x
+        and "hover:underline" in x,
     )
-    title = title_element.get_text().strip()
-    blog_address = title_element.get("href")
+    title_a = title_div.find("a")
+    title = title_a.get_text().strip()
+    blog_address = title_a.get("href")
     link = f"https://shopify.engineering{blog_address}"
     date_element = (
         article.find(
