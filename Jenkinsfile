@@ -11,14 +11,10 @@ pipeline {
     stages {
         stage('Sanity Check') {
             steps {
-                echo 'The beginning of Jenkinsfile'
+                echo 'Starting Jenkins pipeline...'
             }
         }
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -26,6 +22,7 @@ pipeline {
                 }
             }
         }
+
         stage('Login to GHCR') {
             steps {
                 script {
@@ -33,6 +30,7 @@ pipeline {
                 }
             }
         }
+
         stage('Push Image') {
             steps {
                 script {
@@ -43,6 +41,7 @@ pipeline {
             }
         }
     }
+
     post {
         always {
             sh "docker logout ghcr.io"
