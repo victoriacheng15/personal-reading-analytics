@@ -111,9 +111,7 @@ def extract_stripe_articles(article):
     Extracts article information from a Stripe Engineering blog article element.
     """
     # Title link is inside an <h1> with a nested <a class="BlogIndexPost__titleLink">...
-    title_a = article.find(
-        "a", class_=lambda x: x and "BlogIndexPost__titleLink" in x
-    )
+    title_a = article.find("a", class_=lambda x: x and "BlogIndexPost__titleLink" in x)
     if not title_a:
         # fallback to any h1 > a
         h1 = article.find("h1")
