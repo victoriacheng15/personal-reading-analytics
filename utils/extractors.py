@@ -105,6 +105,31 @@ def extract_shopify_articles(article):
     return (date, title, link, "shopify")
 
 
+@extractor_error_handler("Stripe")
+def extract_stripe_articles(article):
+    """
+    Extracts article information from a Stripe Engineering blog article element.
+    """
+    # Title link is inside an <h1> with a nested <a class="BlogIndexPost__titleLink">...
+    title_a = article.find("a", class_=lambda x: x and "BlogIndexPost__titleLink" in x)
+    if not title_a:
+        # fallback to any h1 > a
+        h1 = article.find("h1")
+        title_a = h1.find("a") if h1 else None
+
+    title = title_a.get_text().strip() if title_a else "<untitled>"
+    href = title_a.get("href") if title_a else None
+    # Normalize to absolute URL when possible
+    link = f"https://stripe.com{href}" if href and href.startswith("/") else href
+
+    # Date is in a <time datetime="..."> element
+    time_elem = article.find("time")
+    date_raw = time_elem.get("datetime") if time_elem else None
+    date = clean_and_convert_date(date_raw) if date_raw else ""
+
+    return (date, title, link, "stripe")
+
+
 def get_articles(elements, extract_func, existing_titles):
     """
     Extracts articles from a given provider.
@@ -156,5 +181,9 @@ def provider_dict(provider_element):
         "shopify": {
             "element": lambda: provider_element,
             "extractor": extract_shopify_articles,
+        },
+        "stripe": {
+            "element": lambda: provider_element,
+            "extractor": extract_stripe_articles,
         },
     }

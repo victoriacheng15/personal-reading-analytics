@@ -76,24 +76,6 @@ def get_all_providers(providers_sheet: Worksheet) -> List[Dict[str, Any]]:
     return providers_sheet.get_all_records()
 
 
-# def append_article(
-#     sheet: Worksheet, article_info: tuple, log_func: Callable = print
-# ) -> None:
-#     """
-#     Appends a new article row to the given sheet and logs it.
-
-#     Args:
-#         sheet (Worksheet): The worksheet to update.
-#         article_info (tuple): The article data as (date, title, link, source).
-#         log_func (function, optional): Function used to log output. Defaults to print.
-#     """
-#     date = article_info[0]
-#     title = article_info[1]
-#     link = article_info[2]
-#     log_func(f"==> {title} - {date}\n{link}\n")
-#     sheet.append_row(list(article_info))
-
-
 def batch_append_articles(
     sheet: Worksheet, articles: List[tuple], log_func: Callable = print
 ) -> None:
@@ -117,6 +99,4 @@ def batch_append_articles(
 
     # Batch append all rows at once
     rows = [list(article) for article in articles]
-    # log_func(f"\n📋 Batch rows to append:\n{rows}\n")
-    # TODO: Uncomment to actually append to Google Sheets
     sheet.append_rows(rows)
