@@ -13,6 +13,7 @@ pipeline {
             agent any
             steps {
                 deleteDir()
+                checkout scm
                 script {
                     env.IMAGE_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
                 }
