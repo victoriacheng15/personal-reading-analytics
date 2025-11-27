@@ -14,8 +14,16 @@ pipeline {
             steps {
                 deleteDir()
                 checkout scm
+                // debugging git for sha retrieval
+                sh 'ls -la'                  // Should show .git/
+                sh 'git status'              // Should show branch & status
                 script {
-                    env.IMAGE_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    def sha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    echo "Raw SHA output: '${sha}'"
+                    if (sha.empty) {
+                        error('❌ Git SHA is empty — checkout may have failed')
+                    }
+                    env.IMAGE_TAG = sha
                 }
                 echo "✅ Using Git SHA as image tag: ${env.IMAGE_TAG}"
             }
