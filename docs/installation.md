@@ -6,6 +6,7 @@ The app is currently capable of extracting articles from:
 - Substack
 - The GitHub Blog
 - Shopify Engineering Blog
+- Stripe
 
 Support for additional sites may be added in the future.
 
