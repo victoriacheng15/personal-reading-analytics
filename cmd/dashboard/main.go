@@ -14,17 +14,17 @@ import (
 )
 
 type Metrics struct {
-	TotalArticles       int                      `json:"total_articles"`
-	BySource            map[string]int           `json:"by_source"`
-	BySourceReadStatus  map[string][2]int        `json:"by_source_read_status"`
-	ByYear              map[string]int           `json:"by_year"`
-	ByMonthOnly         map[string]int           `json:"by_month"`
+	TotalArticles       int                       `json:"total_articles"`
+	BySource            map[string]int            `json:"by_source"`
+	BySourceReadStatus  map[string][2]int         `json:"by_source_read_status"`
+	ByYear              map[string]int            `json:"by_year"`
+	ByMonthOnly         map[string]int            `json:"by_month"`
 	ByMonthAndSource    map[string]map[string]int `json:"by_month_and_source"`
-	ReadCount           int                      `json:"read_count"`
-	UnreadCount         int                      `json:"unread_count"`
-	ReadRate            float64                  `json:"read_rate"`
-	AvgArticlesPerMonth float64                  `json:"avg_articles_per_month"`
-	LastUpdated         time.Time                `json:"last_updated"`
+	ReadCount           int                       `json:"read_count"`
+	UnreadCount         int                       `json:"unread_count"`
+	ReadRate            float64                   `json:"read_rate"`
+	AvgArticlesPerMonth float64                   `json:"avg_articles_per_month"`
+	LastUpdated         time.Time                 `json:"last_updated"`
 }
 
 func fetchMetricsFromSheets(ctx context.Context, spreadsheetID, credentialsPath string) (Metrics, error) {
