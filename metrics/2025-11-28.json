@@ -1,0 +1,148 @@
+{
+  "total_articles": 3005,
+  "by_source": {
+    "GitHub": 48,
+    "Shopify": 36,
+    "Stripe": 20,
+    "Substack": 1799,
+    "freeCodeCamp": 1102
+  },
+  "by_source_read_status": {
+    "GitHub": [
+      16,
+      32
+    ],
+    "Shopify": [
+      16,
+      20
+    ],
+    "Stripe": [
+      2,
+      18
+    ],
+    "Substack": [
+      499,
+      1300
+    ],
+    "freeCodeCamp": [
+      579,
+      523
+    ],
+    "substack_author_count": [
+      13,
+      0
+    ]
+  },
+  "by_year": {
+    "2019": 4,
+    "2020": 4,
+    "2022": 4,
+    "2023": 231,
+    "2024": 1353,
+    "2025": 1409
+  },
+  "by_month": {
+    "01": 241,
+    "02": 357,
+    "03": 384,
+    "04": 281,
+    "05": 234,
+    "06": 217,
+    "07": 213,
+    "08": 207,
+    "09": 214,
+    "10": 265,
+    "11": 238,
+    "12": 154
+  },
+  "by_month_and_source": {
+    "01": {
+      "GitHub": 5,
+      "Shopify": 2,
+      "Substack": 191,
+      "freeCodeCamp": 43
+    },
+    "02": {
+      "GitHub": 7,
+      "Shopify": 1,
+      "Stripe": 2,
+      "Substack": 212,
+      "freeCodeCamp": 135
+    },
+    "03": {
+      "GitHub": 8,
+      "Shopify": 3,
+      "Stripe": 2,
+      "Substack": 250,
+      "freeCodeCamp": 121
+    },
+    "04": {
+      "GitHub": 3,
+      "Shopify": 3,
+      "Stripe": 1,
+      "Substack": 154,
+      "freeCodeCamp": 120
+    },
+    "05": {
+      "GitHub": 6,
+      "Shopify": 2,
+      "Stripe": 4,
+      "Substack": 122,
+      "freeCodeCamp": 100
+    },
+    "06": {
+      "GitHub": 4,
+      "Shopify": 4,
+      "Stripe": 1,
+      "Substack": 115,
+      "freeCodeCamp": 93
+    },
+    "07": {
+      "GitHub": 4,
+      "Shopify": 5,
+      "Stripe": 2,
+      "Substack": 117,
+      "freeCodeCamp": 85
+    },
+    "08": {
+      "GitHub": 3,
+      "Shopify": 6,
+      "Stripe": 1,
+      "Substack": 110,
+      "freeCodeCamp": 87
+    },
+    "09": {
+      "GitHub": 3,
+      "Shopify": 2,
+      "Stripe": 4,
+      "Substack": 113,
+      "freeCodeCamp": 92
+    },
+    "10": {
+      "GitHub": 2,
+      "Shopify": 4,
+      "Stripe": 1,
+      "Substack": 133,
+      "freeCodeCamp": 125
+    },
+    "11": {
+      "GitHub": 2,
+      "Shopify": 3,
+      "Stripe": 1,
+      "Substack": 147,
+      "freeCodeCamp": 85
+    },
+    "12": {
+      "GitHub": 1,
+      "Shopify": 1,
+      "Stripe": 1,
+      "Substack": 135,
+      "freeCodeCamp": 16
+    }
+  },
+  "read_count": 1112,
+  "unread_count": 1893,
+  "read_rate": 37.00499168053245,
+  "avg_articles_per_month": 83.47222222222223,
+  "last_updated": "2025-11-28T19:04:32.515020212Z"
+}
