@@ -17,7 +17,7 @@ def get_creds_path() -> str:
     """
     Returns the path to the credentials.json file.
     """
-    return os.path.join(os.path.dirname(__file__), "..", "credentials.json")
+    return os.path.join(os.path.dirname(__file__), "..", "..", "credentials.json")
 
 
 def get_client() -> gspread.Client:
@@ -99,4 +99,4 @@ def batch_append_articles(
 
     # Batch append all rows at once
     rows = [list(article) for article in articles]
-    sheet.append_rows(rows)
+    # sheet.append_rows(rows)

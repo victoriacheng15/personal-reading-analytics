@@ -7,10 +7,10 @@ update:
 	pur -r requirements.txt
 
 format:
-	ruff format main.py utils
+	ruff format src/main.py src/utils
 
 run:
-	python main.py 2>&1
+	cd src && python main.py
 
 up:
 	docker compose up --build
