@@ -56,7 +56,7 @@ type YearInfo struct {
 }
 
 const (
-	articlesCols   = 5 // Expected number of columns: date, title, link, category, read
+	articlesCols   = 5  // Expected number of columns: date, title, link, category, read
 	monthsInPeriod = 36 // 3 years of data for average calculation
 	dashboardTitle = "📚 Personal Reading Analytics"
 )
@@ -65,11 +65,11 @@ var monthNames = []string{"", "January", "February", "March", "April", "May", "J
 	"July", "August", "September", "October", "November", "December"}
 
 var sourceColors = map[string]string{
-	"Substack":    "#667eea",
+	"Substack":     "#667eea",
 	"freeCodeCamp": "#764ba2",
-	"GitHub":      "#f093fb",
-	"Shopify":     "#4facfe",
-	"Stripe":      "#00f2fe",
+	"GitHub":       "#f093fb",
+	"Shopify":      "#4facfe",
+	"Stripe":       "#00f2fe",
 }
 
 // normalizeSourceName converts source names to proper capitalization
@@ -81,10 +81,10 @@ func normalizeSourceName(name string) string {
 		"shopify":      "Shopify",
 		"stripe":       "Stripe",
 	}
-	
+
 	// Convert to lowercase for comparison
 	lower := strings.ToLower(name)
-	
+
 	// Return normalized name if found, otherwise return original
 	if normalized, exists := sourceMap[lower]; exists {
 		return normalized
@@ -851,11 +851,11 @@ func generateHTMLDashboard(metrics Metrics) {
 
 	// Build datasets for each source
 	sourceColors := map[string]string{
-		"Substack":    "#667eea",
+		"Substack":     "#667eea",
 		"freeCodeCamp": "#764ba2",
-		"GitHub":      "#f093fb",
-		"Shopify":     "#4facfe",
-		"Stripe":      "#00f2fe",
+		"GitHub":       "#f093fb",
+		"Shopify":      "#4facfe",
+		"Stripe":       "#00f2fe",
 	}
 
 	datasetsMap := make(map[string][]int)
