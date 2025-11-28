@@ -1,6 +1,13 @@
 credentials.json
 *.txt
 
+# Go binaries
+/dashboard
+*.exe
+*.dll
+*.so
+*.dylib
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -139,7 +146,7 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-/site
+# /site (removed - we want to commit metrics.json and site/)
 
 # mypy
 .mypy_cache/
