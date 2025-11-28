@@ -10,6 +10,9 @@ help:
 #  go build binary
 	@echo "  make build-metrics    - Build metrics binary (metricsjson)"
 	@echo "  make build-dashboard  - Build dashboard binary"
+# run binaries
+	@echo "  make run-dashboard    - Run dashboard binary"
+	@echo "  make run-metrics      - Run metrics binary"
 # Run python script
 	@echo "  make run              - Run Python main script"
 # docker compose
@@ -25,7 +28,7 @@ update:
 	pur -r requirements.txt
 
 format:
-	ruff format src/main.py src/utils
+	ruff format script/
 
 gofmt:
 	gofmt -w ./cmd
@@ -36,8 +39,14 @@ build-metrics:
 build-dashboard:
 	go build -o ./dashboard ./cmd/dashboard
 
+run-dashboard:
+    ./dashboard
+
+run-metrics:
+    ./metricsjson
+
 run:
-	cd src && python main.py
+	cd script && python main.py
 
 up:
 	docker compose up --build

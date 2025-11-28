@@ -36,11 +36,10 @@ jobs:
           echo "SHEET_ID=${{ secrets.SHEET_ID }}" > .env
           echo "CREDENTIALS_PATH=./credentials.json" >> .env
 
-      - name: Build metrics generator
-        run: go build -o ./metricsjson ./cmd/metrics
-
-      - name: Generate metrics
-        run: ./metricsjson
+      - name: Build and generate metrics
+        run: |
+          make build-metrics
+          ./metricsjson
 
       - name: Clean up credentials.json
         run: rm -f credentials.json
