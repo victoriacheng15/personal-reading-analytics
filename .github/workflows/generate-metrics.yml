@@ -18,7 +18,17 @@ jobs:
           go-version: '1.23'
 
       - name: Create credentials file
-        run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
+        run: |
+          echo '${{ secrets.CREDENTIALS }}' > credentials.json
+
+      - name: Verify credentials.json
+        run: |
+          if [ -f credentials.json ]; then
+            echo "Credentials file exists."
+          else
+            echo "Credentials file not found."
+            exit 1
+          fi
 
       - name: Create .env file
         run: |
@@ -30,6 +40,9 @@ jobs:
 
       - name: Generate metrics and dashboard
         run: ./dashboard
+
+      - name: Clean up credentials.json
+        run: rm -f credentials.json
 
       - name: Commit and push to branch
         run: |
