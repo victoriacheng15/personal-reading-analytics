@@ -99,4 +99,4 @@ def batch_append_articles(
 
     # Batch append all rows at once
     rows = [list(article) for article in articles]
-    # sheet.append_rows(rows)
+    sheet.append_rows(rows)
