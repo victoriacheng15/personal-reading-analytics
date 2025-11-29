@@ -11,6 +11,6 @@ pkgs.mkShell {
 
   # Optional: show shell info
   shellHook = ''
-    echo "Node.js:   $(go version)"
+    echo "Go:   $(go version)"
   '';
 }
