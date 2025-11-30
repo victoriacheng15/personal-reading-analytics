@@ -13,8 +13,6 @@
             --card2: #0284c7;
             --accent: #fb923c;
             --accent-strong: #f97316;
-            --positive: #2b6cb0;
-            --unread: #fb923c;
             --muted-bg: #f7fafc;
             --muted-border: #e2e8f0;
             --text-primary: #2d3748;
@@ -66,31 +64,50 @@
             gap: 1.5rem;
         }
 
-        article.metric-card {
+        article.metric-card,
+        article.badge-card {
             background: linear-gradient(135deg, var(--card1) 0%, var(--card2) 100%);
             padding: 1.5rem;
             border-radius: 12px;
             text-align: center;
+            color: white;
+        }
+
+        article.metric-card {
             border: 2px solid var(--accent);
-            color: white;
         }
 
-        article.metric-card h2 {
-            color: white;
+        article.badge-card {
+            border: 2px solid var(--accent-strong);
+            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.12);
         }
 
-        article.metric-card h2 {
+        article.metric-card h2,
+        .badge-title {
             font-size: 0.85rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            opacity: 0.8;
             margin-bottom: 0.5rem;
         }
 
-        .metric-value {
+        article.metric-card h2 {
+            opacity: 0.8;
+        }
+
+        .badge-title {
+            opacity: 0.9;
+            margin-bottom: 0.75rem;
+        }
+
+        .metric-value,
+        .badge-value {
             font-size: 2.2rem;
             font-weight: 700;
+        }
+
+        .badge-value {
+            font-size: 1.8rem;
         }
 
         .badges-grid {
@@ -100,63 +117,18 @@
             margin-bottom: 2rem;
         }
 
-        article.badge-card {
-            /* highlights: blue background, white text, orange border */
-            background: linear-gradient(135deg, var(--card1) 0%, var(--card2) 100%);
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            border: 2px solid var(--accent-strong);
-            color: white;
-            box-shadow: 0 4px 12px rgba(43, 108, 176, 0.12);
+        main {
+            display: grid;
+            gap: 3rem;
         }
 
-        .badge-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            opacity: 0.9;
-            margin-bottom: 0.75rem;
-        }
-
-        .badge-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        section {
-            margin: 3rem 0;
-        }
-
-        section>h2 {
-            font-size: 1.4rem;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-            font-weight: 600;
+        section > h2 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 2rem;
             border-bottom: 3px solid var(--card1);
             padding-bottom: 0.5rem;
             display: inline-block;
-        }
-
-        .sources-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        article.source-card {
-            background: var(--muted-bg);
-            border-left: 5px solid var(--card1);
-            padding: 1.5rem;
-            border-radius: 8px;
-        }
-
-        article.source-card h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.75rem;
         }
 
         .source-stats {
@@ -169,31 +141,6 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 0.4rem;
-        }
-
-        .months-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        article.month-card {
-            background: var(--muted-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--muted-border);
-        }
-
-        article.month-card h3 {
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.8rem;
-        }
-
-        .month-sources {
-            font-size: 0.85rem;
-            color: #4a5568;
-            line-height: 1.5;
         }
 
         .year-breakdown {
@@ -209,6 +156,12 @@
             font-size: 0.9rem;
             font-weight: 600;
             color: #2d3748;
+        }
+
+        .month-sources {
+            font-size: 0.85rem;
+            color: #4a5568;
+            line-height: 1.5;
         }
 
         footer {
@@ -234,11 +187,51 @@
             }
         }
 
+        .sources-grid,
+        .months-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .sources-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .months-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        article.source-card,
+        article.month-card {
+            background: var(--muted-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        article.source-card {
+            border-left: 5px solid var(--card1);
+            padding: 1.5rem;
+        }
+
+        article.month-card {
+            padding: 1rem;
+            border: 1px solid var(--muted-border);
+        }
+
+        article.source-card h3,
+        article.month-card h3 {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.75rem;
+        }
+
+        article.month-card h3 {
+            margin-bottom: 0.8rem;
+        }
+
         .chart-container {
             position: relative;
             width: 100%;
-            margin: 2rem 0;
-            padding: 1.5rem;
             background: var(--muted-bg);
             border-radius: 12px;
             border: 1px solid var(--muted-border);
