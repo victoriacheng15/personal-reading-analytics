@@ -1,0 +1,464 @@
+{
+  "total_articles": 3005,
+  "by_source": {
+    "GitHub": 48,
+    "Shopify": 36,
+    "Stripe": 20,
+    "Substack": 1799,
+    "freeCodeCamp": 1102
+  },
+  "by_source_read_status": {
+    "GitHub": [
+      17,
+      31
+    ],
+    "Shopify": [
+      16,
+      20
+    ],
+    "Stripe": [
+      3,
+      17
+    ],
+    "Substack": [
+      501,
+      1298
+    ],
+    "freeCodeCamp": [
+      579,
+      523
+    ],
+    "substack_author_count": [
+      13,
+      0
+    ]
+  },
+  "by_year": {
+    "2019": 4,
+    "2020": 4,
+    "2022": 4,
+    "2023": 231,
+    "2024": 1353,
+    "2025": 1409
+  },
+  "by_month": {
+    "01": 241,
+    "02": 357,
+    "03": 384,
+    "04": 281,
+    "05": 234,
+    "06": 217,
+    "07": 213,
+    "08": 207,
+    "09": 214,
+    "10": 265,
+    "11": 238,
+    "12": 154
+  },
+  "by_year_and_month": {
+    "2019": {
+      "07": 1,
+      "09": 1,
+      "10": 1,
+      "11": 1
+    },
+    "2020": {
+      "02": 1,
+      "05": 1,
+      "09": 1,
+      "12": 1
+    },
+    "2022": {
+      "03": 1,
+      "05": 2,
+      "09": 1
+    },
+    "2023": {
+      "01": 1,
+      "02": 4,
+      "03": 6,
+      "04": 3,
+      "05": 2,
+      "06": 4,
+      "07": 9,
+      "08": 17,
+      "09": 12,
+      "10": 25,
+      "11": 54,
+      "12": 94
+    },
+    "2024": {
+      "01": 150,
+      "02": 257,
+      "03": 207,
+      "04": 116,
+      "05": 77,
+      "06": 79,
+      "07": 79,
+      "08": 72,
+      "09": 76,
+      "10": 100,
+      "11": 81,
+      "12": 59
+    },
+    "2025": {
+      "01": 90,
+      "02": 95,
+      "03": 170,
+      "04": 162,
+      "05": 152,
+      "06": 134,
+      "07": 124,
+      "08": 118,
+      "09": 123,
+      "10": 139,
+      "11": 102
+    }
+  },
+  "by_month_and_source_read_status": {
+    "01": {
+      "GitHub": [
+        1,
+        4
+      ],
+      "Shopify": [
+        0,
+        2
+      ],
+      "Substack": [
+        20,
+        171
+      ],
+      "freeCodeCamp": [
+        22,
+        21
+      ]
+    },
+    "02": {
+      "GitHub": [
+        1,
+        6
+      ],
+      "Shopify": [
+        0,
+        1
+      ],
+      "Stripe": [
+        0,
+        2
+      ],
+      "Substack": [
+        42,
+        170
+      ],
+      "freeCodeCamp": [
+        56,
+        79
+      ]
+    },
+    "03": {
+      "GitHub": [
+        4,
+        4
+      ],
+      "Shopify": [
+        0,
+        3
+      ],
+      "Stripe": [
+        0,
+        2
+      ],
+      "Substack": [
+        71,
+        179
+      ],
+      "freeCodeCamp": [
+        53,
+        68
+      ]
+    },
+    "04": {
+      "GitHub": [
+        2,
+        1
+      ],
+      "Shopify": [
+        1,
+        2
+      ],
+      "Stripe": [
+        0,
+        1
+      ],
+      "Substack": [
+        51,
+        103
+      ],
+      "freeCodeCamp": [
+        56,
+        64
+      ]
+    },
+    "05": {
+      "GitHub": [
+        4,
+        2
+      ],
+      "Shopify": [
+        2,
+        0
+      ],
+      "Stripe": [
+        0,
+        4
+      ],
+      "Substack": [
+        56,
+        66
+      ],
+      "freeCodeCamp": [
+        66,
+        34
+      ]
+    },
+    "06": {
+      "GitHub": [
+        3,
+        1
+      ],
+      "Shopify": [
+        4,
+        0
+      ],
+      "Stripe": [
+        1,
+        0
+      ],
+      "Substack": [
+        62,
+        53
+      ],
+      "freeCodeCamp": [
+        63,
+        30
+      ]
+    },
+    "07": {
+      "GitHub": [
+        1,
+        3
+      ],
+      "Shopify": [
+        3,
+        2
+      ],
+      "Stripe": [
+        1,
+        1
+      ],
+      "Substack": [
+        41,
+        76
+      ],
+      "freeCodeCamp": [
+        47,
+        38
+      ]
+    },
+    "08": {
+      "GitHub": [
+        0,
+        3
+      ],
+      "Shopify": [
+        2,
+        4
+      ],
+      "Stripe": [
+        0,
+        1
+      ],
+      "Substack": [
+        44,
+        66
+      ],
+      "freeCodeCamp": [
+        50,
+        37
+      ]
+    },
+    "09": {
+      "GitHub": [
+        1,
+        2
+      ],
+      "Shopify": [
+        1,
+        1
+      ],
+      "Stripe": [
+        1,
+        3
+      ],
+      "Substack": [
+        38,
+        75
+      ],
+      "freeCodeCamp": [
+        51,
+        41
+      ]
+    },
+    "10": {
+      "GitHub": [
+        0,
+        2
+      ],
+      "Shopify": [
+        1,
+        3
+      ],
+      "Stripe": [
+        0,
+        1
+      ],
+      "Substack": [
+        39,
+        94
+      ],
+      "freeCodeCamp": [
+        71,
+        54
+      ]
+    },
+    "11": {
+      "GitHub": [
+        0,
+        2
+      ],
+      "Shopify": [
+        2,
+        1
+      ],
+      "Stripe": [
+        0,
+        1
+      ],
+      "Substack": [
+        27,
+        120
+      ],
+      "freeCodeCamp": [
+        33,
+        52
+      ]
+    },
+    "12": {
+      "GitHub": [
+        0,
+        1
+      ],
+      "Shopify": [
+        0,
+        1
+      ],
+      "Stripe": [
+        0,
+        1
+      ],
+      "Substack": [
+        10,
+        125
+      ],
+      "freeCodeCamp": [
+        11,
+        5
+      ]
+    }
+  },
+  "by_category": {
+    "GitHub": [
+      17,
+      31
+    ],
+    "Shopify": [
+      16,
+      20
+    ],
+    "Stripe": [
+      3,
+      17
+    ],
+    "Substack": [
+      501,
+      1298
+    ],
+    "freeCodeCamp": [
+      579,
+      523
+    ]
+  },
+  "by_category_and_source": {},
+  "read_unread_totals": [
+    1116,
+    1889
+  ],
+  "unread_by_month": {
+    "01": 198,
+    "02": 258,
+    "03": 256,
+    "04": 171,
+    "05": 106,
+    "06": 84,
+    "07": 120,
+    "08": 111,
+    "09": 122,
+    "10": 154,
+    "11": 176,
+    "12": 133
+  },
+  "unread_by_category": {
+    "GitHub": 31,
+    "Shopify": 20,
+    "Stripe": 17,
+    "Substack": 1298,
+    "freeCodeCamp": 523
+  },
+  "unread_by_source": {
+    "GitHub": 31,
+    "Shopify": 20,
+    "Stripe": 17,
+    "Substack": 1298,
+    "freeCodeCamp": 523
+  },
+  "oldest_unread_article": {
+    "title": "Fast and flexible observability with canonical log lines",
+    "date": "2019-07-30",
+    "link": "https://stripe.com/blog/canonical-log-lines",
+    "category": "Stripe",
+    "read": false
+  },
+  "source_metadata": {
+    "GitHub": {
+      "added": "2024-03-18"
+    },
+    "Shopify": {
+      "added": "2025-03-05"
+    },
+    "Stripe": {
+      "added": "2025-11-19"
+    },
+    "Substack": {
+      "added": "initial"
+    },
+    "freeCodeCamp": {
+      "added": "initial"
+    }
+  },
+  "read_count": 1116,
+  "unread_count": 1889,
+  "read_rate": 37.13810316139767,
+  "avg_articles_per_month": 39.02597402597402,
+  "last_updated": "2025-11-30T01:02:23.408146969Z"
+}
