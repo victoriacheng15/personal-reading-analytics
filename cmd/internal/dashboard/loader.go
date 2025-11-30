@@ -2,31 +2,41 @@ package dashboard
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 )
 
 // LoadTemplateContent loads the HTML template from the template.html file
 // It tries multiple path configurations to handle different execution contexts
+// (running from project root, running from built binary, etc.)
 func LoadTemplateContent() (string, error) {
-	// Possible paths where template.html might be located
+	// Define canonical paths in priority order
 	possiblePaths := []string{
-		// Relative to current working directory (common when running from project root)
+		// When running from project root (most common during development)
 		"cmd/internal/dashboard/template.html",
-		// Relative to binary location (when built and run from cmd/dashboard)
-		"dashboard/template.html",
+		// When binary is in cmd/dashboard directory
 		"internal/dashboard/template.html",
-		// Absolute path patterns based on common project structures
+		// Fallback: explicit relative path construction
 		filepath.Join(".", "cmd", "internal", "dashboard", "template.html"),
 	}
 
-	// Try to find the template file
+	var cwd string
+	if wd, err := os.Getwd(); err == nil {
+		cwd = wd
+	}
+
+	// Try each path
 	for _, path := range possiblePaths {
 		if content, err := os.ReadFile(path); err == nil {
+			log.Printf("✅ Loaded template from: %s\n", path)
 			return string(content), nil
 		}
 	}
 
-	// If file not found in any location, return error with debugging info
-	return "", fmt.Errorf("template.html not found. Tried paths: %v", possiblePaths)
+	// Enhanced error message with debugging info
+	return "", fmt.Errorf(
+		"template.html not found. Current working directory: %s. Tried paths: %v",
+		cwd, possiblePaths,
+	)
 }
