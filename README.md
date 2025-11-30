@@ -18,10 +18,12 @@ This project is built to reflect how I believe small, personal tools should work
 
 ## 📊 What It Shows
 
-- Total articles read (3000+ and counting)  
-- Read vs. unread by source (Shopify, FCC, Stripe, etc.)  
-- Yearly/monthly trends  
-- Interactive charts
+- **Total articles**: 3000+ articles with read rate percentage  
+- **Read vs. unread breakdown**: By year, by month, and by source (Substack, freeCodeCamp, GitHub, Shopify, Stripe)  
+- **Yearly trends**: Year-by-year distribution with 5-year default view (adjustable)  
+- **Monthly trends**: Monthly distribution across all sources or by individual source  
+- **Interactive charts**: Year chart (bar/line toggle), monthly breakdown, and per-source statistics  
+- **Source insights**: Per-source read rates, Substack author averages, and unread article tracking
 
 ### Supported Sources
 

@@ -18,7 +18,7 @@ The project uses five automated workflows organized by development pipeline: **c
 
 ### Purpose 1
 
-Validates Go code formatting and runs static analysis checks on pull requests and main branch pushes. First quality gate for Go code.
+Validates Go code formatting, runs static analysis checks, and executes unit tests on pull requests and main branch pushes. First quality gate for Go code.
 
 ### Trigger 1
 
@@ -29,31 +29,39 @@ Validates Go code formatting and runs static analysis checks on pull requests an
 
 ```mermaid
 graph TD
-    A["Check gofmt<br/>Format check"] --> B{"Issues?"}
-    B -->|Yes| C["Fail"]
-    B -->|No| D["Run go vet<br/>Static analysis"]
+    A["Run Tests<br/>Unit tests"] --> B{"Pass?"}
+    B -->|No| C["Fail"]
+    B -->|Yes| D["Check gofmt<br/>Format check"]
     D --> E{"Issues?"}
     E -->|Yes| C
-    E -->|No| F["Pass"]
+    E -->|No| F["Run go vet<br/>Static analysis"]
+    F --> G{"Issues?"}
+    G -->|Yes| C
+    G -->|No| H["Pass"]
 ```
 
 ### Output 1
 
-- **Success**: ✅ Go code is properly formatted
-- **Failure**: ❌ Go code not formatted + suggestion to run `gofmt -w ./cmd/`
+- **Tests**: ✅ All tests pass (or ❌ test failures with output)
+- **Format**: ✅ Go code is properly formatted
+- **Analysis**: ✅ No static analysis issues found
+- **Failure**: ❌ Detailed error output + suggestion to run `gofmt -w ./cmd/` or fix failing tests
 - **Exit code**: 0 (pass) or 1 (fail, blocks merge)
 
 ### Validation Checks 1
 
+- **go test**: Unit tests for `cmd/internal/metrics` and other packages
 - **gofmt**: Code style consistency (spacing, indentation, naming conventions)
 - **go vet**: Static analysis for common bugs and issues
 
 ### Key Features 1
 
-- **Pre-merge validation**: Prevents improperly formatted code from merging
+- **Pre-merge validation**: Prevents failing tests or improperly formatted code from merging
+- **Test-first**: Tests run before format/lint checks (fail fast)
 - **Auto-suggestion**: Provides fix command in error message
-- **Scope-specific**: Only runs when Go files in `cmd/` are modified
+- **Scope-specific**: Only runs when Go files in `cmd/**` are modified
 - **No modifications**: Only checks, doesn't auto-fix
+- **Comprehensive coverage**: Validates functionality, formatting, and code quality in one workflow
 
 ---
 
