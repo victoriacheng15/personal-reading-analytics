@@ -4,7 +4,7 @@ import sys
 import traceback
 from datetime import datetime
 from utils.format_date import clean_and_convert_date
-from utils.github_issues import create_github_issue
+# from utils.github_issues import create_github_issue
 
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ def extractor_error_handler(site_name):
                     f"Traceback: {tb}"
                 )
                 # Create GitHub issue for this extraction failure
-                create_github_issue(site_name, tb, snippet)
+                # create_github_issue(site_name, tb, snippet)
                 raise
 
         return wrapper
