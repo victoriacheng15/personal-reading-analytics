@@ -22,7 +22,7 @@ from utils import (
     # Constants
     ARTICLES_WORKSHEET,
     PROVIDERS_WORKSHEET,
-    create_github_issue
+    # create_github_issue
 )
 
 logger = logging.getLogger(__name__)
@@ -45,6 +45,7 @@ async def process_provider(fetcher_state, provider, existing_titles):
 
     if not handler:
         logger.info(f"Unknown provider: {provider_name}")
+        # create_github_issue(provider_name, f"Unknown provider: {provider_name}")
         return [], fetcher_state
 
     try:
@@ -52,7 +53,7 @@ async def process_provider(fetcher_state, provider, existing_titles):
         if not soup:
             error_msg = f"Failed to fetch page for {provider_name} from {provider_url}"
             logger.warning(error_msg)
-            create_github_issue(provider_name, f"Page fetch failed: {error_msg}")
+            # create_github_issue(provider_name, f"Page fetch failed: {error_msg}")
             return [], fetcher_state
 
         element_args = handler["element"]()
@@ -72,7 +73,7 @@ async def process_provider(fetcher_state, provider, existing_titles):
 
     except Exception as e:
         logger.error(f"Error processing {provider_name}: {str(e)}", exc_info=True)
-        create_github_issue(provider_name, f"Error processing provider:\n{str(e)}")
+        # create_github_issue(provider_name, f"Error processing provider:\n{str(e)}")
         return [], fetcher_state
 
 

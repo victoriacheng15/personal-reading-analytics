@@ -29,9 +29,9 @@ from .extractors import (
 )
 
 # GitHub issue creation
-from .github_issues import (
-    create_github_issue,
-)
+# from .github_issues import (
+#     create_github_issue,
+# )
 
 # Date and time utilities
 from .format_date import current_time
@@ -61,7 +61,7 @@ __all__ = [
     "provider_dict",
     "get_articles",
     # GitHub issues
-    "create_github_issue",
+    # "create_github_issue",
     # Date utilities
     "current_time",
     # Constants
