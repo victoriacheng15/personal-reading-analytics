@@ -89,33 +89,21 @@
             box-shadow: 0 4px 12px rgba(43, 108, 176, 0.12);
         }
 
-        article.metric-card h2,
+        .metric-title,
         .badge-title {
-            font-size: 0.85rem;
+            opacity: 0.85;
+            font-size: 1rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        article.metric-card h2 {
-            opacity: 0.8;
-        }
-
-        .badge-title {
-            opacity: 0.9;
-            margin-bottom: 0.25rem;
+            margin-bottom: 1rem;
         }
 
         /* Metric/Badge Values */
         .metric-value,
         .badge-value {
-            font-size: 2.2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-        }
-
-        .badge-value {
-            font-size: 1.8rem;
         }
 
         /* Main Layout */
@@ -251,7 +239,7 @@
                 <div class="metrics-grid">
                     {{range .KeyMetrics}}
                     <article class="metric-card">
-                        <h2>{{.Title}}</h2>
+                        <h3 class="metric-title">{{.Title}}</h3>
                         <p class="metric-value">{{.Value}}</p>
                     </article>
                     {{end}}
