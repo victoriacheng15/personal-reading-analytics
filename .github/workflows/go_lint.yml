@@ -1,4 +1,4 @@
-name: Go c & Test Checking
+name: Go Lint & Test Checking
 
 on:
   pull_request:
