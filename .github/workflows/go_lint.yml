@@ -1,4 +1,4 @@
-name: Go Format & Test Checking
+name: Go Lint & Test Checking
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ env:
   go-version: '1.24'
 
 jobs:
-  format:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,7 +38,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: format
+    needs: lint
     steps:
       - uses: actions/checkout@v6.0.0
       - uses: actions/setup-go@v6.1.0
