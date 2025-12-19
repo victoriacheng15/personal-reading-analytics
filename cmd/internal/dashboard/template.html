@@ -202,6 +202,77 @@
             height: 400px;
         }
 
+        /* Articles Table Styles */
+        .articles-list {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .articles-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .articles-table thead {
+            background: #0284c7;
+        }
+
+        .articles-table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            border-bottom: none;
+        }
+
+        .articles-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            color: #2d3748;
+        }
+
+        .articles-table tbody tr:hover {
+            background: #efefef;
+        }
+
+        .articles-table a {
+            color: #0284c7;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .articles-table a:hover {
+            color: #0369a1;
+            text-decoration: underline;
+        }
+
+        .date-cell {
+            color: #666;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .source-cell {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .title-cell {
+            word-break: break-word;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #cbd5e0;
+            font-style: italic;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .chart-wrapper {
@@ -220,6 +291,15 @@
 
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .articles-table {
+                font-size: 0.85rem;
+            }
+
+            .articles-table th,
+            .articles-table td {
+                padding: 0.5rem 0.75rem;
             }
         }
     </style>
@@ -288,6 +368,41 @@
                     </article>
                     {{end}}
                 </div>
+            </section>
+
+            <!-- Top N Oldest Unread Articles Section -->
+            <section aria-label="Top Oldest Unread Articles">
+                <h2>🔝 Top 3 Oldest Unread Articles</h2>
+                {{if .TopOldestUnreadArticles}}
+                    <div class="articles-list">
+                        <table class="articles-table">
+                            <thead>
+                                <tr>
+                                    <th>Published Date</th>
+                                    <th>Title</th>
+                                    <th>Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range .TopOldestUnreadArticles}}
+                                <tr>
+                                    <td class="date-cell">{{.Date}}</td>
+                                    <td class="title-cell">
+                                        {{if .Link}}
+                                            <a href="{{.Link}}" target="_blank" rel="noopener noreferrer">{{.Title}}</a>
+                                        {{else}}
+                                            {{.Title}}
+                                        {{end}}
+                                    </td>
+                                    <td class="source-cell">{{.Category}}</td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="no-data">No unread articles found.</p>
+                {{end}}
             </section>
 
             <section aria-label="Yearly Breakdown">
