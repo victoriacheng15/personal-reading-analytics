@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 	"time"
 
@@ -31,6 +32,9 @@ const (
 
 	// Provider names
 	SubstackProvider = "Substack"
+
+	// Top oldest unread articles count
+	TopUnreadArticlesCount = 3
 )
 
 // SourceMetadataMap holds the addition dates for all known sources
@@ -361,6 +365,7 @@ func FetchMetricsFromSheets(ctx context.Context, spreadsheetID, credentialsPath 
 
 	var earliestDate, latestDate time.Time
 	var oldestUnreadArticle *schema.ArticleMeta
+	var unreadArticles []schema.ArticleMeta
 
 	// Skip header row (row 0) and process each article
 	for i := 1; i < len(resp.Values); i++ {
@@ -399,16 +404,21 @@ func FetchMetricsFromSheets(ctx context.Context, spreadsheetID, credentialsPath 
 			// Update age distribution for unread articles
 			updateUnreadArticleAgeDistribution(&metrics, article, time.Now())
 
-			// Track oldest unread article
+			// Collect unread article details
 			articleDetail, _ := parseArticleRowWithDetails(row)
-			if articleDetail != nil && oldestUnreadArticle == nil {
-				oldestUnreadArticle = articleDetail
-			} else if articleDetail != nil && oldestUnreadArticle != nil {
-				// Compare dates to find oldest
-				oldestDate, _ := time.Parse("2006-01-02", oldestUnreadArticle.Date)
-				currentDate, _ := time.Parse("2006-01-02", articleDetail.Date)
-				if currentDate.Before(oldestDate) {
+			if articleDetail != nil {
+				unreadArticles = append(unreadArticles, *articleDetail)
+
+				// Track oldest unread article
+				if oldestUnreadArticle == nil {
 					oldestUnreadArticle = articleDetail
+				} else {
+					// Compare dates to find oldest
+					oldestDate, _ := time.Parse("2006-01-02", oldestUnreadArticle.Date)
+					currentDate, _ := time.Parse("2006-01-02", articleDetail.Date)
+					if currentDate.Before(oldestDate) {
+						oldestUnreadArticle = articleDetail
+					}
 				}
 			}
 		}
@@ -428,6 +438,35 @@ func FetchMetricsFromSheets(ctx context.Context, spreadsheetID, credentialsPath 
 
 	// Populate read/unread totals
 	metrics.ReadUnreadTotals = [2]int{metrics.ReadCount, metrics.UnreadCount}
+
+	// Sort unread articles by date (oldest first) and store top N
+	if len(unreadArticles) > 0 {
+		sort.Slice(unreadArticles, func(i, j int) bool {
+			// Parse dates for comparison (YYYY-MM-DD format)
+			iDate, errI := time.Parse("2006-01-02", unreadArticles[i].Date)
+			jDate, errJ := time.Parse("2006-01-02", unreadArticles[j].Date)
+
+			// Handle parsing errors - put unparseable dates at the end
+			if errI != nil && errJ != nil {
+				return false
+			}
+			if errI != nil {
+				return false
+			}
+			if errJ != nil {
+				return true
+			}
+
+			return iDate.Before(jDate)
+		})
+
+		// Store top N oldest unread articles
+		if len(unreadArticles) > TopUnreadArticlesCount {
+			metrics.TopOldestUnreadArticles = unreadArticles[:TopUnreadArticlesCount]
+		} else {
+			metrics.TopOldestUnreadArticles = unreadArticles
+		}
+	}
 
 	// Populate oldest unread article
 	if oldestUnreadArticle != nil {

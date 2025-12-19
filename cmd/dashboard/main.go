@@ -442,6 +442,7 @@ func generateHTMLDashboard(metrics schema.Metrics) error {
 		"ReadUnreadByYearJSON":             template.JS(readUnreadByYearJSON),
 		"UnreadArticleAgeDistributionJSON": template.JS(unreadArticleAgeDistributionJSON),
 		"UnreadByYearJSON":                 template.JS(unreadByYearJSON),
+		"TopOldestUnreadArticles":          metrics.TopOldestUnreadArticles,
 	}
 
 	err = tmpl.Execute(file, data)
