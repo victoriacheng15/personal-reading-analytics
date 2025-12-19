@@ -58,8 +58,8 @@
             margin-bottom: 2rem;
         }
 
-        .metrics-grid, 
-        .badges-grid, 
+        .metrics-grid,
+        .badges-grid,
         .sources-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -371,49 +371,51 @@
             </section>
 
             <!-- Top N Oldest Unread Articles Section -->
+            {{ if .TopOldestUnreadArticles }}
             <section aria-label="Top Oldest Unread Articles">
                 <h2>🔝 Top 3 Oldest Unread Articles</h2>
                 {{if .TopOldestUnreadArticles}}
-                    <div class="articles-list">
-                        <table class="articles-table">
-                            <thead>
-                                <tr>
-                                    <th>Published Date</th>
-                                    <th>Title</th>
-                                    <th>Source</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{range .TopOldestUnreadArticles}}
-                                <tr>
-                                    <td class="date-cell">{{.Date}}</td>
-                                    <td class="title-cell">
-                                        {{if .Link}}
-                                            <a href="{{.Link}}" target="_blank" rel="noopener noreferrer">{{.Title}}</a>
-                                        {{else}}
-                                            {{.Title}}
-                                        {{end}}
-                                    </td>
-                                    <td class="source-cell">{{.Category}}</td>
-                                </tr>
-                                {{end}}
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="articles-list">
+                    <table class="articles-table">
+                        <thead>
+                            <tr>
+                                <th>Published Date</th>
+                                <th>Title</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .TopOldestUnreadArticles}}
+                            <tr>
+                                <td class="date-cell">{{.Date}}</td>
+                                <td class="title-cell">
+                                    {{if .Link}}
+                                    <a href="{{.Link}}" target="_blank" rel="noopener noreferrer">{{.Title}}</a>
+                                    {{else}}
+                                    {{.Title}}
+                                    {{end}}
+                                </td>
+                                <td class="source-cell">{{.Category}}</td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
                 {{else}}
-                    <p class="no-data">No unread articles found.</p>
+                <p class="no-data">No unread articles found.</p>
                 {{end}}
             </section>
+            {{ end }}
 
             <section aria-label="Yearly Breakdown">
                 <div
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <h2>📈 Yearly Breakdown</h2>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
                         <input type="range" id="yearChartRangeSlider" min="5" max="50" value="5"
-                            style="width: 150px; cursor: pointer;"
-                            title="Adjust how many recent years to display">
-                        <span id="yearChartRangeLabel" style="font-size: 0.9rem; color: #718096; min-width: 60px;">Last 5 years</span>
+                            style="width: 150px; cursor: pointer;" title="Adjust how many recent years to display">
+                        <span id="yearChartRangeLabel" style="font-size: 0.9rem; color: #718096; min-width: 60px;">Last
+                            5 years</span>
                     </div>
                     <select id="yearViewToggle"
                         style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
@@ -454,13 +456,15 @@
 
             <section aria-label="Read/Unread Breakdown">
                 <div
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <h2>📖 Read/Unread Breakdown</h2>
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <h2>📖 Read/Unread Breakdown</h2>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
                         <input type="range" id="yearRangeSlider" min="5" max="50" value="5"
                             style="display: none; width: 150px; cursor: pointer;"
                             title="Adjust how many recent years to display">
-                        <span id="yearRangeLabel" style="display: none; font-size: 0.9rem; color: #718096; min-width: 60px;">Last 5 years</span>
+                        <span id="yearRangeLabel"
+                            style="display: none; font-size: 0.9rem; color: #718096; min-width: 60px;">Last 5
+                            years</span>
                     </div>
                     <select id="readUnreadViewToggle"
                         style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
@@ -476,15 +480,16 @@
                 </div>
             </section>
 
-            <section aria-label="Unread Articles by Year">
+            {{ if .UnreadByYearJSON }}
+            <section aria-label="Unread Articles by Year" id="unreadByYearSection">
                 <div
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <h2>📅 Unread Articles by Year</h2>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
                         <input type="range" id="unreadYearChartRangeSlider" min="5" max="50" value="5"
-                            style="width: 150px; cursor: pointer;"
-                            title="Adjust how many recent years to display">
-                        <span id="unreadYearChartRangeLabel" style="font-size: 0.9rem; color: #718096; min-width: 60px;">Last 5 years</span>
+                            style="width: 150px; cursor: pointer;" title="Adjust how many recent years to display">
+                        <span id="unreadYearChartRangeLabel"
+                            style="font-size: 0.9rem; color: #718096; min-width: 60px;">Last 5 years</span>
                     </div>
                     <select id="unreadYearViewToggle"
                         style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
@@ -498,8 +503,10 @@
                     </div>
                 </div>
             </section>
+            {{ end }}
 
-            <section aria-label="Unread Articles Age Distribution">
+            {{ if .UnreadArticleAgeDistributionJSON }}
+            <section aria-label="Unread Articles Age Distribution" id="unreadArticleAgeDistrubtionSection">
                 <h2>⏰ Unread Articles Age Distribution</h2>
                 <div class="chart-container">
                     <div class="chart-wrapper">
@@ -507,6 +514,7 @@
                     </div>
                 </div>
             </section>
+            {{ end }}
         </main>
 
         <footer>
@@ -526,7 +534,7 @@
         const readUnreadByYearData = {{.ReadUnreadByYearJSON }};
         const unreadArticleAgeDistributionData = {{.UnreadArticleAgeDistributionJSON }};
         const unreadByYearData = {{.UnreadByYearJSON }};
-
+        
         // Helper functions
         const updateLabel = (el, val) => el.textContent = `Last ${val} year${val > 1 ? 's' : ''}`;
         const toggleSlider = (show, slider, label) => {
@@ -605,7 +613,7 @@
         });
 
         function filterMonthData() {
-            const filtered = currentSourceFilter === 'all' ? monthChartDatasets : 
+            const filtered = currentSourceFilter === 'all' ? monthChartDatasets :
                 [monthChartDatasets.find(d => d.label === currentSourceFilter)].filter(Boolean);
             return { labels: monthChartLabels, totalData: monthTotalData, datasets: filtered };
         }
@@ -621,7 +629,7 @@
                     y: { beginAtZero: true, ticks: { font: { size: 12 } } }
                 }
             };
-            
+
             if (view === 'total') {
                 monthChart = new Chart(mCtx, createChartConfig('line', labels, [{
                     label: 'Total Articles',
@@ -665,7 +673,7 @@
             if (readUnreadChart) readUnreadChart.destroy();
             const rCtx = document.getElementById('readUnreadChart').getContext('2d');
             let data;
-            
+
             if (view === 'byMonth') data = readUnreadByMonthData;
             else if (view === 'bySource') data = readUnreadBySourceData;
             else {
@@ -676,7 +684,7 @@
                     unreadData: readUnreadByYearData.unreadData.slice(0, range)
                 };
             }
-            
+
             // Scatter plot for all views
             const readScatterData = data.labels.map((label, index) => ({
                 x: label,
@@ -686,12 +694,12 @@
                 x: label,
                 y: data.unreadData[index]
             }));
-            
+
             const datasets = [
                 { label: 'Read', data: readScatterData, backgroundColor: '#2b6cb0', borderColor: '#2b6cb0', borderWidth: 3, pointRadius: 6, pointHoverRadius: 8, showLine: true, fill: false, tension: 0.4 },
                 { label: 'Unread', data: unreadScatterData, backgroundColor: '#fb923c', borderColor: '#fb923c', borderWidth: 3, pointRadius: 6, pointHoverRadius: 8, showLine: true, fill: false, tension: 0.4 }
             ];
-            
+
             readUnreadChart = new Chart(rCtx, createChartConfig('scatter', data.labels, datasets, {
                 scales: {
                     x: { type: 'category', ticks: { font: { size: 11 } } },
@@ -766,21 +774,32 @@
                 }
             }));
         }
-        
-        // Initialize unread by year chart
-        updateUnreadByYearChart('bar');
-        const uSlider = document.getElementById('unreadYearChartRangeSlider'), uLabel = document.getElementById('unreadYearChartRangeLabel');
-        uSlider.max = unreadByYearData.labels.length;
-        uSlider.value = Math.min(5, unreadByYearData.labels.length);
-        updateLabel(uLabel, uSlider.value);
-        document.getElementById('unreadYearViewToggle').addEventListener('change', e => {
-            currentUnreadYearViewMode = e.target.value;
-            updateUnreadByYearChart(currentUnreadYearViewMode);
-        });
-        uSlider.addEventListener('input', e => {
-            updateLabel(uLabel, e.target.value);
-            updateUnreadByYearChart(currentUnreadYearViewMode);
-        });
+
+        // Initialize unread by year chart only if data has actual values
+        const unreadByYearDataCondition = typeof unreadByYearData === 'object' &&
+            unreadByYearData !== null &&
+            Array.isArray(unreadByYearData.data) &&
+            unreadByYearData.data.length > 0 &&
+            unreadByYearData.data.some(value => value > 0)
+        if (unreadByYearDataCondition && document.getElementById('unreadByYearChart')) {
+            updateUnreadByYearChart('bar');
+            const uSlider = document.getElementById('unreadYearChartRangeSlider'), uLabel = document.getElementById('unreadYearChartRangeLabel');
+            uSlider.max = unreadByYearData.labels.length;
+            uSlider.value = Math.min(5, unreadByYearData.labels.length);
+            updateLabel(uLabel, uSlider.value);
+            document.getElementById('unreadYearViewToggle').addEventListener('change', e => {
+                currentUnreadYearViewMode = e.target.value;
+                updateUnreadByYearChart(currentUnreadYearViewMode);
+            });
+            uSlider.addEventListener('input', e => {
+                updateLabel(uLabel, e.target.value);
+                updateUnreadByYearChart(currentUnreadYearViewMode);
+            });
+        } else {
+            // Hide the section if there's no data
+            const section = document.getElementById('unreadByYearSection');
+            if (section) section.style.display = 'none';
+        }
 
         // Initialize age distribution chart
         let ageDistributionChart = null;
@@ -809,7 +828,20 @@
                 plugins: { legend: { display: true, labels: { font: { size: 12 }, usePointStyle: true } } }
             }));
         }
-        updateAgeDistributionChart();
+        
+        // Initialize age distribution chart only if data has actual values
+        const ageDistributionDataCondition = typeof unreadArticleAgeDistributionData === 'object' &&
+            unreadArticleAgeDistributionData !== null &&
+            Array.isArray(unreadArticleAgeDistributionData.data) &&
+            unreadArticleAgeDistributionData.data.length > 0 &&
+            unreadArticleAgeDistributionData.data.some(value => value > 0)
+        if (ageDistributionDataCondition && document.getElementById('ageDistributionChart')) {
+            updateAgeDistributionChart();
+        } else {
+            // Hide the section if there's no data
+            const section = document.getElementById('unreadArticleAgeDistrubtionSection');
+            if (section) section.style.display = 'none';
+        }
     </script>
 </body>
 
