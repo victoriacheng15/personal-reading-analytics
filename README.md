@@ -10,8 +10,6 @@ This project is built to reflect how I believe small, personal tools should work
 
 - **Zero infrastructure** → No servers, databases, or cloud costs. Runs entirely on GitHub (Actions + Pages).  
 - **Fully automated** → Scheduled GitHub Actions keep data fresh—no manual runs or home servers.  
-- **Transparent by default** → All code, data logic, and outputs are public. No black boxes.  
-- **Sustainable & low-stress** → Simple pipeline, easy to maintain, no roadmap pressure. It evolves only when real needs arise.  
 - **Cost-effective** → Uses only free tiers (GitHub, Google Sheets API)—proving powerful automation doesn’t require budget.
 
 ---
