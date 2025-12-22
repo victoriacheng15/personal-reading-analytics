@@ -30,7 +30,7 @@ from .extractors import (
 )
 
 # Date and time utilities
-from .format_date import current_time
+from .format_date import clean_and_convert_date, current_time
 
 # Constants
 from .constants import (
@@ -58,6 +58,7 @@ __all__ = [
     "provider_dict",
     "get_articles",
     # Date utilities
+    "clean_and_convert_date",
     "current_time",
     # Constants
     "ARTICLES_WORKSHEET",
