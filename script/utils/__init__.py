@@ -50,6 +50,7 @@ from .constants import (
 from .mongo import (
     get_mongo_client,
     batch_insert_articles_to_mongo,
+    insert_error_event_to_mongo,
 )
 
 __all__ = [
@@ -86,4 +87,5 @@ __all__ = [
     # MongoDB operations
     "get_mongo_client",
     "batch_insert_articles_to_mongo",
+    "insert_error_event_to_mongo",
 ]

@@ -3,6 +3,7 @@ import logging
 import traceback
 from datetime import datetime
 from utils.format_date import clean_and_convert_date
+from utils.mongo import insert_error_event_to_mongo
 
 
 logger = logging.getLogger(__name__)
@@ -17,16 +18,47 @@ def extractor_error_handler(site_name):
             except Exception as e:
                 # Try to get a snippet of the article HTML for context
                 snippet = None
+                article_url = "unknown"
                 try:
                     snippet = str(article)[:300].replace("\n", " ")
                 except Exception:
                     snippet = "<unavailable>"
+                
+                # Try to extract URL from article
+                try:
+                    link = article.find("a")
+                    if link and link.get("href"):
+                        article_url = link.get("href")
+                except Exception:
+                    pass
+                
                 tb = traceback.format_exc()
                 logger.error(
                     f"Error extracting {site_name} article: {e}\n"
                     f"Article snippet: {snippet}\n"
                     f"Traceback: {tb}"
                 )
+                
+                # Capture extraction failure event to MongoDB
+                try:
+                    mongo_client = get_mongo_client()
+                    if mongo_client:
+                        insert_error_event_to_mongo(
+                            client=mongo_client,
+                            source=site_name.lower(),
+                            error_type="extraction_failed",
+                            error_message=f"{type(e).__name__}: {str(e)}",
+                            url=article_url,
+                            metadata={
+                                "extractor_function": func.__name__,
+                                "article_snippet": snippet
+                            },
+                            traceback_str=tb
+                        )
+                        mongo_client.close()
+                except Exception as mongo_error:
+                    logger.warning(f"Failed to log extraction error to MongoDB: {mongo_error}")
+                
                 raise
 
         return wrapper

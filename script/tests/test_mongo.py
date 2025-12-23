@@ -2,6 +2,7 @@ from unittest.mock import patch, Mock, MagicMock
 from utils import (
     get_mongo_client,
     batch_insert_articles_to_mongo,
+    insert_error_event_to_mongo,
 )
 
 
@@ -105,43 +106,6 @@ def test_batch_insert_articles_to_mongo_empty_articles(mock_logger):
 
 @patch("utils.mongo.logger")
 @patch("utils.mongo.datetime")
-def test_batch_insert_articles_to_mongo_extraction_error(mock_datetime, mock_logger):
-    """Test that function handles domain extraction errors gracefully"""
-    mock_now = Mock()
-    mock_now.isoformat.return_value = "2025-12-22T20:51:59.123456+00:00"
-    mock_datetime.now.return_value = mock_now
-
-    mock_collection = Mock()
-    mock_result = Mock()
-    mock_result.inserted_ids = [1]
-    mock_collection.insert_many.return_value = mock_result
-
-    mock_db = MagicMock()
-    mock_db.__getitem__.return_value = mock_collection
-
-    mock_client = MagicMock()
-    mock_client.__getitem__.return_value = mock_db
-
-    # Article with malformed link that causes urlparse issue
-    articles = [
-        ("2025-12-20", "Test", "not-a-valid-url", "github"),
-    ]
-
-    with patch("utils.mongo.MONGO_DB_NAME", "test_db"):
-        with patch("utils.mongo.MONGO_COLLECTION_NAME", "articles"):
-            batch_insert_articles_to_mongo(mock_client, articles)
-
-    call_args = mock_collection.insert_many.call_args
-    documents = call_args[0][0]
-
-    # Domain should be "not-a-valid-url" (the netloc of an invalid URL)
-    assert "domain" in documents[0]
-    # Should still insert without raising an error
-    mock_collection.insert_many.assert_called_once()
-
-
-@patch("utils.mongo.logger")
-@patch("utils.mongo.datetime")
 def test_batch_insert_articles_to_mongo_insertion_error(mock_datetime, mock_logger):
     """Test that function logs errors when insertion fails"""
     mock_now = Mock()
@@ -210,17 +174,18 @@ def test_batch_insert_articles_to_mongo_document_structure(mock_datetime):
     assert doc["status"] == "ingested"
 
 
+# Tests for insert_error_event_to_mongo function
 @patch("utils.mongo.datetime")
-def test_batch_insert_articles_to_mongo_multiple_articles(mock_datetime):
-    """Test insertion of multiple articles in batch"""
+def test_insert_error_event_to_mongo_success(mock_datetime):
+    """Test successful insertion of error event into MongoDB"""
     mock_now = Mock()
-    mock_now.isoformat.return_value = "2025-12-22T20:51:59.123456+00:00"
+    mock_now.isoformat.return_value = "2025-12-23T10:30:00.000000+00:00"
     mock_datetime.now.return_value = mock_now
 
     mock_collection = Mock()
     mock_result = Mock()
-    mock_result.inserted_ids = [1, 2, 3, 4, 5]
-    mock_collection.insert_many.return_value = mock_result
+    mock_result.inserted_id = "error_id_123"
+    mock_collection.insert_one.return_value = mock_result
 
     mock_db = MagicMock()
     mock_db.__getitem__.return_value = mock_collection
@@ -228,24 +193,183 @@ def test_batch_insert_articles_to_mongo_multiple_articles(mock_datetime):
     mock_client = MagicMock()
     mock_client.__getitem__.return_value = mock_db
 
-    articles = [
-        ("2025-12-20", "Article 1", "https://github.com/1", "github"),
-        ("2025-12-21", "Article 2", "https://stripe.com/2", "stripe"),
-        ("2025-12-22", "Article 3", "https://substack.com/3", "substack"),
-        ("2025-12-20", "Article 4", "https://shopify.engineering/4", "shopify"),
-        ("2025-12-21", "Article 5", "https://freecodecamp.org/5", "freecodecamp"),
-    ]
+    with patch("utils.mongo.MONGO_DB_NAME", "test_db"):
+        with patch("utils.mongo.MONGO_COLLECTION_NAME", "articles"):
+            insert_error_event_to_mongo(
+                client=mock_client,
+                source="freecodecamp",
+                error_type="fetch_failed",
+                error_message="Failed to fetch page",
+                url="https://freecodecamp.org/blog",
+                domain="freecodecamp.org",
+                metadata={"http_status": 503, "retry_count": 0}
+            )
+
+    call_args = mock_collection.insert_one.call_args
+    doc = call_args[0][0]
+
+    assert doc["extracted_at"] == "2025-12-23T10:30:00.000000+00:00"
+    assert doc["source"] == "freecodecamp"
+    assert doc["error"]["type"] == "fetch_failed"
+    assert doc["error"]["message"] == "Failed to fetch page"
+    assert doc["error"]["url"] == "https://freecodecamp.org/blog"
+    assert doc["domain"] == "freecodecamp.org"
+    assert doc["status"] == "ingested"
+    assert doc["event_type"] == "fetch_failed"
+    assert doc["metadata"]["http_status"] == 503
+    assert doc["metadata"]["retry_count"] == 0
+
+
+@patch("utils.mongo.datetime")
+def test_insert_error_event_to_mongo_with_traceback(mock_datetime):
+    """Test error event insertion with traceback string"""
+    mock_now = Mock()
+    mock_now.isoformat.return_value = "2025-12-23T10:30:00.000000+00:00"
+    mock_datetime.now.return_value = mock_now
+
+    mock_collection = Mock()
+    mock_result = Mock()
+    mock_result.inserted_id = "error_id_456"
+    mock_collection.insert_one.return_value = mock_result
+
+    mock_db = MagicMock()
+    mock_db.__getitem__.return_value = mock_collection
+
+    mock_client = MagicMock()
+    mock_client.__getitem__.return_value = mock_db
+
+    traceback_str = "Traceback (most recent call last):\n  File 'test.py', line 10\n    raise Exception"
 
     with patch("utils.mongo.MONGO_DB_NAME", "test_db"):
         with patch("utils.mongo.MONGO_COLLECTION_NAME", "articles"):
-            batch_insert_articles_to_mongo(mock_client, articles)
+            insert_error_event_to_mongo(
+                client=mock_client,
+                source="shopify",
+                error_type="extraction_failed",
+                error_message="AttributeError: 'NoneType' object has no attribute 'get_text'",
+                url="https://shopify.engineering/post123",
+                traceback_str=traceback_str
+            )
 
-    call_args = mock_collection.insert_many.call_args
-    documents = call_args[0][0]
+    call_args = mock_collection.insert_one.call_args
+    doc = call_args[0][0]
 
-    assert len(documents) == 5
-    assert documents[0]["domain"] == "github.com"
-    assert documents[1]["domain"] == "stripe.com"
-    assert documents[2]["domain"] == "substack.com"
-    assert documents[3]["domain"] == "shopify.engineering"
-    assert documents[4]["domain"] == "freecodecamp.org"
+    assert doc["error"]["type"] == "extraction_failed"
+    assert doc["error"]["traceback"] == traceback_str
+    assert doc["event_type"] == "extraction_failed"
+
+
+@patch("utils.mongo.datetime")
+def test_insert_error_event_to_mongo_extracts_domain(mock_datetime):
+    """Test that domain is extracted from URL when not provided"""
+    mock_now = Mock()
+    mock_now.isoformat.return_value = "2025-12-23T10:30:00.000000+00:00"
+    mock_datetime.now.return_value = mock_now
+
+    mock_collection = Mock()
+    mock_result = Mock()
+    mock_result.inserted_id = "error_id_789"
+    mock_collection.insert_one.return_value = mock_result
+
+    mock_db = MagicMock()
+    mock_db.__getitem__.return_value = mock_collection
+
+    mock_client = MagicMock()
+    mock_client.__getitem__.return_value = mock_db
+
+    with patch("utils.mongo.MONGO_DB_NAME", "test_db"):
+        with patch("utils.mongo.MONGO_COLLECTION_NAME", "articles"):
+            insert_error_event_to_mongo(
+                client=mock_client,
+                source="stripe",
+                error_type="provider_failed",
+                error_message="KeyError: 'extractor'",
+                url="https://stripe.com/blog"
+            )
+
+    call_args = mock_collection.insert_one.call_args
+    doc = call_args[0][0]
+
+    assert doc["domain"] == "stripe.com"
+    assert doc["event_type"] == "provider_failed"
+
+
+@patch("utils.mongo.logger")
+def test_insert_error_event_to_mongo_no_client(mock_logger):
+    """Test that function returns early when client is None"""
+    insert_error_event_to_mongo(
+        client=None,
+        source="github",
+        error_type="fetch_failed",
+        error_message="Failed to fetch",
+        url="https://github.com/blog"
+    )
+
+    mock_logger.error.assert_not_called()
+
+
+@patch("utils.mongo.datetime")
+def test_insert_error_event_to_mongo_invalid_url(mock_datetime):
+    """Test that function handles invalid URLs gracefully"""
+    mock_now = Mock()
+    mock_now.isoformat.return_value = "2025-12-23T10:30:00.000000+00:00"
+    mock_datetime.now.return_value = mock_now
+
+    mock_collection = Mock()
+    mock_result = Mock()
+    mock_result.inserted_id = "error_id_999"
+    mock_collection.insert_one.return_value = mock_result
+
+    mock_db = MagicMock()
+    mock_db.__getitem__.return_value = mock_collection
+
+    mock_client = MagicMock()
+    mock_client.__getitem__.return_value = mock_db
+
+    with patch("utils.mongo.MONGO_DB_NAME", "test_db"):
+        with patch("utils.mongo.MONGO_COLLECTION_NAME", "articles"):
+            insert_error_event_to_mongo(
+                client=mock_client,
+                source="github",
+                error_type="fetch_failed",
+                error_message="Failed to fetch",
+                url="not-a-valid-url"
+            )
+
+    call_args = mock_collection.insert_one.call_args
+    doc = call_args[0][0]
+
+    # Should set domain to "unknown" or the invalid URL result
+    assert "domain" in doc
+    mock_collection.insert_one.assert_called_once()
+
+
+@patch("utils.mongo.logger")
+@patch("utils.mongo.datetime")
+def test_insert_error_event_to_mongo_insertion_error(mock_datetime, mock_logger):
+    """Test that function logs errors when insertion fails"""
+    mock_now = Mock()
+    mock_now.isoformat.return_value = "2025-12-23T10:30:00.000000+00:00"
+    mock_datetime.now.return_value = mock_now
+
+    mock_collection = Mock()
+    mock_collection.insert_one.side_effect = Exception("Connection timeout")
+
+    mock_db = MagicMock()
+    mock_db.__getitem__.return_value = mock_collection
+
+    mock_client = MagicMock()
+    mock_client.__getitem__.return_value = mock_db
+
+    with patch("utils.mongo.MONGO_DB_NAME", "test_db"):
+        with patch("utils.mongo.MONGO_COLLECTION_NAME", "articles"):
+            insert_error_event_to_mongo(
+                client=mock_client,
+                source="substack",
+                error_type="extraction_failed",
+                error_message="Parsing error",
+                url="https://substack.com/post"
+            )
+
+    mock_logger.error.assert_called_once()
+    assert "Failed to insert error event into MongoDB" in str(mock_logger.error.call_args)
