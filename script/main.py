@@ -1,6 +1,7 @@
 import logging
 import sys
 import asyncio
+import traceback
 from utils import (
     # Sheet operations
     get_client,
@@ -12,6 +13,7 @@ from utils import (
     # MongoDB operations
     get_mongo_client,
     batch_insert_articles_to_mongo,
+    insert_error_event_to_mongo,
     # Web scraping
     init_fetcher_state,
     fetch_page,
@@ -55,6 +57,23 @@ async def process_provider(fetcher_state, provider, existing_titles):
         if not soup:
             error_msg = f"Failed to fetch page for {provider_name} from {provider_url}"
             logger.warning(error_msg)
+            
+            # Capture fetch failure event to MongoDB
+            mongo_client = get_mongo_client()
+            if mongo_client:
+                insert_error_event_to_mongo(
+                    client=mongo_client,
+                    source=provider_name,
+                    error_type="fetch_failed",
+                    error_message="Failed to fetch page",
+                    url=provider_url,
+                    metadata={
+                        "provider_element": provider_element,
+                        "retry_count": 0
+                    }
+                )
+                mongo_client.close()
+            
             return [], fetcher_state
 
         element_args = handler["element"]()
@@ -74,6 +93,25 @@ async def process_provider(fetcher_state, provider, existing_titles):
 
     except Exception as e:
         logger.error(f"Error processing {provider_name}: {str(e)}", exc_info=True)
+        
+        # Capture provider-level failure event to MongoDB
+        mongo_client = get_mongo_client()
+        if mongo_client:
+            insert_error_event_to_mongo(
+                client=mongo_client,
+                source=provider_name,
+                error_type="provider_failed",
+                error_message=str(e),
+                url=provider_url,
+                metadata={
+                    "provider_element": provider_element,
+                    "phase": "article_extraction",
+                    "exception_type": type(e).__name__
+                },
+                traceback_str=traceback.format_exc()
+            )
+            mongo_client.close()
+        
         return [], fetcher_state
 
 
