@@ -59,6 +59,7 @@ def batch_insert_articles_to_mongo(client, articles):
             },
             "domain": domain,
             "status": "ingested",
+            "event_type": "extraction",
         }
         documents.append(doc)
 
