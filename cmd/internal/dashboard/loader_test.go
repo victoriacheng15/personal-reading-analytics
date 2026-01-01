@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-// TestLoadTemplateContent tests the LoadTemplateContent function
-func TestLoadTemplateContent(t *testing.T) {
+// TestGetTemplatesDir tests the GetTemplatesDir function
+func TestGetTemplatesDir(t *testing.T) {
 	// Save original working directory
 	originalWd, err := os.Getwd()
 	if err != nil {
@@ -27,7 +27,7 @@ func TestLoadTemplateContent(t *testing.T) {
 		expectEmpty bool
 	}{
 		{
-			name: "loads template from primary path",
+			name: "finds templates directory from primary path",
 			setup: func(t *testing.T) string {
 				tmpDir := t.TempDir()
 				if err := os.Chdir(tmpDir); err != nil {
@@ -35,16 +35,9 @@ func TestLoadTemplateContent(t *testing.T) {
 				}
 
 				// Create directory structure for primary path
-				dashboardDir := filepath.Join("cmd", "internal", "dashboard")
-				if err := os.MkdirAll(dashboardDir, 0755); err != nil {
+				templatesDir := filepath.Join("cmd", "internal", "dashboard", "templates")
+				if err := os.MkdirAll(templatesDir, 0755); err != nil {
 					t.Fatalf("failed to create directories: %v", err)
-				}
-
-				// Create template file
-				templatePath := filepath.Join(dashboardDir, "template.html")
-				templateContent := "<html><body>Test Template</body></html>"
-				if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
-					t.Fatalf("failed to write template file: %v", err)
 				}
 
 				return tmpDir
@@ -53,7 +46,7 @@ func TestLoadTemplateContent(t *testing.T) {
 			expectEmpty: false,
 		},
 		{
-			name: "loads template from secondary path",
+			name: "finds templates directory from secondary path",
 			setup: func(t *testing.T) string {
 				tmpDir := t.TempDir()
 				if err := os.Chdir(tmpDir); err != nil {
@@ -61,16 +54,9 @@ func TestLoadTemplateContent(t *testing.T) {
 				}
 
 				// Create directory structure for secondary path
-				dashboardDir := filepath.Join("internal", "dashboard")
-				if err := os.MkdirAll(dashboardDir, 0755); err != nil {
+				templatesDir := filepath.Join("internal", "dashboard", "templates")
+				if err := os.MkdirAll(templatesDir, 0755); err != nil {
 					t.Fatalf("failed to create directories: %v", err)
-				}
-
-				// Create template file
-				templatePath := filepath.Join(dashboardDir, "template.html")
-				templateContent := "<html><body>Secondary Path Template</body></html>"
-				if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
-					t.Fatalf("failed to write template file: %v", err)
 				}
 
 				return tmpDir
@@ -79,7 +65,7 @@ func TestLoadTemplateContent(t *testing.T) {
 			expectEmpty: false,
 		},
 		{
-			name: "returns error when template not found",
+			name: "returns error when templates directory not found",
 			setup: func(t *testing.T) string {
 				tmpDir := t.TempDir()
 				if err := os.Chdir(tmpDir); err != nil {
@@ -97,14 +83,14 @@ func TestLoadTemplateContent(t *testing.T) {
 			tmpDir := tt.setup(t)
 			defer os.RemoveAll(tmpDir)
 
-			content, err := LoadTemplateContent()
+			dir, err := GetTemplatesDir()
 
 			if tt.expectError {
 				if err == nil {
 					t.Errorf("expected error, got nil")
 				}
-				if !tt.expectEmpty && content != "" {
-					t.Errorf("expected empty content on error, got: %v", content)
+				if !tt.expectEmpty && dir != "" {
+					t.Errorf("expected empty path on error, got: %v", dir)
 				}
 				return
 			}
@@ -113,12 +99,102 @@ func TestLoadTemplateContent(t *testing.T) {
 				t.Errorf("unexpected error: %v", err)
 			}
 
-			if tt.expectEmpty && content == "" {
-				t.Errorf("expected non-empty content, got empty string")
+			if tt.expectEmpty && dir == "" {
+				t.Errorf("expected non-empty path, got empty string")
 			}
 
-			if !tt.expectEmpty && content == "" {
-				t.Errorf("expected non-empty content, got empty string")
+			if !tt.expectEmpty && dir == "" {
+				t.Errorf("expected non-empty path, got empty string")
+			}
+		})
+	}
+}
+
+// TestLoadEvolutionData tests the LoadEvolutionData function
+func TestLoadEvolutionData(t *testing.T) {
+	// Save original working directory
+	originalWd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("failed to get working directory: %v", err)
+	}
+	defer func() {
+		// Restore original working directory
+		if err := os.Chdir(originalWd); err != nil {
+			t.Fatalf("failed to restore working directory: %v", err)
+		}
+	}()
+
+	tests := []struct {
+		name        string
+		setup       func(t *testing.T) string
+		expectError bool
+	}{
+		{
+			name: "loads evolution data successfully",
+			setup: func(t *testing.T) string {
+				tmpDir := t.TempDir()
+				if err := os.Chdir(tmpDir); err != nil {
+					t.Fatalf("failed to change directory: %v", err)
+				}
+
+				dir := filepath.Join("cmd", "internal", "dashboard")
+				if err := os.MkdirAll(dir, 0755); err != nil {
+					t.Fatal(err)
+				}
+
+				yamlContent := `
+events:
+  - date: "2024-01"
+    title: "Test Event"
+    description: |
+      - "Detail 1"
+`
+				if err := os.WriteFile(filepath.Join(dir, "evolution.yml"), []byte(yamlContent), 0644); err != nil {
+					t.Fatal(err)
+				}
+				return tmpDir
+			},
+			expectError: false,
+		},
+		{
+			name: "returns error when file missing",
+			setup: func(t *testing.T) string {
+				tmpDir := t.TempDir()
+				if err := os.Chdir(tmpDir); err != nil {
+					t.Fatalf("failed to change directory: %v", err)
+				}
+				return tmpDir
+			},
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmpDir := tt.setup(t)
+			defer os.RemoveAll(tmpDir)
+
+			data, err := LoadEvolutionData()
+
+			if tt.expectError {
+				if err == nil {
+					t.Error("expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+
+			if len(data.Events) > 0 && data.Events[0].Title != "Test Event" {
+				t.Errorf("expected title 'Test Event', got %s", data.Events[0].Title)
+			}
+
+			if len(data.Events) > 0 {
+				if len(data.Events[0].DescriptionLines) == 0 || data.Events[0].DescriptionLines[0] != "Detail 1" {
+					t.Errorf("expected DescriptionLines[0] to be 'Detail 1', got %v", data.Events[0].DescriptionLines)
+				}
 			}
 		})
 	}

@@ -74,3 +74,14 @@ type HightlightMetric struct {
 	Title string
 	Value string
 }
+
+type EvolutionData struct {
+	Events []Milestone `yaml:"events"`
+}
+
+type Milestone struct {
+	Date             string   `yaml:"date"`
+	Title            string   `yaml:"title"`
+	Description      string   `yaml:"description"`
+	DescriptionLines []string `yaml:"-"`
+}

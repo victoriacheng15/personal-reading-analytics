@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -14,7 +16,7 @@ import (
 )
 
 const (
-	dashboardTitle = "📚 Personal Reading Analytics"
+	dashboardTitle = "📚 Personal Reading Analytics Dashboard"
 )
 
 var shortMonthNames = []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
@@ -251,6 +253,71 @@ func prepareUnreadByYear(metrics schema.Metrics) template.JS {
 	return template.JS(jsonData)
 }
 
+// copyDir recursively copies a directory tree, attempting to preserve permissions.
+func copyDir(src, dst string) error {
+	src = filepath.Clean(src)
+	dst = filepath.Clean(dst)
+
+	si, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	if !si.IsDir() {
+		return fmt.Errorf("source is not a directory")
+	}
+
+	err = os.MkdirAll(dst, si.Mode())
+	if err != nil {
+		return err
+	}
+
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		srcPath := filepath.Join(src, entry.Name())
+		dstPath := filepath.Join(dst, entry.Name())
+
+		if entry.IsDir() {
+			err = copyDir(srcPath, dstPath)
+			if err != nil {
+				return err
+			}
+		} else {
+			// Copy file
+			if err = copyFile(srcPath, dstPath); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// copyFile copies a single file from src to dst
+func copyFile(src, dst string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+
+	return out.Close()
+}
+
 // generateHTMLDashboard creates and saves the HTML dashboard file
 func generateHTMLDashboard(metrics schema.Metrics) error {
 	// Sort sources by count
@@ -351,39 +418,6 @@ func generateHTMLDashboard(metrics schema.Metrics) error {
 	mostUnreadSource := calculateMostUnreadSource(metrics)
 	thisMonthArticles := calculateThisMonthArticles(metrics, currentMonth)
 
-	// Load HTML template from file
-	templateContent, err := dashboard.LoadTemplateContent()
-	if err != nil {
-		return fmt.Errorf("failed to load template: %w", err)
-	}
-
-	// Parse and execute template
-	funcMap := template.FuncMap{
-		"divideFloat": func(a, b int) float64 {
-			if b == 0 {
-				return 0
-			}
-			return float64(a) / float64(b)
-		},
-	}
-
-	tmpl := template.New("dashboard").Funcs(funcMap)
-
-	tmpl, err = tmpl.Parse(templateContent)
-	if err != nil {
-		return fmt.Errorf("failed to parse HTML template: %w", err)
-	}
-
-	// Create site directory
-	os.MkdirAll("site", 0755)
-
-	// Create output file
-	file, err := os.Create("site/index.html")
-	if err != nil {
-		return fmt.Errorf("failed to create site/index.html: %w", err)
-	}
-	defer file.Close()
-
 	// Prepare chart data using dashboard helpers
 	yearChartData := dashboard.PrepareYearChartData(years)
 	monthChartData := dashboard.PrepareMonthChartData(monthlyAggregated, sources)
@@ -414,45 +448,127 @@ func generateHTMLDashboard(metrics schema.Metrics) error {
 		{Title: "✅ This Month's Articles", Value: fmt.Sprintf("%d", thisMonthArticles)},
 	}
 
-	// Execute template
-	data := map[string]interface{}{
-		"DashboardTitle":                   dashboardTitle,
-		"KeyMetrics":                       keyMetrics,
-		"highlightMetrics":                 highlightMetrics,
-		"TotalArticles":                    metrics.TotalArticles,
-		"ReadCount":                        metrics.ReadCount,
-		"UnreadCount":                      metrics.UnreadCount,
-		"ReadRate":                         metrics.ReadRate,
-		"AvgArticlesPerMonth":              metrics.AvgArticlesPerMonth,
-		"LastUpdated":                      metrics.LastUpdated,
-		"Sources":                          sources,
-		"Months":                           monthlyAggregated,
-		"Years":                            years,
-		"AllYears":                         allYears,
-		"AllSources":                       allSources,
-		"AllYearsJSON":                     template.JS(allYearsJSON),
-		"AllSourcesJSON":                   template.JS(allSourcesJSON),
-		"YearChartLabels":                  template.JS(yearChartData.LabelsJSON),
-		"YearChartData":                    template.JS(yearChartData.DataJSON),
-		"MonthChartLabels":                 template.JS(monthChartData.LabelsJSON),
-		"MonthChartDatasets":               template.JS(monthChartData.DatasetsJSON),
-		"MonthTotalData":                   template.JS(monthChartData.TotalDataJSON),
-		"ReadUnreadByMonthJSON":            template.JS(readUnreadByMonthJSON),
-		"ReadUnreadBySourceJSON":           template.JS(readUnreadBySourceJSON),
-		"ReadUnreadByYearJSON":             template.JS(readUnreadByYearJSON),
-		"UnreadArticleAgeDistributionJSON": template.JS(unreadArticleAgeDistributionJSON),
-		"UnreadByYearJSON":                 template.JS(unreadByYearJSON),
-		"TopOldestUnreadArticles":          metrics.TopOldestUnreadArticles,
-	}
-
-	err = tmpl.Execute(file, data)
+	// Load evolution data
+	evolutionData, err := dashboard.LoadEvolutionData()
 	if err != nil {
-		log.Printf("❌ Template execution error: %v\n", err)
-		log.Printf("Error type: %T\n", err)
-		return fmt.Errorf("failed to execute template: %w", err)
+		log.Printf("⚠️ Warning: Failed to load evolution data: %v", err)
+	} else {
+		// Sort events by date descending (latest first)
+		sort.Slice(evolutionData.Events, func(i, j int) bool {
+			return evolutionData.Events[i].Date > evolutionData.Events[j].Date
+		})
 	}
 
-	log.Println("✅ HTML dashboard generated at site/index.html")
+	// Get templates directory
+	tmplDir, err := dashboard.GetTemplatesDir()
+	if err != nil {
+		return fmt.Errorf("failed to get templates directory: %w", err)
+	}
+
+	// Common function map
+	funcMap := template.FuncMap{
+		"divideFloat": func(a, b int) float64 {
+			if b == 0 {
+				return 0
+			}
+			return float64(a) / float64(b)
+		},
+	}
+
+	// Create site directory
+	if err := os.MkdirAll("site", 0755); err != nil {
+		return fmt.Errorf("failed to create site directory: %w", err)
+	}
+
+	// Copy CSS directory
+	cssSrc := filepath.Join(tmplDir, "css")
+	cssDst := filepath.Join("site", "css")
+	if err := copyDir(cssSrc, cssDst); err != nil {
+		// Log warning but don't fail, in case css dir doesn't exist
+		log.Printf("⚠️ Warning: Failed to copy CSS directory: %v", err)
+	} else {
+		log.Printf("✅ Copied CSS to %s", cssDst)
+	}
+
+	// Pages to generate
+	pages := []struct {
+		Filename string
+		Title    string
+	}{
+		{"index.html", dashboardTitle},
+		{"analytics.html", "📊 Analytics"},
+		{"evolution.html", "⏳ Evolution"},
+	}
+
+	// Loop and generate each page
+	for _, page := range pages {
+		// Create new template instance for this page
+		tmpl := template.New("").Funcs(funcMap)
+
+		// Parse shared templates and the specific page template
+		files := []string{
+			filepath.Join(tmplDir, "base.html"),
+			filepath.Join(tmplDir, "header.html"),
+			filepath.Join(tmplDir, "footer.html"),
+			filepath.Join(tmplDir, page.Filename),
+		}
+
+		// Parse files
+		tmpl, err = tmpl.ParseFiles(files...)
+		if err != nil {
+			return fmt.Errorf("failed to parse templates for %s: %w", page.Filename, err)
+		}
+
+		// Create output file
+		outPath := filepath.Join("site", page.Filename)
+		f, err := os.Create(outPath)
+		if err != nil {
+			return fmt.Errorf("failed to create %s: %w", outPath, err)
+		}
+		defer f.Close()
+
+		// Prepare data map for this page execution
+		data := map[string]interface{}{
+			"DashboardTitle":                   dashboardTitle,
+			"PageTitle":                        page.Title,
+			"KeyMetrics":                       keyMetrics,
+			"highlightMetrics":                 highlightMetrics,
+			"TotalArticles":                    metrics.TotalArticles,
+			"ReadCount":                        metrics.ReadCount,
+			"UnreadCount":                      metrics.UnreadCount,
+			"ReadRate":                         metrics.ReadRate,
+			"AvgArticlesPerMonth":              metrics.AvgArticlesPerMonth,
+			"LastUpdated":                      metrics.LastUpdated,
+			"Sources":                          sources,
+			"Months":                           monthlyAggregated,
+			"Years":                            years,
+			"AllYears":                         allYears,
+			"AllSources":                       allSources,
+			"AllYearsJSON":                     template.JS(allYearsJSON),
+			"AllSourcesJSON":                   template.JS(allSourcesJSON),
+			"YearChartLabels":                  template.JS(yearChartData.LabelsJSON),
+			"YearChartData":                    template.JS(yearChartData.DataJSON),
+			"MonthChartLabels":                 template.JS(monthChartData.LabelsJSON),
+			"MonthChartDatasets":               template.JS(monthChartData.DatasetsJSON),
+			"MonthTotalData":                   template.JS(monthChartData.TotalDataJSON),
+			"ReadUnreadByMonthJSON":            template.JS(readUnreadByMonthJSON),
+			"ReadUnreadBySourceJSON":           template.JS(readUnreadBySourceJSON),
+			"ReadUnreadByYearJSON":             template.JS(readUnreadByYearJSON),
+			"UnreadArticleAgeDistributionJSON": template.JS(unreadArticleAgeDistributionJSON),
+			"UnreadByYearJSON":                 template.JS(unreadByYearJSON),
+			"TopOldestUnreadArticles":          metrics.TopOldestUnreadArticles,
+			"EvolutionData":                    evolutionData,
+		}
+
+		// Execute the template matching the filename
+		err = tmpl.ExecuteTemplate(f, page.Filename, data)
+		if err != nil {
+			return fmt.Errorf("failed to execute template for %s: %w", page.Filename, err)
+		}
+
+		log.Printf("✅ Generated %s", outPath)
+	}
+
 	return nil
 }
 
