@@ -89,10 +89,10 @@ go-coverage-log:
 	go tool cover -func=coverage.out | awk '$$3 != "100.0%"'
 
 run-metrics:
-	go build -o ./metricsjson.exe ./cmd/metrics && ./metricsjson.exe
+	go build -o ./metricsjson.exe ./cmd/metrics && ./metricsjson.exe && rm ./metricsjson.exe
 
 run-dashboard:
-	go build -o ./dashboard.exe ./cmd/dashboard && ./dashboard.exe
+	go build -o ./dashboard.exe ./cmd/dashboard && ./dashboard.exe && rm ./dashboard.exe
 
 cleanup:
 	rm -f ./metricsjson.exe ./dashboard.exe coverage.out coverage.html
