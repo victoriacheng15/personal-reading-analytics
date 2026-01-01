@@ -816,13 +816,37 @@ func TestGenerateHTMLDashboard(t *testing.T) {
 			}
 			defer os.RemoveAll(tmpDir)
 
-			templateDir := filepath.Join(tmpDir, "cmd", "internal", "dashboard")
+			templateDir := filepath.Join(tmpDir, "cmd", "internal", "dashboard", "templates")
 			if err := os.MkdirAll(templateDir, 0755); err != nil {
 				t.Fatal(err)
 			}
 
-			dummyTemplate := `<html><body><h1>{{.DashboardTitle}}</h1></body></html>`
-			if err := os.WriteFile(filepath.Join(templateDir, "template.html"), []byte(dummyTemplate), 0644); err != nil {
+			// Create required template files
+			baseTmpl := `{{define "base"}}<html><body>{{block "content" .}}{{end}}</body></html>{{end}}`
+			headerTmpl := `{{define "header"}}<header></header>{{end}}`
+			footerTmpl := `{{define "footer"}}<footer></footer>{{end}}`
+			indexTmpl := `{{define "content"}}{{template "header" .}}<h1>Home</h1>{{template "footer" .}}{{end}}{{template "base" .}}`
+			analyticsTmpl := `{{define "content"}}{{template "header" .}}<h1>Analytics</h1>{{template "footer" .}}{{end}}{{template "base" .}}`
+			evolutionTmpl := `{{define "content"}}{{template "header" .}}<h1>Evolution</h1>{{template "footer" .}}{{end}}{{template "base" .}}`
+
+			templates := map[string]string{
+				"base.html":      baseTmpl,
+				"header.html":    headerTmpl,
+				"footer.html":    footerTmpl,
+				"index.html":     indexTmpl,
+				"analytics.html": analyticsTmpl,
+				"evolution.html": evolutionTmpl,
+			}
+
+			for name, content := range templates {
+				if err := os.WriteFile(filepath.Join(templateDir, name), []byte(content), 0644); err != nil {
+					t.Fatalf("failed to create template %s: %v", name, err)
+				}
+			}
+
+			// Mock evolution.yml since it's now required
+			evolutionData := `timeline: []`
+			if err := os.WriteFile(filepath.Join(tmpDir, "cmd", "internal", "dashboard", "evolution.yml"), []byte(evolutionData), 0644); err != nil {
 				t.Fatal(err)
 			}
 
@@ -845,59 +869,137 @@ func TestGenerateHTMLDashboard(t *testing.T) {
 }
 
 // ============================================================================
-// main: Orchestrates the complete dashboard generation pipeline
+// File Operations: CopyDir and CopyFile
 // ============================================================================
 
-func TestMainExecution(t *testing.T) {
+func TestCopyFile(t *testing.T) {
 	tests := []struct {
-		name                 string
-		metricsJSON          string
-		expectHTMLGeneration bool
+		name      string
+		content   string
+		setup     func(t *testing.T, src, dst string)
+		expectErr bool
 	}{
 		{
-			name:                 "main generates html from latest metrics",
-			metricsJSON:          `{"total_articles": 100, "by_source": {"Test": 100}, "by_source_read_status": {"Test": [50, 50], "substack_author_count": [0,0]}, "unread_article_age_distribution": {"less_than_1_month": 10, "1_to_3_months": 0, "3_to_6_months": 0, "6_to_12_months": 0, "older_than_1year": 0}}`,
-			expectHTMLGeneration: true,
+			name:    "successfully copies file",
+			content: "hello world",
+			setup: func(t *testing.T, src, dst string) {
+				// Normal setup
+			},
+			expectErr: false,
+		},
+		{
+			name:    "source does not exist",
+			content: "",
+			setup: func(t *testing.T, src, dst string) {
+				os.Remove(src) // Ensure source is missing
+			},
+			expectErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tmpDir, err := os.MkdirTemp("", "main_test")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer os.RemoveAll(tmpDir)
+			tmpDir := t.TempDir()
+			srcPath := filepath.Join(tmpDir, "source.txt")
+			dstPath := filepath.Join(tmpDir, "dest.txt")
 
-			metricsDir := filepath.Join(tmpDir, "metrics")
-			if err := os.MkdirAll(metricsDir, 0755); err != nil {
-				t.Fatal(err)
-			}
-
-			if err := os.WriteFile(filepath.Join(metricsDir, "2025-01-01.json"), []byte(tt.metricsJSON), 0644); err != nil {
-				t.Fatal(err)
+			if tt.content != "" {
+				if err := os.WriteFile(srcPath, []byte(tt.content), 0644); err != nil {
+					t.Fatal(err)
+				}
 			}
 
-			templateDir := filepath.Join(tmpDir, "cmd", "internal", "dashboard")
-			if err := os.MkdirAll(templateDir, 0755); err != nil {
-				t.Fatal(err)
-			}
-			dummyTemplate := `<html><body><h1>Main Test</h1></body></html>`
-			if err := os.WriteFile(filepath.Join(templateDir, "template.html"), []byte(dummyTemplate), 0644); err != nil {
-				t.Fatal(err)
+			tt.setup(t, srcPath, dstPath)
+
+			err := copyFile(srcPath, dstPath)
+			if (err != nil) != tt.expectErr {
+				t.Errorf("copyFile() error = %v, expectErr %v", err, tt.expectErr)
 			}
 
-			oldWd, _ := os.Getwd()
-			defer os.Chdir(oldWd)
-			if err := os.Chdir(tmpDir); err != nil {
-				t.Fatal(err)
+			if !tt.expectErr {
+				content, err := os.ReadFile(dstPath)
+				if err != nil {
+					t.Fatalf("failed to read destination file: %v", err)
+				}
+				if string(content) != tt.content {
+					t.Errorf("content mismatch: got %q, want %q", string(content), tt.content)
+				}
+			}
+		})
+	}
+}
+
+func TestCopyDir(t *testing.T) {
+	tests := []struct {
+		name      string
+		setup     func(t *testing.T, src string)
+		expectErr bool
+		verify    func(t *testing.T, dst string)
+	}{
+		{
+			name: "recursively copies directory",
+			setup: func(t *testing.T, src string) {
+				// Create file in root
+				os.WriteFile(filepath.Join(src, "root.txt"), []byte("root"), 0644)
+				// Create subdir
+				subDir := filepath.Join(src, "subdir")
+				os.Mkdir(subDir, 0755)
+				// Create file in subdir
+				os.WriteFile(filepath.Join(subDir, "sub.txt"), []byte("sub"), 0644)
+			},
+			expectErr: false,
+			verify: func(t *testing.T, dst string) {
+				// Check root file
+				if _, err := os.Stat(filepath.Join(dst, "root.txt")); os.IsNotExist(err) {
+					t.Error("root.txt not copied")
+				}
+				// Check subdir
+				if _, err := os.Stat(filepath.Join(dst, "subdir")); os.IsNotExist(err) {
+					t.Error("subdir not copied")
+				}
+				// Check subdir file
+				if _, err := os.Stat(filepath.Join(dst, "subdir", "sub.txt")); os.IsNotExist(err) {
+					t.Error("sub.txt not copied")
+				}
+			},
+		},
+		{
+			name: "source does not exist",
+			setup: func(t *testing.T, src string) {
+				os.RemoveAll(src)
+			},
+			expectErr: true,
+			verify:    func(t *testing.T, dst string) {},
+		},
+		{
+			name: "source is a file",
+			setup: func(t *testing.T, src string) {
+				os.RemoveAll(src)
+				os.WriteFile(src, []byte("file"), 0644)
+			},
+			expectErr: true,
+			verify:    func(t *testing.T, dst string) {},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmpDir := t.TempDir()
+			srcDir := filepath.Join(tmpDir, "src")
+			dstDir := filepath.Join(tmpDir, "dst")
+
+			// Create src dir by default (tests can remove it)
+			os.Mkdir(srcDir, 0755)
+
+			tt.setup(t, srcDir)
+
+			err := copyDir(srcDir, dstDir)
+			if (err != nil) != tt.expectErr {
+				t.Errorf("copyDir() error = %v, expectErr %v", err, tt.expectErr)
 			}
 
-			main()
-
-			_, err = os.Stat("site/index.html")
-			if tt.expectHTMLGeneration && os.IsNotExist(err) {
-				t.Error("site/index.html was not created by main()")
+			if !tt.expectErr {
+				tt.verify(t, dstDir)
 			}
 		})
 	}

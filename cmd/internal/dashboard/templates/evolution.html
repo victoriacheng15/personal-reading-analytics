@@ -1,0 +1,22 @@
+{{define "content"}}
+<main class="evolution-page">
+    <section aria-label="Evolution Timeline">
+        <div class="timeline">
+            {{range .EvolutionData.Events}}
+            <div class="timeline-item">
+                <h2 class="timeline-date">{{.Date}}</h2>
+                <div class="timeline-content">
+                    <h3>{{.Title}}</h3>
+                    <ul class="timeline-details">
+                        {{range .DescriptionLines}}
+                        <li>{{.}}</li>
+                        {{end}}
+                    </ul>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </section>
+</main>
+{{end}}
+{{template "base" .}}
