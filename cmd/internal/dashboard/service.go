@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"time"
 
 	schema "github.com/victoriacheng15/personal-reading-analytics-dashboard/cmd/internal"
 	"github.com/victoriacheng15/personal-reading-analytics-dashboard/cmd/internal/metrics"
@@ -123,14 +124,19 @@ func (s *DashboardService) prepareViewModel(m schema.Metrics) (ViewModel, error)
 	}
 
 	// Determine current month (MM format) for badge calculation
-	// Using the latest month from ByMonth as current month
-	// TODO: Replace with dynamic time.Now() logic in future refactor
-	currentMonth := "11" // Default to November
-	for month := 12; month >= 1; month-- {
-		monthStr := fmt.Sprintf("%02d", month)
-		if _, exists := m.ByMonth[monthStr]; exists {
-			currentMonth = monthStr
-			break
+	now := time.Now()
+	currentMonth := now.Format("01")
+
+	// If the current month (from system time) has no data,
+	// fall back to the latest month available in the metrics to provide
+	// a better "latest snapshot" view.
+	if _, exists := m.ByMonth[currentMonth]; !exists {
+		for month := 12; month >= 1; month-- {
+			monthStr := fmt.Sprintf("%02d", month)
+			if _, exists := m.ByMonth[monthStr]; exists {
+				currentMonth = monthStr
+				break
+			}
 		}
 	}
 

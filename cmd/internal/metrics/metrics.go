@@ -388,12 +388,27 @@ func calculateDerivedMetrics(metrics *schema.Metrics, earliestDate, latestDate t
 	}
 
 	// Calculate average articles per month based on actual data span
-	monthsSpan := 1
+	monthsSpan := 1.0
 	if !earliestDate.IsZero() && !latestDate.IsZero() {
-		monthsSpan = calculateMonthsDifference(earliestDate, latestDate) + 1
-		log.Printf("📊 Data span: %s to %s (%d months)\n", earliestDate.Format("2006-01-02"), latestDate.Format("2006-01-02"), monthsSpan)
+		monthsDiff := calculateMonthsDifference(earliestDate, latestDate)
+
+		// Handle partial month for the latest month
+		// If latestDate is in the current month, we calculate the fraction of the month passed
+		now := time.Now()
+		if latestDate.Year() == now.Year() && latestDate.Month() == now.Month() {
+			daysInMonth := time.Date(now.Year(), now.Month()+1, 0, 0, 0, 0, 0, time.UTC).Day()
+			fraction := float64(now.Day()) / float64(daysInMonth)
+			monthsSpan = float64(monthsDiff) + fraction
+		} else {
+			monthsSpan = float64(monthsDiff) + 1.0
+		}
+
+		log.Printf("📊 Data span: %s to %s (%.2f months)\n", earliestDate.Format("2006-01-02"), latestDate.Format("2006-01-02"), monthsSpan)
 	}
-	metrics.AvgArticlesPerMonth = float64(metrics.TotalArticles) / float64(monthsSpan)
+
+	if monthsSpan > 0 {
+		metrics.AvgArticlesPerMonth = float64(metrics.TotalArticles) / monthsSpan
+	}
 }
 
 // populateTopArticles stores the top oldest unread articles and the oldest unread article
