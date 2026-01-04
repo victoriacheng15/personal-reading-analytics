@@ -1,5 +1,5 @@
 import asyncio
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import Mock, patch, AsyncMock, MagicMock
 from main import process_provider, async_main, main
 
 # Mock data
@@ -75,6 +75,7 @@ def test_process_provider_fetch_failure(
 
 
 @patch("main.get_mongo_client")
+@patch("main.insert_summary_event_mongo")
 @patch("main.close_fetcher", new_callable=AsyncMock)
 @patch("main.batch_append_articles")
 @patch("main.process_provider", new_callable=AsyncMock)
@@ -92,6 +93,7 @@ def test_async_main_success(
     mock_process,
     mock_batch_append,
     mock_close,
+    mock_insert_summary,
     mock_get_mongo_client,
 ):
     """Test the main async flow with new articles"""
@@ -103,7 +105,14 @@ def test_async_main_success(
         [("2025-01-01", "Title", "Link", "Source")],
         MOCK_FETCHER_STATE,
     )
-    mock_get_mongo_client.return_value = None  # Prevent MongoDB connection
+    mock_client = MagicMock()  # Use MagicMock which supports __getitem__ better
+    # Configure mock_client to return a mock database when accessed via []
+    mock_db = MagicMock()
+    mock_collection = Mock()
+    mock_db.__getitem__.return_value = mock_collection  # For db[collection_name]
+    mock_client.__getitem__.return_value = mock_db  # For client[db_name]
+
+    mock_get_mongo_client.return_value = mock_client
 
     # Execute
     asyncio.run(async_main("2025-01-01 - 12:00"))
@@ -113,9 +122,11 @@ def test_async_main_success(
     mock_sheet.sort.assert_called_once_with((1, "des"))
     mock_sheet.update_cell.assert_called_once()
     mock_close.assert_called_once()
+    mock_insert_summary.assert_called_once_with(mock_client, 1)
 
 
 @patch("main.get_mongo_client")
+@patch("main.insert_summary_event_mongo")
 @patch("main.close_fetcher", new_callable=AsyncMock)
 @patch("main.batch_append_articles")
 @patch("main.process_provider", new_callable=AsyncMock)
@@ -133,6 +144,7 @@ def test_async_main_no_articles(
     mock_process,
     mock_batch_append,
     mock_close,
+    mock_insert_summary,
     mock_get_mongo_client,
 ):
     """Test the main async flow with no new articles"""
@@ -140,12 +152,14 @@ def test_async_main_no_articles(
     mock_get_worksheet.return_value = mock_sheet
     mock_get_providers.return_value = [MOCK_PROVIDER]
     mock_process.return_value = ([], MOCK_FETCHER_STATE)
-    mock_get_mongo_client.return_value = None  # Prevent MongoDB connection
+    mock_client = Mock()
+    mock_get_mongo_client.return_value = mock_client
 
     asyncio.run(async_main("timestamp"))
 
     mock_batch_append.assert_not_called()
     mock_sheet.sort.assert_called_once()
+    mock_insert_summary.assert_called_once_with(mock_client, 0)
 
 
 @patch("main.async_main")

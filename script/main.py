@@ -12,8 +12,9 @@ from utils import (
     SHEET_ID,
     # MongoDB operations
     get_mongo_client,
-    batch_insert_articles_to_mongo,
-    insert_error_event_to_mongo,
+    insert_articles_event_mongo,
+    insert_error_event_mongo,
+    insert_summary_event_mongo,
     close_mongo_client,
     # Web scraping
     init_fetcher_state,
@@ -62,7 +63,7 @@ async def process_provider(fetcher_state, provider, existing_titles):
             # Capture fetch failure event to MongoDB
             mongo_client = get_mongo_client()
             if mongo_client:
-                insert_error_event_to_mongo(
+                insert_error_event_mongo(
                     client=mongo_client,
                     source=provider_name,
                     error_type="fetch_failed",
@@ -95,7 +96,7 @@ async def process_provider(fetcher_state, provider, existing_titles):
         # Capture provider-level failure event to MongoDB
         mongo_client = get_mongo_client()
         if mongo_client:
-            insert_error_event_to_mongo(
+            insert_error_event_mongo(
                 client=mongo_client,
                 source=provider_name,
                 error_type="provider_failed",
@@ -147,10 +148,15 @@ async def async_main(timestamp):
         # Write to MongoDB
         mongo_client = get_mongo_client()
         if mongo_client:
-            batch_insert_articles_to_mongo(mongo_client, all_articles)
+            insert_articles_event_mongo(mongo_client, all_articles)
+            insert_summary_event_mongo(mongo_client, len(all_articles))
             # Client is singleton, do not close
     else:
         logger.info("\n✅ No new articles found\n")
+        # Log summary event for no new articles
+        mongo_client = get_mongo_client()
+        if mongo_client:
+            insert_summary_event_mongo(mongo_client, 0)
 
     articles_sheet.sort((1, "des"))
     articles_sheet.update_cell(1, 6, f"Updated at\n{timestamp}")

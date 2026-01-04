@@ -63,7 +63,32 @@ def _get_collection(client):
     return db[MONGO_COLLECTION_NAME]
 
 
-def batch_insert_articles_to_mongo(client, articles):
+def _create_event_doc(source, event_type, payload, meta=None):
+    """
+    Standardizes the construction of an event document.
+
+    Args:
+        source (str): Origin of the event.
+        event_type (str): Type of event.
+        payload (dict): Event-specific data.
+        meta (dict, optional): Operational metadata.
+
+    Returns:
+        dict: Standardized event document.
+    """
+    doc = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "source": source,
+        "event_type": event_type,
+        "status": "ingested",
+        "payload": payload,
+    }
+    if meta:
+        doc["meta"] = meta
+    return doc
+
+
+def insert_articles_event_mongo(client, articles):
     """
     Transforms and inserts a batch of articles into MongoDB.
 
@@ -89,18 +114,13 @@ def batch_insert_articles_to_mongo(client, articles):
         except Exception:
             domain = "unknown"
 
-        doc = {
-            "extracted_at": current_utc_time,
-            "source": source,
-            "article": {
-                "title": title,
-                "link": link,
-                "published_date": date,
-            },
+        payload = {
+            "title": title,
+            "link": link,
+            "published_date": date,
             "domain": domain,
-            "status": "ingested",
-            "event_type": "extraction",
         }
+        doc = _create_event_doc(source, "extraction", payload)
         documents.append(doc)
 
     if documents:
@@ -113,7 +133,7 @@ def batch_insert_articles_to_mongo(client, articles):
             logger.error(f"Failed to insert articles into MongoDB: {e}")
 
 
-def insert_error_event_to_mongo(
+def insert_error_event_mongo(
     client,
     source,
     error_type,
@@ -128,13 +148,13 @@ def insert_error_event_to_mongo(
 
     Args:
         client (MongoClient): The MongoDB client.
-        source (str): The source provider name (e.g., 'freecodecamp', 'shopify').
-        error_type (str): Type of error ('fetch_failed', 'extraction_failed', 'provider_failed').
+        source (str): The source provider name.
+        error_type (str): Type of error.
         error_message (str): Error message description.
         url (str): The URL where the error occurred.
         domain (str, optional): Domain extracted from URL. If None, will be extracted from url.
-        metadata (dict, optional): Additional metadata about the error.
-        traceback_str (str, optional): Full traceback string for debugging.
+        metadata (dict, optional): Additional metadata about the error (e.g. retry_count).
+        traceback_str (str, optional): Full Python traceback string.
     """
     collection = _get_collection(client)
     if not collection:
@@ -148,28 +168,17 @@ def insert_error_event_to_mongo(
         except Exception:
             domain = "unknown"
 
-    # Build error document
-    error_doc = {
-        "type": error_type,
+    # Build payload
+    payload = {
+        "domain": domain or "unknown",
         "message": error_message,
         "url": url,
     }
 
     if traceback_str:
-        error_doc["traceback"] = traceback_str
+        payload["traceback"] = traceback_str
 
-    # Build full document
-    doc = {
-        "extracted_at": datetime.now(UTC).isoformat(),
-        "source": source,
-        "error": error_doc,
-        "domain": domain or "unknown",
-        "status": "ingested",
-        "event_type": error_type,
-    }
-
-    if metadata:
-        doc["metadata"] = metadata
+    doc = _create_event_doc(source, error_type, payload, meta=metadata)
 
     try:
         result = collection.insert_one(doc)
@@ -178,3 +187,25 @@ def insert_error_event_to_mongo(
         )
     except Exception as e:
         logger.error(f"Failed to insert error event into MongoDB: {e}")
+
+
+def insert_summary_event_mongo(client, articles_count):
+    """
+    Inserts a summary event into MongoDB.
+
+    Args:
+        client (MongoClient): The MongoDB client.
+        articles_count (int): Number of new articles extracted.
+    """
+    collection = _get_collection(client)
+    if not collection:
+        return
+
+    payload = {"articles_count": articles_count}
+    doc = _create_event_doc("system", "extraction_summary", payload)
+
+    try:
+        result = collection.insert_one(doc)
+        logger.info(f"Inserted summary event into MongoDB: {result.inserted_id}")
+    except Exception as e:
+        logger.error(f"Failed to insert summary event into MongoDB: {e}")
