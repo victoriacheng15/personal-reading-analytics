@@ -49,8 +49,9 @@ from .constants import (
 
 from .mongo import (
     get_mongo_client,
-    batch_insert_articles_to_mongo,
-    insert_error_event_to_mongo,
+    insert_articles_event_mongo,
+    insert_error_event_mongo,
+    insert_summary_event_mongo,
     close_mongo_client,
 )
 
@@ -87,7 +88,8 @@ __all__ = [
     "GOOGLE_SHEETS_SCOPES",
     # MongoDB operations
     "get_mongo_client",
-    "batch_insert_articles_to_mongo",
-    "insert_error_event_to_mongo",
+    "insert_articles_event_mongo",
+    "insert_error_event_mongo",
+    "insert_summary_event_mongo",
     "close_mongo_client",
 ]

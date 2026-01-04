@@ -3,7 +3,7 @@ import logging
 import traceback
 from datetime import datetime
 from utils.format_date import clean_and_convert_date
-from utils.mongo import insert_error_event_to_mongo, get_mongo_client
+from utils.mongo import insert_error_event_mongo, get_mongo_client
 from utils.constants import (
     SOURCE_FREECODECAMP,
     SOURCE_SUBSTACK,
@@ -50,7 +50,7 @@ def extractor_error_handler(site_name):
                 try:
                     mongo_client = get_mongo_client()
                     if mongo_client:
-                        insert_error_event_to_mongo(
+                        insert_error_event_mongo(
                             client=mongo_client,
                             source=site_name.lower(),
                             error_type="extraction_failed",
