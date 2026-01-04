@@ -1,6 +1,8 @@
 package metrics
 
 import (
+	"time"
+
 	schema "github.com/victoriacheng15/personal-reading-analytics-dashboard/cmd/internal"
 )
 
@@ -37,8 +39,13 @@ func CalculateMostUnreadSource(metrics schema.Metrics) string {
 	return mostUnreadSource
 }
 
-// CalculateThisMonthArticles calculates articles read this month (current month)
+// CalculateThisMonthArticles calculates articles read this month.
+// If currentMonth is empty, it uses the current system month.
 func CalculateThisMonthArticles(metrics schema.Metrics, currentMonth string) int {
+	if currentMonth == "" {
+		currentMonth = time.Now().Format("01")
+	}
+
 	// Sum all read articles from by_month_and_source_read_status for current month
 	if monthData, exists := metrics.ByMonthAndSource[currentMonth]; exists {
 		total := 0
