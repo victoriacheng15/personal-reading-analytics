@@ -120,7 +120,8 @@ def insert_articles_event_mongo(client, articles):
             "published_date": date,
             "domain": domain,
         }
-        doc = _create_event_doc(source, "extraction", payload)
+        # Ensure source is lowercased for consistency
+        doc = _create_event_doc(source.lower(), "extraction", payload)
         documents.append(doc)
 
     if documents:
@@ -178,7 +179,8 @@ def insert_error_event_mongo(
     if traceback_str:
         payload["traceback"] = traceback_str
 
-    doc = _create_event_doc(source, error_type, payload, meta=metadata)
+    # Ensure source is lowercased for consistency
+    doc = _create_event_doc(source.lower(), "extraction_failed" if error_type == "extraction_failed" else error_type, payload, meta=metadata)
 
     try:
         result = collection.insert_one(doc)
