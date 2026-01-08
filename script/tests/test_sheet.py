@@ -214,8 +214,8 @@ def test_batch_append_articles_calls_append_rows():
     rows = args[0]
 
     assert len(rows) == 2
-    assert rows[0] == ["2025-01-15", "Article One", "http://example.com/1", "Source A"]
-    assert rows[1] == ["2025-01-16", "Article Two", "http://example.com/2", "Source B"]
+    assert rows[0] == ["2025-01-15", "Article One", "http://example.com/1", "source a"]
+    assert rows[1] == ["2025-01-16", "Article Two", "http://example.com/2", "source b"]
 
 
 def test_batch_append_articles_returns_none_on_empty():
@@ -251,4 +251,4 @@ def test_batch_append_articles_single_article():
     rows = args[0]
 
     assert len(rows) == 1
-    assert rows[0] == ["2025-01-15", "Article One", "http://example.com/1", "Source A"]
+    assert rows[0] == ["2025-01-15", "Article One", "http://example.com/1", "source a"]

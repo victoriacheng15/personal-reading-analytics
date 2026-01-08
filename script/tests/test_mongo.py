@@ -166,7 +166,7 @@ def test_insert_articles_event_mongo_document_structure(
 
     # Verify document structure matches the spec
     assert doc["timestamp"] == "2025-12-22T20:51:59.123456+00:00"
-    assert doc["source"] == "Stripe"
+    assert doc["source"] == "stripe"
     assert doc["payload"]["title"] == "Why Observability Matters"
     assert doc["payload"]["link"] == "https://stripe.com/blog/observability"
     assert doc["payload"]["published_date"] == "2025-12-20"
@@ -206,7 +206,7 @@ def test_insert_error_event_mongo_success(mock_datetime, mock_get_collection):
     doc = call_args[0][0]
 
     assert doc["timestamp"] == "2025-12-23T10:30:00.000000+00:00"
-    assert doc["source"] == "freeCodeCamp"
+    assert doc["source"] == "freecodecamp"
     assert doc["payload"]["message"] == "Failed to fetch page"
     assert doc["payload"]["url"] == "https://freecodecamp.org/blog"
     assert doc["payload"]["domain"] == "freecodecamp.org"
