@@ -19,6 +19,7 @@ type ViewModel struct {
 	ReadRate                         float64
 	AvgArticlesPerMonth              float64
 	LastUpdated                      time.Time
+	AISummary                        string
 	Sources                          []schema.SourceInfo
 	Months                           []schema.MonthInfo
 	Years                            []schema.YearInfo

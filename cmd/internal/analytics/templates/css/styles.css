@@ -360,6 +360,20 @@ footer {
         gap: var(--spacing-md);
     }
 
+    /* AI Summary Styles */
+    .ai-summary-card {
+        background: var(--bg-soft);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-std);
+        border: var(--border-std) solid var(--border-light);
+        border-left: var(--border-accent) solid var(--brand-primary);
+        box-shadow: var(--shadow-sm);
+        font-size: 1.1rem;
+        line-height: var(--leading-base);
+        color: var(--text-main);
+        letter-spacing: 0.02em;
+    }
+
     /* Card Styles */
     .metric-card,
     .badge-card {

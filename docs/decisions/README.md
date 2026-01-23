@@ -6,11 +6,11 @@ This directory contains the history of significant architectural shifts and tech
 
 | ID | Title | Status | Date |
 | :--- | :--- | :--- | :--- |
-| **001** | [Prefer RSS/Atom Feeds over HTML Scraping](001-prefer-rss-over-html-scraping.md) | `Proposed` | 2026-01-16 |
+| **001** | [Prefer RSS/Atom Feeds over HTML Scraping](001-prefer-rss-over-html-scraping.md) | `Accepted` | 2026-01-16 |
+| **002** | [Integrate AI-Powered Weekly Metrics Summary](002-integrate-ai-metrics-summary.md) | `Accepted` | 2026-01-23 |
 
 ## 🛠 Process
 
 - **Propose:** Create a new Markdown file using the RFC template.
-- **Discuss:** Link the proposal in a GitHub issue for feedback.
 - **Accept:** Update the status to `Accepted` once a consensus is reached.
 - **Supersede:** If a newer decision replaces an old one, update the old one's status to `Superseded`.
