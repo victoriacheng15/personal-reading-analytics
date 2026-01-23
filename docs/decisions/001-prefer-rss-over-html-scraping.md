@@ -12,13 +12,13 @@ The current extraction pipeline relies on scraping HTML DOM structures. This is 
 - **Execution Overhead:** HTML pages are significantly larger than XML feeds, increasing bandwidth and parsing time.
 - **Complexity:** Storing specific CSS selectors in Google Sheets makes the system hard to audit and prone to manual entry errors.
 
-## Proposed Solution
+## Solution
 
 The project will prioritize **RSS/Atom feeds** as the primary extraction method for all providers that support them.
 
-- **Primary Method:** Connect to the provider's `rss.xml` or `atom.xml` endpoint.
+- **Primary Method:** Connect to the provider's `rss.xml` or `atom.xml` endpoint (configured via the existing `url` column in the providers sheet).
 - **Fallback Method:** HTML scraping will only be used for providers that do not publish a discovery feed (e.g., Stripe, Shopify).
-- **Implementation:** The system will check for a configured `rss_url` key in the provider handler. If present, it takes precedence over the standard URL.
+- **Implementation:** Instead of separate URL keys, the system uses **Dual-Mode Extractors**. The `provider_dict` defines multiple targets (e.g., `[provider_element, "item"]`), and the extractor function dynamically branches logic based on whether it encounters an RSS `<item>` or a standard HTML element.
 
 ## Comparison / Alternatives Considered
 

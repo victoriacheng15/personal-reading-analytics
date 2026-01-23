@@ -202,6 +202,7 @@ func (s *AnalyticsService) prepareViewModel(m schema.Metrics) (ViewModel, error)
 		ReadRate:                         m.ReadRate,
 		AvgArticlesPerMonth:              m.AvgArticlesPerMonth,
 		LastUpdated:                      m.LastUpdated,
+		AISummary:                        m.AISummary,
 		Sources:                          sources,
 		Months:                           monthlyAggregated,
 		Years:                            years,

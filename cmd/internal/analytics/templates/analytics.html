@@ -1,5 +1,14 @@
 {{define "content"}}
 <main class="analytics-page">
+    {{ if .AISummary }}
+    <section aria-label="AI Summary">
+        <h2 class="section-title">🤖 AI Summary</h2>
+        <div class="ai-summary-card">
+            <p>{{.AISummary}}</p>
+        </div>
+    </section>
+    {{ end }}
+
     <section aria-label="Key Metrics">
         <h2  class="section-title">🔑 Key Metrics</h2>
         <div class="metrics-grid">

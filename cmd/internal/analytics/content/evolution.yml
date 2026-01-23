@@ -67,3 +67,12 @@ events:
     description: |
       - "Implemented auto-detecting RSS extraction for freeCodeCamp and GitHub, significantly improving pipeline stability."
       - "Proposed RFC 002 to integrate Google Gemini for qualitative reading trend summaries."
+
+  - date: "2026-01-23"
+    title: "Integrated AI-Powered Weekly Summaries"
+    artifacts:
+      - name: "ADR 002: AI-Powered Weekly Metrics Summary"
+        url: "docs/decisions/002-integrate-ai-metrics-summary.md"
+    description: |
+      - "Integrated Google Gemini (2.5 Flash Lite) to provide qualitative week-over-week trends directly on the dashboard."
+      - "Enhanced the metrics pipeline with standalone '--fetch' and '--summarize' workflows for better operational flexibility."

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -31,11 +32,6 @@ func (d *DefaultMetricsFetcher) FetchMetrics(ctx context.Context, sheetID, crede
 
 // loadConfiguration loads environment variables and returns sheetID and credentialsPath
 func loadConfiguration() (string, string, error) {
-	// Load .env file
-	if err := godotenv.Load(); err != nil {
-		log.Println("Warning: .env file not found, will use environment variables")
-	}
-
 	sheetID := os.Getenv("SHEET_ID")
 	credentialsPath := os.Getenv("CREDENTIALS_PATH")
 
@@ -50,51 +46,119 @@ func loadConfiguration() (string, string, error) {
 }
 
 // saveMetrics saves metrics to a JSON file
-func saveMetrics(metricsData schema.Metrics) error {
+func saveMetrics(metricsData schema.Metrics) (string, error) {
 	// Create metrics directory
 	if err := os.MkdirAll("metrics", 0755); err != nil {
-		return fmt.Errorf("failed to create metrics directory: %w", err)
+		return "", fmt.Errorf("failed to create metrics directory: %w", err)
 	}
 
 	// Marshal to JSON
 	metricsJSON, err := json.MarshalIndent(metricsData, "", "  ")
 	if err != nil {
-		return fmt.Errorf("failed to marshal metrics: %w", err)
+		return "", fmt.Errorf("failed to marshal metrics: %w", err)
 	}
 
 	// Generate filename with date
+
 	dateFilename := metricsData.LastUpdated.Format("2006-01-02") + ".json"
 	metricsFilePath := fmt.Sprintf("metrics/%s", dateFilename)
 
 	// Write to file
 	if err := os.WriteFile(metricsFilePath, metricsJSON, 0644); err != nil {
-		return fmt.Errorf("failed to write metrics file: %w", err)
+		return "", fmt.Errorf("failed to write metrics file: %w", err)
 	}
 
 	log.Printf("✅ Metrics saved to metrics/%s\n", dateFilename)
-	return nil
+	return dateFilename, nil
 }
 
-// run executes the main logic and returns an error
-func run(ctx context.Context, fetcher MetricsFetcher) error {
+// runFetch executes the fetch logic
+func runFetch(ctx context.Context, fetcher MetricsFetcher) (string, *schema.Metrics, error) {
 	// Load configuration
 	sheetID, credentialsPath, err := loadConfiguration()
 	if err != nil {
-		return err
+		return "", nil, err
 	}
 
 	// Fetch metrics from Google Sheets
 	metricsData, err := fetcher.FetchMetrics(ctx, sheetID, credentialsPath)
 	if err != nil {
-		return fmt.Errorf("failed to fetch metrics: %w", err)
+		return "", nil, fmt.Errorf("failed to fetch metrics: %w", err)
 	}
 
 	// Save metrics
-	if err := saveMetrics(metricsData); err != nil {
-		return err
+	filename, err := saveMetrics(metricsData)
+	if err != nil {
+		return "", nil, err
 	}
 
 	log.Println("✅ Successfully generated metrics from Google Sheets")
+	return filename, &metricsData, nil
+}
+
+// runSummarize executes the AI summary logic
+func runSummarize(ctx context.Context, filename string, metricsData *schema.Metrics) error {
+	if filename == "" || metricsData == nil {
+		return fmt.Errorf("metrics data not provided for summarization")
+	}
+
+	log.Printf("🤖 Generating AI summary for %s...\n", filename)
+	if err := metrics.GenerateAndSaveSummary(ctx, "metrics", filename, metricsData); err != nil {
+		return fmt.Errorf("failed to generate summary: %w", err)
+	}
+	log.Println("✅ AI Summary generated and saved.")
+	return nil
+}
+
+// execute runs the application logic based on flags
+func execute(ctx context.Context, fetcher MetricsFetcher, fetchFlag, summarizeFlag bool) error {
+	// Default behavior: Run both
+	runBoth := !fetchFlag && !summarizeFlag
+
+	var filename string
+	var metricsData *schema.Metrics
+	var err error
+
+	if runBoth || fetchFlag {
+		filename, metricsData, err = runFetch(ctx, fetcher)
+		if err != nil {
+			return fmt.Errorf("Error fetching metrics: %w", err)
+		}
+	}
+
+	if runBoth || summarizeFlag {
+		if summarizeFlag && filename == "" {
+			// Standalone mode: Find latest file in metrics/ dir
+			entries, err := os.ReadDir("metrics")
+			if err == nil {
+				// Find last one
+				var lastFile string
+				for _, e := range entries {
+					if !e.IsDir() {
+						lastFile = e.Name()
+					}
+				}
+				if lastFile != "" {
+					filename = lastFile
+					// Load it
+					bytes, _ := os.ReadFile("metrics/" + lastFile)
+					var m schema.Metrics
+					if json.Unmarshal(bytes, &m) == nil {
+						metricsData = &m
+					}
+				}
+			}
+		}
+
+		if metricsData != nil {
+			if err := runSummarize(ctx, filename, metricsData); err != nil {
+				log.Printf("Warning: AI summarization failed: %v", err)
+				// Don't error here, as the primary metrics are safe
+			}
+		} else {
+			log.Println("No metrics data available to summarize.")
+		}
+	}
 	return nil
 }
 
@@ -102,10 +166,18 @@ func run(ctx context.Context, fetcher MetricsFetcher) error {
 var logFatalf = log.Fatalf
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: .env file not found, will use environment variables")
+	}
+
+	fetchFlag := flag.Bool("fetch", false, "Only fetch metrics from Google Sheets")
+	summarizeFlag := flag.Bool("summarize", false, "Only generate AI summary for the latest metrics")
+	flag.Parse()
+
 	ctx := context.Background()
 	fetcher := &DefaultMetricsFetcher{}
 
-	if err := run(ctx, fetcher); err != nil {
-		logFatalf("Error: %v", err)
+	if err := execute(ctx, fetcher, *fetchFlag, *summarizeFlag); err != nil {
+		logFatalf("%v", err)
 	}
 }
