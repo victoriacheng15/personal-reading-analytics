@@ -212,7 +212,7 @@ func (s *AnalyticsService) prepareViewModel(m schema.Metrics) (ViewModel, error)
 		ReadRate:                         m.ReadRate,
 		AvgArticlesPerMonth:              m.AvgArticlesPerMonth,
 		LastUpdated:                      m.LastUpdated,
-		AISummary:                        m.AISummary,
+		AIDeltaAnalysis:                  m.AIDeltaAnalysis,
 		Sources:                          sources,
 		Months:                           monthlyAggregated,
 		Years:                            years,
@@ -312,9 +312,8 @@ func (s *AnalyticsService) render(vm ViewModel) error {
 		if err != nil {
 			return fmt.Errorf("failed to execute template for %s: %w", page.Filename, err)
 		}
-
-		log.Printf("✅ Generated %s", outPath)
 	}
+	log.Printf("✅ Successfully generated site")
 
 	return nil
 }

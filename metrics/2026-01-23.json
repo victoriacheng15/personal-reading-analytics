@@ -565,5 +565,5 @@
   "read_rate": 47.26070528967254,
   "avg_articles_per_month": 18.175373823149343,
   "last_updated": "2026-01-23T02:57:55.637665863Z",
-  "ai_summary": "Your reading pace has increased, with a higher read rate this week, suggesting improved efficiency in tackling your content backlog. While you made progress in reducing older unread articles, the reduction was less pronounced than the growth in newer unread items. Your reading focus this week has been predominantly on content from 2024 and 2025, with a slight increase in older content from 2026."
+  "ai_delta_analysis": "Reading velocity has increased, evidenced by a higher read rate. The backlog of articles older than a year has decreased, but there has been a notable increase in unread articles from 2024. The focus this week was predominantly on content from 2024 and 2025, with a slight uptick in reading material from 2026."
 }

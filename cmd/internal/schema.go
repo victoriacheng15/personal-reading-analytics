@@ -26,8 +26,7 @@ type Metrics struct {
 	ReadRate                     float64                      `json:"read_rate"`
 	AvgArticlesPerMonth          float64                      `json:"avg_articles_per_month"`
 	LastUpdated                  time.Time                    `json:"last_updated"`
-	AISummary                    string                       `json:"ai_summary,omitempty"`
-	Articles                     []ArticleMeta                `json:"articles,omitempty"`
+	AIDeltaAnalysis              string                       `json:"ai_delta_analysis,omitempty"`
 }
 
 // ArticleMeta holds minimal info for backlog/unread analysis

@@ -1,13 +1,18 @@
 {{define "content"}}
 <main class="analytics-page">
-    {{ if .AISummary }}
-    <section aria-label="AI Summary">
-        <h2 class="section-title">🤖 AI Summary</h2>
-        <div class="ai-summary-card">
-            <p>{{.AISummary}}</p>
-        </div>
-    </section>
-    {{ end }}
+<section class="metrics-grid">
+    <div class="ai-summary-card full-width">
+        <h3 class="ai-card-title">🤖 AI Delta Analysis</h3>
+        <p class="ai-card-subtitle">
+            Comparative analysis between the current and the previous snapshots.
+        </p>
+        {{ if .AIDeltaAnalysis }}
+        <p>{{.AIDeltaAnalysis}}</p>
+        {{ else }}
+        <p>AI delta analysis unavailable for this snapshot.</p>
+        {{ end }}
+    </div>
+</section>
 
     <section aria-label="Key Metrics">
         <h2  class="section-title">🔑 Key Metrics</h2>

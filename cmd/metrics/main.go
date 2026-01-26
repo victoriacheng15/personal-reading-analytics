@@ -96,17 +96,17 @@ func runFetch(ctx context.Context, fetcher MetricsFetcher) (string, *schema.Metr
 	return filename, &metricsData, nil
 }
 
-// runSummarize executes the AI summary logic
-func runSummarize(ctx context.Context, filename string, metricsData *schema.Metrics) error {
+// runDeltaAnalysis executes the AI delta analysis logic
+func runDeltaAnalysis(ctx context.Context, filename string, metricsData *schema.Metrics) error {
 	if filename == "" || metricsData == nil {
-		return fmt.Errorf("metrics data not provided for summarization")
+		return fmt.Errorf("metrics data not provided for delta analysis")
 	}
 
-	log.Printf("🤖 Generating AI summary for %s...\n", filename)
-	if err := metrics.GenerateAndSaveSummary(ctx, "metrics", filename, metricsData); err != nil {
-		return fmt.Errorf("failed to generate summary: %w", err)
+	// Generate AI Delta Analysis
+	if err := metrics.GenerateAndSaveDeltaAnalysis(ctx, "metrics", filename, metricsData); err != nil {
+		fmt.Fprintf(os.Stderr, "Error generating AI delta analysis: %v\n", err)
 	}
-	log.Println("✅ AI Summary generated and saved.")
+	log.Println("✅ AI Delta Analysis generated and saved.")
 	return nil
 }
 
@@ -151,12 +151,12 @@ func execute(ctx context.Context, fetcher MetricsFetcher, fetchFlag, summarizeFl
 		}
 
 		if metricsData != nil {
-			if err := runSummarize(ctx, filename, metricsData); err != nil {
-				log.Printf("Warning: AI summarization failed: %v", err)
+			if err := runDeltaAnalysis(ctx, filename, metricsData); err != nil {
+				log.Printf("Warning: AI delta analysis failed: %v", err)
 				// Don't error here, as the primary metrics are safe
 			}
 		} else {
-			log.Println("No metrics data available to summarize.")
+			log.Println("No metrics data available to perform delta analysis.")
 		}
 	}
 	return nil
@@ -171,7 +171,7 @@ func main() {
 	}
 
 	fetchFlag := flag.Bool("fetch", false, "Only fetch metrics from Google Sheets")
-	summarizeFlag := flag.Bool("summarize", false, "Only generate AI summary for the latest metrics")
+	summarizeFlag := flag.Bool("summarize", false, "Only generate AI delta analysis for the latest metrics")
 	flag.Parse()
 
 	ctx := context.Background()

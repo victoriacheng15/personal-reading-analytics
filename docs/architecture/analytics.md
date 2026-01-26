@@ -51,12 +51,16 @@ The source templates used by the Analytics Generator to produce the final site.
 
 ### 4. AI Integration (`cmd/internal/ai`)
 
-Manages interactions with the Google Gemini API to generate qualitative summaries.
+Manages interactions with the Google Gemini API to perform **AI Delta Analysis**, generating qualitative summaries of changes between metrics snapshots.
 
 - **Responsibility:**
   - Constructing prompts from raw metrics data.
   - Interfacing with the `google.golang.org/genai` SDK.
   - returning a text summary of weekly progress and trends.
+- **Analysis Dimensions:** The prompt specifically targets three key metrics:
+  1. **Velocity:** Changes in reading pace or read rate.
+  2. **Backlog Health:** Balancing clearing old debt (>1 year) vs. adding new unread noise.
+  3. **Chronology:** The specific publication years of content focused on during the week.
 - **Model:** Defaults to `gemini-2.5-flash-lite` for cost-effective performance.
 
 ## Analytics Generation Flow

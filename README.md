@@ -1,6 +1,12 @@
 # 📚 Personal Reading Analytics
 
-A self-built fully automated data pipeline with CI/CD governance, refreshed automatically to turn personal data into actionable insights with zero infrastructure.
+A self-built, fully automated data pipeline with CI/CD governance, leveraging GitHub Actions and MongoDB event sourcing to transform raw reading data into actionable insights and interactive visualizations with zero infrastructure.
+
+Beyond standard charts, it performs an **AI Delta Analysis** to generate a qualitative weekly narrative, answering three specific questions:
+
+- **Velocity**: Are you reading faster or slower than usual?
+- **Backlog Health**: Are you clearing old debt (>1 year) or just adding new noise?
+- **Chronology**: Which specific years of content are you focusing on right now?
 
 ---
 
@@ -56,7 +62,7 @@ For deep technical details, architectural diagrams, and operational guides, plea
 
 - **Total articles**: Tracking total articles across currently supported sources
 - **Read rate**: Percentage of articles completed with visual highlighting
-- **AI-powered summary**: Qualitative weekly analysis of reading trends and backlog reduction
+- **AI Delta Analysis**: Multi-dimensional analysis of reading **Velocity** (pace), **Backlog Health** (clearing old debt vs. new noise), and **Chronology** (era of content focus) to provide narrative context beyond raw numbers.
 - **Reading statistics**: Read count, unread count, and average articles per month
 - **Highlight badges**: Top read rate source, most unread source, current month's read articles
 
