@@ -91,9 +91,9 @@ func TestSaveUpdatedMetrics(t *testing.T) {
 	tmpDir := t.TempDir()
 	filename := "test.json"
 	m := &internal.Metrics{
-		TotalArticles: 10,
-		AISummary:     "Looks good!",
-		LastUpdated:   time.Now(),
+		TotalArticles:   10,
+		AIDeltaAnalysis: "Looks good!",
+		LastUpdated:     time.Now(),
 	}
 
 	err := saveMetrics(tmpDir, filename, m)
@@ -110,8 +110,8 @@ func TestSaveUpdatedMetrics(t *testing.T) {
 	var result internal.Metrics
 	json.Unmarshal(bytes, &result)
 
-	if result.AISummary != "Looks good!" {
-		t.Errorf("AISummary mismatch: got %s", result.AISummary)
+	if result.AIDeltaAnalysis != "Looks good!" {
+		t.Errorf("AIDeltaAnalysis mismatch: got %s", result.AIDeltaAnalysis)
 	}
 }
 

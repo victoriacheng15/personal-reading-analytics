@@ -85,17 +85,17 @@ chapters:
         artifacts:
           - name: "ADR 001: Prefer RSS over Scraping"
             url: "docs/decisions/001-prefer-rss-over-html-scraping.md"
-          - name: "ADR 002: AI-Powered Weekly Metrics Summary"
-            url: "docs/decisions/002-integrate-ai-metrics-summary.md"
+          - name: "ADR 002: Integrate AI Delta Analysis"
+            url: "docs/decisions/002-integrate-ai-delta-analysis.md"
         description: |
           - "Implemented auto-detecting RSS extraction for freeCodeCamp and GitHub, significantly improving pipeline stability."
-          - "Proposed RFC 002 to integrate Google Gemini for qualitative reading trend summaries."
+          - "Proposed RFC 002 to integrate Google Gemini for qualitative reading trend delta analysis."
 
       - date: "2026-01-23"
-        title: "Integrated AI-Powered Weekly Summaries"
+        title: "Integrated AI Delta Analysis"
         artifacts:
-          - name: "ADR 002: AI-Powered Weekly Metrics Summary"
-            url: "docs/decisions/002-integrate-ai-metrics-summary.md"
+          - name: "ADR 002: Integrate AI Delta Analysis"
+            url: "docs/decisions/002-integrate-ai-delta-analysis.md"
         description: |
           - "Integrated Google Gemini (2.5 Flash Lite) to provide qualitative week-over-week trends directly on the analytics page."
-          - "Enhanced the metrics pipeline with standalone fetch and summarize flags for better operational flexibility."
+          - "Enhanced the metrics pipeline with standalone fetch and delta analysis flags for better operational flexibility."

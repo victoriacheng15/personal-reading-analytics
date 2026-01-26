@@ -4,13 +4,39 @@ This directory contains the history of significant architectural shifts and tech
 
 ## 📋 Decision Log
 
-| ID | Title | Status | Date |
-| :--- | :--- | :--- | :--- |
-| **001** | [Prefer RSS/Atom Feeds over HTML Scraping](001-prefer-rss-over-html-scraping.md) | `Accepted` | 2026-01-16 |
-| **002** | [Integrate AI-Powered Weekly Metrics Summary](002-integrate-ai-metrics-summary.md) | `Accepted` | 2026-01-23 |
+| ID | Title | Status |
+| :--- | :--- | :--- |
+| **001** | [Prefer RSS/Atom Feeds over HTML Scraping](001-prefer-rss-over-html-scraping.md) | `Accepted` |
+| **002** | [Integrate AI Delta Analysis](002-integrate-ai-delta-analysis.md) | `Accepted` |
 
-## 🛠 Process
+---
 
-- **Propose:** Create a new Markdown file using the RFC template.
-- **Accept:** Update the status to `Accepted` once a consensus is reached.
-- **Supersede:** If a newer decision replaces an old one, update the old one's status to `Superseded`.
+## 📄 ADR Template
+
+New architectural decisions should follow the structure below:
+
+```markdown
+# ADR [00X]: [Descriptive Title]
+
+- **Status:** Proposed | Accepted | Superseded
+- **Date:** YYYY-MM-DD
+- **Author:** Victoria Cheng
+
+## Context and Problem Statement
+
+What specific issue triggered this change?
+
+## Decision Outcome
+
+What was the chosen architectural path?
+
+## Consequences
+
+- **Positive:** (e.g., Faster development, resolved dependency drift).
+- **Negative/Trade-offs:** (e.g., Added complexity to the CI/CD pipeline).
+
+## Verification
+
+- [ ] **Manual Check:** (e.g., Verified logs/UI locally).
+- [ ] **Automated Tests:** (e.g., `make nix-go-test` passed).
+```

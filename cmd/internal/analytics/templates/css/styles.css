@@ -360,7 +360,7 @@ footer {
         gap: var(--spacing-md);
     }
 
-    /* AI Summary Styles */
+    /* AI Delta Analysis Styles */
     .ai-summary-card {
         background: var(--bg-soft);
         padding: var(--spacing-md);
@@ -372,6 +372,18 @@ footer {
         line-height: var(--leading-base);
         color: var(--text-main);
         letter-spacing: 0.02em;
+    }
+
+    .ai-card-title {
+        margin-bottom: 0.25rem;
+    }
+
+    .ai-card-subtitle {
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+        font-style: italic;
+        opacity: 0.8;
     }
 
     /* Card Styles */

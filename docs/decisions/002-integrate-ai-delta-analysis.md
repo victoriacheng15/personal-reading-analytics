@@ -1,4 +1,4 @@
-# ADR 002: AI-Powered Weekly Metrics Summary
+# ADR 002: Integrate AI Delta Analysis
 
 - **Status:** Accepted
 - **Date:** 2026-01-23
@@ -10,11 +10,11 @@ The current analytics dashboard (`analytics.exe`) is stateless regarding history
 
 ## Decision Outcome
 
-The project will integrate **Google Gemini (Generative AI)** to process the raw metrics and generate a qualitative weekly summary. This will be the first and only mechanism in the system to provide historical context.
+The project will integrate **Google Gemini (Generative AI)** to perform an **AI Delta Analysis**, comparing raw metrics snapshots to generate a qualitative weekly narrative. This provides historical context that static charts cannot easily convey.
 
 - **Mechanism:** The `metrics.exe` binary supports two distinct operational modes via flags:
   - **`--fetch` (Workflow A):** Connects to Google Sheets, calculates stats, and saves the raw `YYYY-MM-DD.json`.
-  - **`--summarize` (Workflow B):** Reads the latest local JSON, compares it with the previous week's file, generates the AI summary, and appends it to the *existing* JSON file.
+  - **`--summarize` (Workflow B):** Reads the latest local JSON, compares it with the previous week's file, generates the AI delta analysis, and appends it to the *existing* JSON file.
 - **Architecture:**
   - A new package `cmd/internal/ai` isolates external API interactions.
   - The `metrics` package remains the source of truth for data structure.
@@ -23,7 +23,7 @@ The project will integrate **Google Gemini (Generative AI)** to process the raw 
 ## Consequences
 
 - **Positive:**
-  - AI-generated summaries provide high-signal narrative context without requiring a database or complex frontend charting.
+  - AI-generated delta analyses provide high-signal narrative context without requiring a database or complex frontend charting.
   - `metrics` package remains the single source of truth.
 - **Negative/Trade-offs:**
   - Introduces an external API dependency (Gemini).
@@ -31,5 +31,5 @@ The project will integrate **Google Gemini (Generative AI)** to process the raw 
 
 ## Verification
 
-- [x] **Manual Check:** Run `go run cmd/metrics/main.go --summarize` and verify the `ai_summary` field in the generated JSON.
+- [x] **Manual Check:** Run `go run cmd/metrics/main.go --summarize` and verify the `ai_delta_analysis` field in the generated JSON.
 - [x] **Automated Tests:** Run `go test ./cmd/internal/metrics/...` to verify prompt construction and mock client interactions.
