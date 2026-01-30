@@ -40,7 +40,7 @@ def close_mongo_client():
     Closes the global MongoDB client connection.
     """
     global _MONGO_CLIENT
-    if _MONGO_CLIENT:
+    if _MONGO_CLIENT is not None:
         _MONGO_CLIENT.close()
         _MONGO_CLIENT = None
 
@@ -55,7 +55,7 @@ def _get_collection(client):
     Returns:
         Collection: MongoDB collection or None if client is invalid.
     """
-    if not client:
+    if client is None:
         logger.warning("MongoDB client is None. Cannot access collection.")
         return None
 
@@ -100,7 +100,7 @@ def insert_articles_event_mongo(client, articles):
         return
 
     collection = _get_collection(client)
-    if not collection:
+    if collection is None:
         return
 
     documents = []
@@ -158,7 +158,7 @@ def insert_error_event_mongo(
         traceback_str (str, optional): Full Python traceback string.
     """
     collection = _get_collection(client)
-    if not collection:
+    if collection is None:
         return
 
     # Extract domain if not provided
@@ -200,7 +200,7 @@ def insert_summary_event_mongo(client, articles_count):
         articles_count (int): Number of new articles extracted.
     """
     collection = _get_collection(client)
-    if not collection:
+    if collection is None:
         return
 
     payload = {"articles_count": articles_count}
