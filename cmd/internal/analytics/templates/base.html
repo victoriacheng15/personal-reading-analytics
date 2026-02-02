@@ -19,15 +19,15 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="analytics.html">Analytics</a></li>
-                    <li><a href="evolution.html">Evolution</a></li>
+                    <li><a href="index.html" {{if eq .PageTitle "Home"}}aria-current="page"{{end}}>Home</a></li>
+                    <li><a href="analytics.html" {{if eq .PageTitle "Analytics"}}aria-current="page"{{end}}>Analytics</a></li>
+                    <li><a href="evolution.html" {{if eq .PageTitle "Evolution"}}aria-current="page"{{end}}>Evolution</a></li>
                 </ul>
             </nav>
         </header>
         {{block "content" .}}{{end}}
         <footer>
-          <p>📈 Data sourced from personal article collection • Weekly metrics via GitHub Actions</p>
+          <p><span role="img" aria-label="Chart Increasing">📈</span> Data sourced from personal article collection • Weekly metrics via GitHub Actions</p>
         </footer>
     </div>
     {{block "script" .}}{{end}}

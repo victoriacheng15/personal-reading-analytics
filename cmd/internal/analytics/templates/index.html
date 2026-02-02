@@ -26,7 +26,7 @@
         <div class="engineering-principles-grid">
             {{range .IndexContent.EngineeringPrinciplesSection.Principles}}
             <article class="principle-card">
-                <div class="principle-icon">{{.Icon}}</div>
+                <div class="principle-icon"><span role="img" aria-hidden="true">{{.Icon}}</span></div>
                 <h3 class="principle-title">{{.Title}}</h3>
                 <p class="principle-desc">{{.Description}}</p>
             </article>

@@ -1,8 +1,8 @@
 {{define "content"}}
 <main class="analytics-page">
 <section class="metrics-grid">
-    <div class="ai-summary-card full-width">
-        <h3 class="ai-card-title">🤖 AI Delta Analysis</h3>
+    <aside class="ai-summary-card full-width" role="note" aria-label="AI Delta Analysis">
+        <h3 class="ai-card-title"><span role="img" aria-label="Robot">🤖</span> AI Delta Analysis</h3>
         <p class="ai-card-subtitle">
             Comparative analysis between the current and the previous snapshots.
         </p>
@@ -11,11 +11,12 @@
         {{ else }}
         <p>AI delta analysis unavailable for this snapshot.</p>
         {{ end }}
-    </div>
+    </aside>
 </section>
 
+    {{ if .KeyMetrics }}
     <section aria-label="Key Metrics">
-        <h2  class="section-title">🔑 Key Metrics</h2>
+        <h2  class="section-title"><span role="img" aria-label="Key">🔑</span> Key Metrics</h2>
         <div class="metrics-grid">
             {{range .KeyMetrics}}
             <article class="metric-card">
@@ -25,9 +26,11 @@
             {{end}}
         </div>
     </section>
+    {{ end }}
 
+    {{ if .HighlightMetrics }}
     <section aria-label="Highlights & Badges">
-        <h2  class="section-title">🏆 Highlights</h2>
+        <h2  class="section-title"><span role="img" aria-label="Trophy">🏆</span> Highlights</h2>
         <div class="badges-grid">
             {{range .HighlightMetrics}}
             <article class="badge-card">
@@ -37,43 +40,34 @@
             {{end}}
         </div>
     </section>
+    {{ end }}
 
+    {{ if .Sources }}
     <section aria-label="Sources">
-        <h2  class="section-title">📌 Sources</h2>
+        <h2  class="section-title"><span role="img" aria-label="Pushpin">📌</span> Sources</h2>
         <div class="sources-grid">
             {{range .Sources}}
             <article class="source-card">
                 <h3>{{.Name}}</h3>
-                <div class="source-stats">
-                    <div class="stat-line">
-                        <span>Total:</span>
-                        <strong>{{.Count}}</strong>
-                    </div>
-                    <div class="stat-line">
-                        <span>Read:</span>
-                        <strong>{{.Read}} ({{printf "%.1f" .ReadPct}}%)</strong>
-                    </div>
-                    <div class="stat-line">
-                        <span>Unread:</span>
-                        <strong>{{.Unread}}</strong>
-                    </div>
+                <dl class="source-stats">
+                    <dt>Total:</dt> <dd><strong>{{.Count}}</strong></dd>
+                    <dt>Read:</dt> <dd><strong>{{.Read}} ({{printf "%.1f" .ReadPct}}%)</strong></dd>
+                    <dt>Unread:</dt> <dd><strong>{{.Unread}}</strong></dd>
                     {{if gt .AuthorCount 0}}
-                    <div class="stat-line"
-                        style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--muted-border); font-size: 0.8rem; opacity: 0.7;">
-                        <span>Per author:</span>
-                        <strong>{{printf "%.0f" (divideFloat .Count .AuthorCount)}} articles</strong>
-                    </div>
+                    <dt class="per-author-label">Per author:</dt>
+                    <dd class="per-author-value"><strong>{{printf "%.0f" (divideFloat .Count .AuthorCount)}} articles</strong></dd>
                     {{end}}
-                </div>
+                </dl>
             </article>
             {{end}}
         </div>
     </section>
+    {{ end }}
 
     <!-- Top N Oldest Unread Articles Section -->
     {{ if .TopOldestUnreadArticles }}
     <section aria-label="Top Oldest Unread Articles">
-        <h2  class="section-title">🔝 Top 3 Oldest Unread Articles</h2>
+        <h2  class="section-title"><span role="img" aria-label="Top">🔝</span> Top 3 Oldest Unread Articles</h2>
         {{if .TopOldestUnreadArticles}}
         <div class="articles-list">
             <table class="articles-table">
@@ -107,19 +101,20 @@
     </section>
     {{ end }}
 
+    {{ if .YearChartData }}
     <section aria-label="Yearly Breakdown">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <h2  class="section-title">📈 Yearly Breakdown</h2>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <div class="section-header-row">
+            <h2  class="section-title"><span role="img" aria-label="Chart Increasing">📈</span> Yearly Breakdown</h2>
+            <div class="section-controls">
                 <input type="range" id="yearChartRangeSlider" min="5" max="50" value="5" class="range-slider"
                     title="Adjust how many recent years to display">
                 <span id="yearChartRangeLabel" class="range-label">Last
                     5 years</span>
-            </div> <select id="yearViewToggle"
-                style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
-                <option value="bar">Bar Chart</option>
-                <option value="line">Line Chart</option>
-            </select>
+                <select id="yearViewToggle" class="view-toggle-select">
+                    <option value="bar">Bar Chart</option>
+                    <option value="line">Line Chart</option>
+                </select>
+            </div>
         </div>
         <div class="chart-container">
             <div class="chart-wrapper">
@@ -127,18 +122,18 @@
             </div>
         </div>
     </section>
+    {{ end }}
 
+    {{ if .MonthChartDatasets }}
     <section aria-label="Monthly Breakdown">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <h2  class="section-title">📊 Monthly Breakdown</h2>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <select id="sourceFilter"
-                    style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
+        <div class="section-header-row">
+            <h2  class="section-title"><span role="img" aria-label="Bar Chart">📊</span> Monthly Breakdown</h2>
+            <div class="section-controls">
+                <select id="sourceFilter" class="view-toggle-select">
                     <option value="all">All Sources</option>
                     {{range .AllSources}}<option value="{{.}}">{{.}}</option>{{end}}
                 </select>
-                <select id="monthViewToggle"
-                    style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
+                <select id="monthViewToggle" class="view-toggle-select">
                     <option value="total">Total Articles</option>
                     <option value="stacked">By Source</option>
                 </select>
@@ -150,21 +145,23 @@
             </div>
         </div>
     </section>
+    {{ end }}
 
+    {{ if .ReadUnreadByMonthJSON }}
     <section aria-label="Read/Unread Breakdown">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <h2  class="section-title">📖 Read/Unread Breakdown</h2>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <div class="section-header-row">
+            <h2  class="section-title"><span role="img" aria-label="Open Book">📖</span> Read/Unread Breakdown</h2>
+            <div class="section-controls">
                 <input type="range" id="yearRangeSlider" min="5" max="50" value="5" style="display: none;"
                     class="range-slider" title="Adjust how many recent years to display">
                 <span id="yearRangeLabel" style="display: none;" class="range-label">Last 5
                     years</span>
-            </div> <select id="readUnreadViewToggle"
-                style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
-                <option value="byYear">By Year</option>
-                <option value="byMonth">By Month</option>
-                <option value="bySource">By Source</option>
-            </select>
+                <select id="readUnreadViewToggle" class="view-toggle-select">
+                    <option value="byYear">By Year</option>
+                    <option value="byMonth">By Month</option>
+                    <option value="bySource">By Source</option>
+                </select>
+            </div>
         </div>
         <div class="chart-container">
             <div class="chart-wrapper">
@@ -172,20 +169,21 @@
             </div>
         </div>
     </section>
+    {{ end }}
 
     {{ if .UnreadByYearJSON }}
     <section aria-label="Unread Articles by Year" id="unreadByYearSection">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <h2  class="section-title">📅 Unread Articles by Year</h2>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <div class="section-header-row">
+            <h2  class="section-title"><span role="img" aria-label="Calendar">📅</span> Unread Articles by Year</h2>
+            <div class="section-controls">
                 <input type="range" id="unreadYearChartRangeSlider" min="5" max="50" value="5" class="range-slider"
                     title="Adjust how many recent years to display">
                 <span id="unreadYearChartRangeLabel" class="range-label">Last 5 years</span>
-            </div> <select id="unreadYearViewToggle"
-                style="padding: 0.5rem 1rem; border-radius: 6px; border: 2px solid var(--card1); background: white; color: #2d3748; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
-                <option value="bar">Bar Chart</option>
-                <option value="line">Line Chart</option>
-            </select>
+                <select id="unreadYearViewToggle" class="view-toggle-select">
+                    <option value="bar">Bar Chart</option>
+                    <option value="line">Line Chart</option>
+                </select>
+            </div>
         </div>
         <div class="chart-container">
             <div class="chart-wrapper">
@@ -197,7 +195,7 @@
 
     {{ if .UnreadArticleAgeDistributionJSON }}
     <section aria-label="Unread Articles Age Distribution" id="unreadArticleAgeDistributionSection">
-        <h2  class="section-title">⏰ Unread Articles Age Distribution</h2>
+        <h2  class="section-title"><span role="img" aria-label="Alarm Clock">⏰</span> Unread Articles Age Distribution</h2>
         <div class="chart-container">
             <div class="chart-wrapper">
                 <canvas id="ageDistributionChart"></canvas>
