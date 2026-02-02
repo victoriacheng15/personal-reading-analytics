@@ -3,7 +3,7 @@
         py-test py-cov \
         run-metrics run-dashboard cleanup \
         run clean \
-        docker-build docker-run
+        docker-build docker-run lint
 
 # === Nix Integration ===
 # Helper to run any target inside nix-shell (e.g., make nix-go-test)
@@ -35,6 +35,7 @@ help:
 	@echo "  make run-analytics    - Build and run analytics binary"
 	@echo ""
 	@echo "  make docker-run       - Build, run, and remove Docker image"
+	@echo "  make lint             - Run markdownlint via Docker"
 
 # === Python venv and package Management ===
 install:
@@ -104,3 +105,9 @@ docker-run:
 	docker build -t articles-extractor .
 	docker run --rm articles-extractor
 	docker image rm articles-extractor
+
+# === Markdown Linting ===
+LINT_IMAGE = ghcr.io/igorshubovych/markdownlint-cli:v0.44.0
+
+lint:
+	docker run --rm -v "$(PWD):/data" -w /data $(LINT_IMAGE) --fix "**/*.md"
