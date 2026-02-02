@@ -1,0 +1,17 @@
+name: Markdown Linter
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.md'
+  workflow_dispatch:
+
+jobs:
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: victoriacheng15hub/platform-actions/markdown-linter@v0
+        with:
+          paths: |
+            **/*.md
