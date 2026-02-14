@@ -353,7 +353,6 @@ func (s *AnalyticsService) render(vm ViewModel, outputDir string, pages []struct
 			return fmt.Errorf("failed to execute template for %s: %w", page.Filename, err)
 		}
 	}
-	log.Printf("✅ Successfully generated site in %s", outputDir)
 
 	return nil
 }

@@ -25,6 +25,26 @@ type DefaultMetricsFetcher struct{}
 // fetchMetricsFunc is a package-level variable that can be mocked in tests
 var fetchMetricsFunc = metrics.FetchMetricsFromSheets
 
+// logFatalf is a package-level variable that can be mocked in tests
+var logFatalf = log.Fatalf
+
+func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: .env file not found, will use environment variables")
+	}
+
+	fetchFlag := flag.Bool("fetch", false, "Only fetch metrics from Google Sheets")
+	summarizeFlag := flag.Bool("summarize", false, "Only generate AI delta analysis for the latest metrics")
+	flag.Parse()
+
+	ctx := context.Background()
+	fetcher := &DefaultMetricsFetcher{}
+
+	if err := execute(ctx, fetcher, *fetchFlag, *summarizeFlag); err != nil {
+		logFatalf("%v", err)
+	}
+}
+
 // FetchMetrics fetches metrics from Google Sheets
 func (d *DefaultMetricsFetcher) FetchMetrics(ctx context.Context, sheetID, credentialsPath string) (schema.Metrics, error) {
 	return fetchMetricsFunc(ctx, sheetID, credentialsPath)
@@ -160,24 +180,4 @@ func execute(ctx context.Context, fetcher MetricsFetcher, fetchFlag, summarizeFl
 		}
 	}
 	return nil
-}
-
-// logFatalf is a package-level variable that can be mocked in tests
-var logFatalf = log.Fatalf
-
-func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("Warning: .env file not found, will use environment variables")
-	}
-
-	fetchFlag := flag.Bool("fetch", false, "Only fetch metrics from Google Sheets")
-	summarizeFlag := flag.Bool("summarize", false, "Only generate AI delta analysis for the latest metrics")
-	flag.Parse()
-
-	ctx := context.Background()
-	fetcher := &DefaultMetricsFetcher{}
-
-	if err := execute(ctx, fetcher, *fetchFlag, *summarizeFlag); err != nil {
-		logFatalf("%v", err)
-	}
 }
