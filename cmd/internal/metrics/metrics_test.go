@@ -340,35 +340,123 @@ func TestCountSubstackProviders(t *testing.T) {
 }
 
 // ============================================================================
+// BuildSourceMap: creates a normalization map from the providers sheet data
+// ============================================================================
+
+func TestBuildSourceMap(t *testing.T) {
+	tests := []struct {
+		name     string
+		rows     [][]interface{}
+		expected map[string]string
+	}{
+		{
+			name: "custom providers added to default map",
+			rows: [][]interface{}{
+				{"Name", "URL", "Element", "Strategy", "Color", "Added"},
+				{"MyBlog", "url1", "e1", "html", "c1", "a1"},
+				{"another-blog", "url2", "e2", "rss", "c2", "a2"},
+			},
+			expected: map[string]string{
+				"substack":     "Substack",
+				"freecodecamp": "freeCodeCamp",
+				"github":       "GitHub",
+				"shopify":      "Shopify",
+				"stripe":       "Stripe",
+				"myblog":       "MyBlog",
+				"another-blog": "another-blog",
+			},
+		},
+		{
+			name: "overwrites default with custom casing",
+			rows: [][]interface{}{
+				{"Name", "URL", "Element", "Strategy", "Color", "Added"},
+				{"GITHUB", "url1", "e1", "html", "c1", "a1"},
+			},
+			expected: map[string]string{
+				"github": "GITHUB",
+			},
+		},
+		{
+			name: "empty or only header returns default map",
+			rows: [][]interface{}{
+				{"Name", "URL"},
+			},
+			expected: map[string]string{
+				"substack":     "Substack",
+				"freecodecamp": "freeCodeCamp",
+				"github":       "GitHub",
+				"shopify":      "Shopify",
+				"stripe":       "Stripe",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := BuildSourceMap(tt.rows)
+			for k, v := range tt.expected {
+				if result[k] != v {
+					t.Errorf("BuildSourceMap()[%q] = %q, want %q", k, result[k], v)
+				}
+			}
+		})
+	}
+}
+
+// ============================================================================
 // NormalizeSourceName: Converts source names to proper capitalization
 // ============================================================================
 
 func TestNormalizeSourceName(t *testing.T) {
-	tests := []struct {
-		input    string
-		expected string
-	}{
-		{"substack", "Substack"},
-		{"SUBSTACK", "Substack"},
-		{"Substack", "Substack"},
-		{"freecodecamp", "freeCodeCamp"},
-		{"FREECODECAMP", "freeCodeCamp"},
-		{"github", "GitHub"},
-		{"GITHUB", "GitHub"},
-		{"shopify", "Shopify"},
-		{"stripe", "Stripe"},
-		{"Unknown", "Unknown"},
-		{"medium", "medium"},
-	}
+	t.Run("default map", func(t *testing.T) {
+		tests := []struct {
+			input    string
+			expected string
+		}{
+			{"substack", "Substack"},
+			{"SUBSTACK", "Substack"},
+			{"Substack", "Substack"},
+			{"freecodecamp", "freeCodeCamp"},
+			{"FREECODECAMP", "freeCodeCamp"},
+			{"github", "GitHub"},
+			{"GITHUB", "GitHub"},
+			{"shopify", "Shopify"},
+			{"stripe", "Stripe"},
+			{"Unknown", "Unknown"},
+			{"medium", "medium"},
+		}
 
-	for _, tt := range tests {
-		t.Run(tt.input, func(t *testing.T) {
-			result := NormalizeSourceName(tt.input)
+		for _, tt := range tests {
+			result := NormalizeSourceName(tt.input, nil)
 			if result != tt.expected {
-				t.Errorf("NormalizeSourceName(%q) = %q, want %q", tt.input, result, tt.expected)
+				t.Errorf("NormalizeSourceName(%q, nil) = %q, want %q", tt.input, result, tt.expected)
 			}
-		})
-	}
+		}
+	})
+
+	t.Run("custom map", func(t *testing.T) {
+		sourceMap := map[string]string{
+			"custom": "CustomSource",
+			"github": "GitHub-Enterprise",
+		}
+
+		tests := []struct {
+			input    string
+			expected string
+		}{
+			{"custom", "CustomSource"},
+			{"CUSTOM", "CustomSource"},
+			{"github", "GitHub-Enterprise"},
+			{"substack", "substack"}, // No fallback when map is provided
+		}
+
+		for _, tt := range tests {
+			result := NormalizeSourceName(tt.input, sourceMap)
+			if result != tt.expected {
+				t.Errorf("NormalizeSourceName(%q, sourceMap) = %q, want %q", tt.input, result, tt.expected)
+			}
+		}
+	})
 }
 
 // ============================================================================
@@ -450,7 +538,7 @@ func TestParseArticleRow(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := parseArticleRow(tt.row)
+			result, err := parseArticleRow(tt.row, nil)
 			if (err != nil) != tt.expectErr {
 				t.Errorf("parseArticleRow() error = %v, expectErr %v", err, tt.expectErr)
 				return
@@ -518,7 +606,7 @@ func TestParseArticleRowWithDetails(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := parseArticleRowWithDetails(tt.row)
+			result, err := parseArticleRowWithDetails(tt.row, nil)
 			if (err != nil) != tt.expectErr {
 				t.Errorf("parseArticleRowWithDetails() error = %v, expectErr %v", err, tt.expectErr)
 				return
@@ -1507,7 +1595,7 @@ func TestProcessArticleRows(t *testing.T) {
 			}
 
 			var earliestDate, latestDate time.Time
-			unread, oldest := processArticleRows(tt.rows, &metrics, &earliestDate, &latestDate)
+			unread, oldest := processArticleRows(tt.rows, &metrics, &earliestDate, &latestDate, nil)
 
 			if !tt.validate(&metrics, unread, oldest) {
 				t.Errorf("%s: validation failed", tt.name)
@@ -2022,7 +2110,7 @@ func TestFetchMetricsFromSheetsWithService(t *testing.T) {
 
 				// Parse articles from rows (skip header row 0)
 				for i := 1; i < len(rows); i++ {
-					article, err := parseArticleRow(rows[i])
+					article, err := parseArticleRow(rows[i], nil)
 					if err != nil {
 						continue
 					}
@@ -2088,7 +2176,7 @@ func TestFetchMetricsFromSheetsWithService(t *testing.T) {
 
 				// Get latest date from all articles
 				for i := 1; i < len(rows); i++ {
-					article, err := parseArticleRow(rows[i])
+					article, err := parseArticleRow(rows[i], nil)
 					if err != nil {
 						continue
 					}
@@ -2099,7 +2187,7 @@ func TestFetchMetricsFromSheetsWithService(t *testing.T) {
 
 				// Process unread articles for age distribution
 				for i := 1; i < len(rows); i++ {
-					article, err := parseArticleRow(rows[i])
+					article, err := parseArticleRow(rows[i], nil)
 					if err != nil {
 						continue
 					}
@@ -2160,7 +2248,7 @@ func TestFetchMetricsFromSheetsWithService(t *testing.T) {
 
 				// Process articles
 				for i := 1; i < len(rows); i++ {
-					article, err := parseArticleRow(rows[i])
+					article, err := parseArticleRow(rows[i], nil)
 					if err != nil {
 						continue
 					}
@@ -2257,7 +2345,7 @@ func TestFetchMetricsFromSheets(t *testing.T) {
 
 				// Simulate FetchMetricsFromSheetsWithService processing (skip header at index 0)
 				for i := 1; i < len(rows); i++ {
-					article, err := parseArticleRow(rows[i])
+					article, err := parseArticleRow(rows[i], nil)
 					if err != nil {
 						continue
 					}
@@ -2336,7 +2424,7 @@ func TestFetchMetricsFromSheets(t *testing.T) {
 
 				// Process rows
 				for i := 1; i < len(rows); i++ {
-					article, err := parseArticleRow(rows[i])
+					article, err := parseArticleRow(rows[i], nil)
 					if err != nil {
 						continue
 					}
@@ -2383,7 +2471,7 @@ func TestFetchMetricsFromSheets(t *testing.T) {
 
 				// Collect unread articles (simulating FetchMetricsFromSheetsWithService)
 				for i := 1; i < len(rows); i++ {
-					article, err := parseArticleRowWithDetails(rows[i])
+					article, err := parseArticleRowWithDetails(rows[i], nil)
 					if err != nil {
 						continue
 					}

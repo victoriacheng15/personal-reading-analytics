@@ -96,14 +96,42 @@ func countSubstackProviders(client SheetsClient, spreadsheetID, providersSheet s
 	return count, nil
 }
 
-// NormalizeSourceName converts source names to proper capitalization
-func NormalizeSourceName(name string) string {
+// BuildSourceMap creates a normalization map from the providers sheet data
+func BuildSourceMap(rows [][]interface{}) map[string]string {
 	sourceMap := map[string]string{
 		"substack":     "Substack",
 		"freecodecamp": "freeCodeCamp",
 		"github":       "GitHub",
 		"shopify":      "Shopify",
 		"stripe":       "Stripe",
+	}
+
+	if len(rows) <= 1 {
+		return sourceMap
+	}
+
+	// Skip header row and build map from provider names
+	for i := 1; i < len(rows); i++ {
+		row := rows[i]
+		if len(row) > ProvidersColName {
+			name := fmt.Sprintf("%v", row[ProvidersColName])
+			sourceMap[strings.ToLower(name)] = name
+		}
+	}
+
+	return sourceMap
+}
+
+// NormalizeSourceName converts source names to proper capitalization using a dynamic map
+func NormalizeSourceName(name string, sourceMap map[string]string) string {
+	if sourceMap == nil {
+		sourceMap = map[string]string{
+			"substack":     "Substack",
+			"freecodecamp": "freeCodeCamp",
+			"github":       "GitHub",
+			"shopify":      "Shopify",
+			"stripe":       "Stripe",
+		}
 	}
 
 	// Convert to lowercase for comparison
@@ -124,7 +152,7 @@ type ParsedArticle struct {
 }
 
 // parseArticleRow extracts relevant data from a single article row
-func parseArticleRow(row []interface{}) (*ParsedArticle, error) {
+func parseArticleRow(row []interface{}, sourceMap map[string]string) (*ParsedArticle, error) {
 	if len(row) < ColRead+1 {
 		return nil, fmt.Errorf("incomplete row: expected at least %d columns, got %d", ColRead+1, len(row))
 	}
@@ -143,7 +171,7 @@ func parseArticleRow(row []interface{}) (*ParsedArticle, error) {
 
 	// Parse category/source (Column D)
 	if len(row) > ColCategory {
-		article.Category = NormalizeSourceName(fmt.Sprintf("%v", row[ColCategory]))
+		article.Category = NormalizeSourceName(fmt.Sprintf("%v", row[ColCategory]), sourceMap)
 	}
 
 	// Parse read status (Column E)
@@ -156,7 +184,7 @@ func parseArticleRow(row []interface{}) (*ParsedArticle, error) {
 }
 
 // parseArticleRowWithDetails extracts all details from a single article row
-func parseArticleRowWithDetails(row []interface{}) (*schema.ArticleMeta, error) {
+func parseArticleRowWithDetails(row []interface{}, sourceMap map[string]string) (*schema.ArticleMeta, error) {
 	if len(row) < ColRead+1 {
 		return nil, fmt.Errorf("incomplete row: expected at least %d columns, got %d", ColRead+1, len(row))
 	}
@@ -180,7 +208,7 @@ func parseArticleRowWithDetails(row []interface{}) (*schema.ArticleMeta, error) 
 
 	// Parse category/source (Column D)
 	if len(row) > ColCategory {
-		article.Category = NormalizeSourceName(fmt.Sprintf("%v", row[ColCategory]))
+		article.Category = NormalizeSourceName(fmt.Sprintf("%v", row[ColCategory]), sourceMap)
 	}
 
 	// Parse read status (Column E)
@@ -313,7 +341,7 @@ func updateUnreadArticleAgeDistribution(metrics *schema.Metrics, article *Parsed
 }
 
 // processArticleRows processes all article rows and updates metrics
-func processArticleRows(rows [][]interface{}, metrics *schema.Metrics, earliestDate, latestDate *time.Time) ([]schema.ArticleMeta, *schema.ArticleMeta) {
+func processArticleRows(rows [][]interface{}, metrics *schema.Metrics, earliestDate, latestDate *time.Time, sourceMap map[string]string) ([]schema.ArticleMeta, *schema.ArticleMeta) {
 	var unreadArticles []schema.ArticleMeta
 	var oldestUnreadArticle *schema.ArticleMeta
 
@@ -322,7 +350,7 @@ func processArticleRows(rows [][]interface{}, metrics *schema.Metrics, earliestD
 		row := rows[i]
 
 		// Parse the article row into structured data
-		article, err := parseArticleRow(row)
+		article, err := parseArticleRow(row, sourceMap)
 		if err != nil {
 			// Skip incomplete or invalid rows
 			continue
@@ -355,7 +383,7 @@ func processArticleRows(rows [][]interface{}, metrics *schema.Metrics, earliestD
 			updateUnreadArticleAgeDistribution(metrics, article, time.Now())
 
 			// Collect unread article details
-			articleDetail, _ := parseArticleRowWithDetails(row)
+			articleDetail, _ := parseArticleRowWithDetails(row, sourceMap)
 			if articleDetail != nil {
 				unreadArticles = append(unreadArticles, *articleDetail)
 
@@ -535,6 +563,9 @@ func fetchMetricsWithFetcher(spreadsheetID string, fetcher SheetsFetcher) (schem
 		log.Printf("Warning: Unable to read providers sheet: %v\n", err)
 	}
 
+	// Build normalization map from providers
+	sourceMap := BuildSourceMap(providerRows)
+
 	// Initialize metrics
 	metrics := schema.Metrics{
 		BySource:                     make(map[string]int),
@@ -559,7 +590,7 @@ func fetchMetricsWithFetcher(spreadsheetID string, fetcher SheetsFetcher) (schem
 		for i := 1; i < len(providerRows); i++ {
 			row := providerRows[i]
 			if len(row) > ProvidersColName {
-				name := NormalizeSourceName(fmt.Sprintf("%v", row[ProvidersColName]))
+				name := NormalizeSourceName(fmt.Sprintf("%v", row[ProvidersColName]), sourceMap)
 
 				// Deduplication: Only store metadata for the first occurrence of a source name
 				if _, exists := metrics.SourceMetadata[name]; !exists {
@@ -598,7 +629,7 @@ func fetchMetricsWithFetcher(spreadsheetID string, fetcher SheetsFetcher) (schem
 	var earliestDate, latestDate time.Time
 
 	// Process all articles
-	unreadArticles, oldestUnreadArticle := processArticleRows(articleRows, &metrics, &earliestDate, &latestDate)
+	unreadArticles, oldestUnreadArticle := processArticleRows(articleRows, &metrics, &earliestDate, &latestDate, sourceMap)
 
 	// Calculate derived metrics
 	calculateDerivedMetrics(&metrics, earliestDate, latestDate)
