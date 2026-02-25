@@ -1,9 +1,9 @@
 {{define "content"}}
 <main class="intro-page">
     <section aria-label="Intro" class="intro-section">
-        <h2 class="intro-heading">{{.IndexContent.IntroSection.Heading}}</h2>
+        <h2 class="intro-heading">{{.IndexContent.Intro.Heading}}</h2>
         <div class="cta-grid">
-            {{range .IndexContent.IntroSection.CTAButtons}}
+            {{range .IndexContent.Intro.CTAButtons}}
             <a href="{{.URL}}" class="btn {{if eq .Text "View the Analytics"}}btn-primary{{else if eq .Text "See How It Evolved"}}btn-secondary{{else}}btn-outline{{end}} cta-button" 
                {{if eq .Text "View Code on GitHub"}}target="_blank" rel="noopener noreferrer"{{end}}>
                 {{.Text}}
@@ -13,18 +13,18 @@
     </section>
 
     <section aria-label="Origin Story">
-        <h2 class="section-title">{{.IndexContent.OriginStorySection.Title}}</h2>
+        <h2 class="section-title">{{.IndexContent.OriginStory.Title}}</h2>
         <div class="origin-story-box">
-            {{range .IndexContent.OriginStorySection.Paragraphs}}
+            {{range .IndexContent.OriginStory.Paragraphs}}
             <p>{{.}}</p>
             {{end}}
         </div>
     </section>
 
     <section aria-label="Engineering Principles">
-        <h2 class="section-title">{{.IndexContent.EngineeringPrinciplesSection.Title}}</h2>
+        <h2 class="section-title">{{.IndexContent.EngPrinciples.Title}}</h2>
         <div class="engineering-principles-grid">
-            {{range .IndexContent.EngineeringPrinciplesSection.Principles}}
+            {{range .IndexContent.EngPrinciples.Principles}}
             <article class="principle-card">
                 <div class="principle-icon"><span role="img" aria-hidden="true">{{.Icon}}</span></div>
                 <h3 class="principle-title">{{.Title}}</h3>

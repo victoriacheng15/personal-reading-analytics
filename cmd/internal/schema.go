@@ -101,13 +101,20 @@ type Milestone struct {
 	DescriptionLines []string   `yaml:"-"`
 }
 
-type IndexContent struct {
-	IntroSection                 IntroSection                 `yaml:"intro_section"`
-	OriginStorySection           OriginStorySection           `yaml:"origin_story_section"`
-	EngineeringPrinciplesSection EngineeringPrinciplesSection `yaml:"engineering_principles_section"`
+type Author struct {
+	Name     string `yaml:"name"`
+	GitHub   string `yaml:"github"`
+	LinkedIn string `yaml:"linkedin"`
 }
 
-type IntroSection struct {
+type IndexContent struct {
+	Author        Author        `yaml:"author"`
+	Intro         Intro         `yaml:"intro"`
+	OriginStory   OriginStory   `yaml:"origin_story"`
+	EngPrinciples EngPrinciples `yaml:"eng_principles"`
+}
+
+type Intro struct {
 	Heading    string      `yaml:"heading"`
 	CTAButtons []CTAButton `yaml:"cta_buttons"`
 }
@@ -117,12 +124,12 @@ type CTAButton struct {
 	URL  string `yaml:"url"`
 }
 
-type OriginStorySection struct {
+type OriginStory struct {
 	Title      string   `yaml:"title"`
 	Paragraphs []string `yaml:"paragraphs"`
 }
 
-type EngineeringPrinciplesSection struct {
+type EngPrinciples struct {
 	Title      string      `yaml:"title"`
 	Principles []Principle `yaml:"principles"`
 }

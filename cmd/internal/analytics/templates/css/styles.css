@@ -255,8 +255,45 @@ footer {
     color: var(--text-muted);
     font-size: var(--text-sm);
 
-    p:first-child {
-        margin-bottom: 0.5rem;
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-attribution {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        justify-content: center;
+
+        p {
+            margin: 0 !important;
+        }
+    }
+
+    .social-links {
+        display: flex;
+        gap: var(--spacing-sm);
+
+        a {
+            color: var(--text-muted);
+            transition: color var(--transition-base), transform var(--transition-base);
+            display: flex;
+            align-items: center;
+
+            &:hover {
+                color: var(--brand-primary);
+                transform: var(--hover-lift);
+            }
+        }
+    }
+
+    p:last-child {
+        margin-top: 0.5rem;
+        opacity: 0.8;
     }
 
     a {
