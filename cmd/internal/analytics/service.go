@@ -319,6 +319,23 @@ func (s *AnalyticsService) render(vm ViewModel, outputDir string, pages []struct
 		log.Printf("⚠️ Warning: Failed to copy CSS directory: %v", err)
 	}
 
+	// Copy static SEO/AI metadata files to output root
+	staticSrc := filepath.Join(tmplDir, "static")
+	staticFiles, err := os.ReadDir(staticSrc)
+	if err == nil {
+		for _, file := range staticFiles {
+			if !file.IsDir() {
+				src := filepath.Join(staticSrc, file.Name())
+				dst := filepath.Join(outputDir, file.Name())
+				if err := copyFile(src, dst); err != nil {
+					log.Printf("⚠️ Warning: Failed to copy static file %s: %v", file.Name(), err)
+				}
+			}
+		}
+	} else if !os.IsNotExist(err) {
+		log.Printf("⚠️ Warning: Failed to read static directory: %v", err)
+	}
+
 	// Loop and generate each page
 	for _, page := range pages {
 		// Create new template instance for this page

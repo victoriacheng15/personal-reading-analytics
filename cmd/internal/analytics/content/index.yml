@@ -1,4 +1,9 @@
-intro_section:
+author:
+  name: "Victoria Cheng"
+  github: "https://github.com/victoriacheng15"
+  linkedin: "https://www.linkedin.com/in/victoriacheng15/"
+
+intro:
   heading: "Your reading, visualized: no servers, no noise, just your data."
   cta_buttons:
     - text: "View the Analytics"
@@ -8,7 +13,7 @@ intro_section:
     - text: "View Code on GitHub"
       url: "https://github.com/victoriacheng15/personal-reading-analytics"
 
-origin_story_section:
+origin_story:
   title: "📖 Origin Story"
   paragraphs:
     - "I used to follow a handful of engineering blogs, but checking each one for new posts became a chore, too many tabs, too easy to miss something. (Yes, I’ve definitely had 20+ tabs open at once… 😅)"
@@ -16,7 +21,7 @@ origin_story_section:
     - "Later, I got curious: What if I could actually see my reading habits over time? Not to “optimize” productivity, but to understand where my attention really goes… and which blogs still earn it."
     - "That curiosity led me to build a lightweight analytics system in Go, powered by the same Python-collected data. The result? A personal reading analytics: a quiet mirror on my learning journey."
 
-engineering_principles_section:
+eng_principles:
   title: "🌿 Engineering Principles"
   principles:
     - icon: "🚀"
