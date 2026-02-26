@@ -9,7 +9,7 @@ on:
     paths: [cmd/**]
 
 env:
-  go-version: '1.24'
+  go-version: '1.25'
 
 jobs:
   lint:
