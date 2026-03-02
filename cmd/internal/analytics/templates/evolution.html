@@ -1,44 +1,37 @@
 {{define "content"}}
 <main class="flex flex-col gap-12">
     <section class="flex flex-col gap-4 text-center">
-        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center justify-center gap-2"><span
-                role="img" aria-label="Scroll" class="text-4xl">📜</span> Engineering Evolution</h2>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center justify-center gap-2"><span role="img" aria-label="Scroll" class="text-4xl">📜</span> Engineering Evolution</h2>
         <p class="text-lg text-slate-600 max-w-2xl mx-auto italic leading-relaxed">
-            A chronological history of the technical decisions, architectural shifts, and automated milestones
+            A chronological history of the technical decisions, architectural shifts, and automated milestones 
             that shaped this project from a simple script into an intelligent platform.
         </p>
     </section>
 
     <section aria-label="Project Evolution Timeline" class="flex flex-col gap-8">
         {{range $index, $chapter := .EvolutionData.Chapters}}
-        <details
-            class="bg-slate-50 border-2 border-slate-200 rounded-2xl overflow-hidden shadow-sm group transition-all open:border-sky-700 open:shadow-md"
-            {{if eq $index 0}}open{{end}}>
-            <summary
-                class="list-none p-6 bg-slate-50 cursor-pointer flex justify-between items-center gap-6 group-open:bg-slate-50 transition-colors hover:bg-slate-100">
+        <details class="bg-slate-50 border-2 border-slate-200 rounded-2xl overflow-hidden shadow-sm group transition-all open:border-sky-700 open:shadow-md" {{if eq $index 0}}open{{end}}>
+            <summary class="list-none p-6 bg-slate-50 cursor-pointer flex justify-between items-center gap-6 group-open:bg-slate-50 transition-colors hover:bg-slate-100">
                 <div class="flex flex-col gap-1 text-left">
-                    <h3 class="text-xl font-bold text-slate-900 italic">Chapter {{sub (len $.EvolutionData.Chapters)
-                        $index}}: {{.Title}}</h3>
+                    <h3 class="text-xl font-bold text-slate-900 italic">Chapter {{sub (len $.EvolutionData.Chapters) $index}}: {{.Title}}</h3>
                     <p class="text-sm text-slate-500">{{.Intro}}</p>
                 </div>
                 <div class="flex items-center gap-4 shrink-0">
                     <span class="text-sky-700 transition-transform group-open:rotate-180">▼</span>
                 </div>
             </summary>
-
+            
             <div class="p-8 border-t border-slate-100 bg-slate-50">
                 <div class="relative border-l-4 border-slate-100 pl-8 flex flex-col gap-12">
                     {{range .Timeline}}
                     <article class="relative flex flex-col gap-4 group/item">
                         <!-- Timeline Dot -->
-                        <div
-                            class="absolute -left-[38px] top-1 w-4 h-4 rounded-full bg-slate-50 border-4 border-sky-700 shadow-sm group-hover/item:scale-125 transition-transform">
-                        </div>
-
+                        <div class="absolute -left-[38px] top-1 w-4 h-4 rounded-full bg-slate-50 border-4 border-sky-700 shadow-sm group-hover/item:scale-125 transition-transform"></div>
+                        
                         <div class="text-xs font-black text-sky-700 uppercase tracking-widest">{{.Date}}</div>
                         <div class="flex flex-col gap-2">
                             <h3 class="text-xl font-bold text-slate-900 leading-tight italic">{{.Title}}</h3>
-
+                            
                             {{if .DescriptionLines}}
                             <ul class="flex flex-col gap-3 mt-2">
                                 {{range .DescriptionLines}}
@@ -54,9 +47,7 @@
                             <ul class="flex flex-wrap gap-3 mt-4">
                                 {{range .Artifacts}}
                                 <li>
-                                    <a href="{{.URL}}" target="_blank"
-                                        class="px-4 py-2 bg-slate-50 border-2 border-sky-700 rounded-xl text-xs font-bold text-slate-600 hover:text-sky-700 transition-all shadow-sm flex items-center gap-2"><span
-                                            role="img" aria-label="Document">📄</span> {{.Name}}</a>
+                                    <a href="{{.URL}}" target="_blank" class="px-4 py-2 bg-slate-50 border-2 border-sky-700 rounded-xl text-xs font-bold text-slate-600 hover:text-sky-700 transition-all shadow-sm flex items-center gap-2"><span role="img" aria-label="Document">📄</span> {{.Name}}</a>
                                 </li>
                                 {{end}}
                             </ul>

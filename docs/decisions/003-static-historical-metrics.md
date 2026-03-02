@@ -46,5 +46,5 @@ We will extend the static site generation process to build a **full historical a
 
 ## Verification
 
-- [x] **Manual Check:** Run `make nix-run-analytics` and inspect the `dist/history/` directory to ensure subfolders are created for past dates.
+- [x] **Manual Check:** Run `make web-build` and inspect the `dist/history/` directory to ensure subfolders are created for past dates.
 - [x] **Automated Tests:** `make nix-go-test` passes, including updated service and main tests for multi-pass generation.

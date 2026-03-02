@@ -15,7 +15,7 @@ endif
 .PHONY: help run \
         install freeze update py-run py-check py-format py-test py-cov \
         go-check go-format go-update go-test go-cov \
-        run-metrics run-analytics lint clean
+        metrics-build web-build lint clean
 
 # === Help ===
 help:
@@ -33,8 +33,8 @@ help:
 	@echo "  make go-format        - [Go] Format files with gofmt"
 	@echo "  make go-test          - [Go] Run tests"
 	@echo "  make go-cov           - [Go] Run tests with coverage summary"
-	@echo "  make run-metrics      - [Go] Build and run metrics generator"
-	@echo "  make run-analytics    - [Go] Build and run analytics engine"
+	@echo "  make metrics-build    - [Go] Build metrics json"
+	@echo "  make web-build        - [Go] Build web site"
 	@echo ""
 	@echo "  make lint             - [Quality] Run markdownlint via Docker"
 	@echo "  make clean            - [Utils] Remove build artifacts and caches"
@@ -88,7 +88,7 @@ go-test:
 go-cov:
 	$(NIX_RUN) "go test -coverprofile=coverage.out ./cmd/... && go tool cover -func=coverage.out && rm coverage.out || exit 1"
 
-run-metrics:
+metrics-build:
 	$(NIX_RUN) "go build -o ./metricsjson.exe ./cmd/metrics && ./metricsjson.exe && rm ./metricsjson.exe"
 
 setup-tailwind:
@@ -96,7 +96,7 @@ setup-tailwind:
 	@curl -sL https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 -o tailwindcss
 	@chmod +x tailwindcss
 
-run-analytics: setup-tailwind
+web-build: setup-tailwind
 	$(NIX_RUN) "echo 'Running analytics build...' && \
 	rm -rf dist && \
 	mkdir -p dist && \

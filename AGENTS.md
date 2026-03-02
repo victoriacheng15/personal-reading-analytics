@@ -29,8 +29,8 @@ The `Makefile` automatically uses `nix-shell` if available.
 
 | Command | Description |
 | :--- | :--- |
-| `make run-analytics` | Builds and runs the dashboard generator (`analytics.exe`). |
-| `make run-metrics` | Builds and runs the metrics calculator (`metricsjson.exe`). |
+| `make web-build` | Builds and runs the dashboard generator (`analytics.exe`). |
+| `make metrics-build` | Builds and runs the metrics calculator (`metricsjson.exe`). |
 | `make go-test` | Runs all Go unit tests. |
 | `make go-format` | Formats Go code using `gofmt`. |
 | `make go-cov` | Runs Go tests with coverage summary in the terminal. |
