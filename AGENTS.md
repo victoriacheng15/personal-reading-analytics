@@ -75,7 +75,7 @@ Ensure you have run `make install` first to set up the environment.
 
 ### HTML/CSS
 
-- **CSS**: Use standard CSS variables in `cmd/internal/analytics/templates/css/styles.css`.
+- **CSS**: Use standard CSS variables in `cmd/internal/web/templates/css/styles.css`.
 - **No Inline Styles**: All styles must reside in the centralized CSS file.
 - **Layout**: Prefer `flex` or `grid` with `gap` for spacing.
 

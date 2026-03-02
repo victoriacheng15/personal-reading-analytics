@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	schema "github.com/victoriacheng15/personal-reading-analytics/cmd/internal"
-	analytics "github.com/victoriacheng15/personal-reading-analytics/cmd/internal/analytics"
+	web "github.com/victoriacheng15/personal-reading-analytics/cmd/internal/web"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// 2. Initialize Analytics Service
-	service := analytics.NewAnalyticsService("dist")
+	service := web.NewAnalyticsService("dist")
 
 	log.Printf("Generating reports for %d dates...\n", len(dates))
 
@@ -34,7 +34,7 @@ func main() {
 		}
 
 		// Historical: ONLY analytics.html in dist/history/YYYY-MM-DD
-		err = service.GenerateAnalyticsOnly(metrics, analytics.GenConfig{
+		err = service.GenerateAnalyticsOnly(metrics, web.GenConfig{
 			OutputDir:    filepath.Join("dist", "history", date),
 			BaseURL:      "../../",
 			IsHistorical: true,
@@ -47,7 +47,7 @@ func main() {
 
 		// Latest (root): ALL pages in dist/
 		if i == 0 {
-			err = service.GenerateFullSite(metrics, analytics.GenConfig{
+			err = service.GenerateFullSite(metrics, web.GenConfig{
 				OutputDir:    "dist",
 				BaseURL:      "./",
 				IsHistorical: false,

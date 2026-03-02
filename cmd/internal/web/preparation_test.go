@@ -1,4 +1,4 @@
-package analytics
+package web
 
 import (
 	"encoding/json"

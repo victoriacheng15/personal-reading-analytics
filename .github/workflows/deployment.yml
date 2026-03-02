@@ -34,7 +34,7 @@ jobs:
         with:
           go-version: ${{ env.go-version }}
 
-      - name: Build and generate analytics
+      - name: Build the web
         run: make web-build
 
       - uses: actions/configure-pages@v5

@@ -100,8 +100,8 @@ web-build: setup-tailwind
 	$(NIX_RUN) "echo 'Running analytics build...' && \
 	rm -rf dist && \
 	mkdir -p dist && \
-	./tailwindcss -i ./cmd/internal/analytics/templates/css/input.css -o ./cmd/internal/analytics/templates/css/styles.css --minify && \
-	go build -o ./analytics.exe ./cmd/analytics && \
+	./tailwindcss -i ./cmd/internal/web/templates/css/input.css -o ./cmd/internal/web/templates/css/styles.css --minify && \
+	go build -o ./analytics.exe ./cmd/web && \
 	./analytics.exe && \
 	rm ./analytics.exe && \
 	rm tailwindcss"
