@@ -3,77 +3,108 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Personal reading analytics and engineering blog tracker by Victoria Cheng.">
-    <meta name="author" content="{{.IndexContent.Author.Name}}">
-    <link rel="canonical" href="{{.BaseURL}}/{{.PageTitle}}">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{.BaseURL}}">
-    <meta property="og:title" content="{{.AnalyticsTitle}} - {{.PageTitle}}">
-    <meta property="og:description" content="Zero-infrastructure reading analytics pipeline. Automated data pipeline via GitHub Actions with MongoDB event sourcing for observability and AI-powered Delta Analysis via Google Gemini.">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{.BaseURL}}">
-    <meta property="twitter:title" content="{{.AnalyticsTitle}} - {{.PageTitle}}">
-    <meta property="twitter:description" content="Zero-infrastructure reading analytics pipeline. Automated data pipeline via GitHub Actions with MongoDB event sourcing for observability and AI-powered Delta Analysis via Google Gemini.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Personal reading analytics and engineering blog tracker by Victoria Cheng.">
+  <meta name="author" content="{{.IndexContent.Author.Name}}">
+  <link rel="canonical" href="{{.BaseURL}}/{{.PageTitle}}">
 
-    <title>{{.AnalyticsTitle}} - {{.PageTitle}}</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{.BaseURL}}">
+  <meta property="og:title" content="{{.AnalyticsTitle}} - {{.PageTitle}}">
+  <meta property="og:description"
+    content="Zero-infrastructure reading analytics pipeline. Automated data pipeline via GitHub Actions with MongoDB event sourcing for observability and AI-powered Delta Analysis via Google Gemini.">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="{{.BaseURL}}">
+  <meta property="twitter:title" content="{{.AnalyticsTitle}} - {{.PageTitle}}">
+  <meta property="twitter:description"
+    content="Zero-infrastructure reading analytics pipeline. Automated data pipeline via GitHub Actions with MongoDB event sourcing for observability and AI-powered Delta Analysis via Google Gemini.">
+
+  <title>{{.AnalyticsTitle}} - {{.PageTitle}}</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
-<body>
-    <div id="app">
-        <header>
-            <div class="header-title-group">
-                <h1>{{.PageTitle}}</h1>
-                <time>Last updated: {{.LastUpdated.Format "Jan 02, 2006 at 3:04 PM"}}</time>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="{{.BaseURL}}index.html" {{if eq .PageTitle "📚 Personal Reading Analytics"}}aria-current="page"{{end}}>Home</a></li>
-                    <li><a href="{{.BaseURL}}analytics.html" {{if (or (eq .PageTitle "📊 Analytics") (eq .PageTitle "📊 Analytics (Archived)"))}}aria-current="page"{{end}}>Analytics</a></li>
-                    <li><a href="{{.BaseURL}}evolution.html" {{if eq .PageTitle "⏳ Evolution"}}aria-current="page"{{end}}>Evolution</a></li>
-                    {{if (or (eq .PageTitle "📊 Analytics") (eq .PageTitle "📊 Analytics (Archived)"))}}
-                    <li class="history-nav-item">
-                        <label for="snapshot-selector" class="visually-hidden">Select Snapshot</label>
-                        <select id="snapshot-selector" class="snapshot-select" onchange="window.location.href=this.value">
-                            <option value="{{.BaseURL}}analytics.html">Latest Analytics</option>
-                            {{$base := .BaseURL}}
-                            {{range .HistoryDates}}
-                            <option value="{{$base}}history/{{.}}/analytics.html" {{if eq . $.ReportDate}}selected{{end}}>
-                                {{.}}
-                            </option>
-                            {{end}}
-                        </select>
-                    </li>
-                    {{end}}
-                </ul>
-            </nav>
-        </header>
-        {{block "content" .}}{{end}}
-        <footer>
-          <div class="footer-content">
-            <div class="footer-attribution">
-              <p>&copy; 2026 {{.IndexContent.Author.Name}}</p>
-              <div class="social-links">
-                <a href="{{.IndexContent.Author.GitHub}}" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-                </a>
-                <a href="{{.IndexContent.Author.LinkedIn}}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                </a>
-              </div>
-            </div>
-            <p><span role="img" aria-label="Chart Increasing">📈</span> Data sourced from personal article collection • Weekly metrics via GitHub Actions</p>
+<body class="bg-gradient-to-br from-sky-400 to-cyan-300 bg-fixed text-slate-900 font-sans min-h-screen p-4 md:p-8">
+  <div id="app"
+    class="max-w-4xl mx-auto p-6 md:p-10 flex flex-col gap-10 bg-slate-50/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-slate-200/20">
+    <header class="flex flex-col gap-6 border-b-2 border-sky-400 pb-6">
+      <div class="flex flex-col gap-1">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{.PageTitle}}</h1>
+        <time class="text-sm text-slate-500 italic">Last updated: {{.LastUpdated.Format "Jan 02, 2006 at 3:04
+          PM"}}</time>
+      </div>
+      <nav>
+        <ul class="flex flex-wrap gap-x-8 gap-y-4 items-center">
+          <li><a href="{{.BaseURL}}index.html"
+              class="font-semibold text-lg hover:text-sky-600 transition-colors {{if eq .PageTitle " 📚 Personal Reading
+              Analytics"}}text-sky-700 border-b-2 border-sky-700{{else}}text-slate-700{{end}}" {{if eq
+              .PageTitle "📚 Personal Reading Analytics" }}aria-current="page" {{end}}>Home</a></li>
+          <li><a href="{{.BaseURL}}analytics.html"
+              class="font-semibold text-lg hover:text-sky-600 transition-colors {{if (or (eq .PageTitle " 📊 Analytics")
+              (eq .PageTitle "📊 Analytics (Archived)" ))}}text-sky-700 border-b-2
+              border-sky-700{{else}}text-slate-700{{end}}" {{if (or (eq .PageTitle "📊 Analytics" ) (eq
+              .PageTitle "📊 Analytics (Archived)" ))}}aria-current="page" {{end}}>Analytics</a></li>
+          <li><a href="{{.BaseURL}}evolution.html"
+              class="font-semibold text-lg hover:text-sky-600 transition-colors {{if eq .PageTitle " ⏳
+              Evolution"}}text-sky-700 border-b-2 border-sky-700{{else}}text-slate-700{{end}}" {{if eq
+              .PageTitle "⏳ Evolution" }}aria-current="page" {{end}}>Evolution</a></li>
+          {{if (or (eq .PageTitle "📊 Analytics") (eq .PageTitle "📊 Analytics (Archived)"))}}
+          <li class="flex items-center ml-auto">
+            <label for="snapshot-selector" class="sr-only">Select Snapshot</label>
+            <select id="snapshot-selector"
+              class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all"
+              onchange="window.location.href=this.value">
+              <option value="{{.BaseURL}}analytics.html">Latest Analytics</option>
+              {{$base := .BaseURL}}
+              {{range .HistoryDates}}
+              <option value="{{$base}}history/{{.}}/analytics.html" {{if eq . $.ReportDate}}selected{{end}}>
+                {{.}}
+              </option>
+              {{end}}
+            </select>
+          </li>
+          {{end}}
+        </ul>
+      </nav>
+    </header>
+    {{block "content" .}}{{end}}
+    <footer class="mt-auto border-t-2 border-sky-400 pt-8 flex flex-col items-center gap-4 text-sm text-slate-500">
+      <div class="flex flex-col items-center gap-2 w-full">
+        <div class="flex items-center justify-center gap-6 flex-wrap">
+          <p>&copy; 2026 {{.IndexContent.Author.Name}}</p>
+          <div class="flex gap-3">
+            <a href="{{.IndexContent.Author.GitHub}}" target="_blank" rel="noopener noreferrer"
+              class="text-slate-400 hover:text-sky-600 transition-all hover:-translate-y-1" aria-label="GitHub">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-github">
+                <path
+                  d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                </path>
+              </svg>
+            </a>
+            <a href="{{.IndexContent.Author.LinkedIn}}" target="_blank" rel="noopener noreferrer"
+              class="text-slate-400 hover:text-sky-600 transition-all hover:-translate-y-1" aria-label="LinkedIn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-linkedin">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+            </a>
           </div>
-        </footer>
-    </div>
-    {{block "script" .}}{{end}}
+        </div>
+        <p class="flex items-center gap-1"><span role="img" aria-label="Chart Increasing">📈</span> Data sourced from
+          personal article collection • Weekly metrics via GitHub Actions</p>
+      </div>
+    </footer>
+  </div>
+  {{block "script" .}}{{end}}
 </body>
 
 </html>

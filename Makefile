@@ -91,8 +91,20 @@ go-cov:
 run-metrics:
 	$(NIX_RUN) "go build -o ./metricsjson.exe ./cmd/metrics && ./metricsjson.exe && rm ./metricsjson.exe"
 
-run-analytics:
-	$(NIX_RUN) "go build -o ./analytics.exe ./cmd/analytics && ./analytics.exe && rm ./analytics.exe"
+setup-tailwind:
+	@echo "Downloading tailwind css cli v4..."
+	@curl -sL https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 -o tailwindcss
+	@chmod +x tailwindcss
+
+run-analytics: setup-tailwind
+	$(NIX_RUN) "echo 'Running analytics build...' && \
+	rm -rf dist && \
+	mkdir -p dist && \
+	./tailwindcss -i ./cmd/internal/analytics/templates/css/input.css -o ./cmd/internal/analytics/templates/css/styles.css --minify && \
+	go build -o ./analytics.exe ./cmd/analytics && \
+	./analytics.exe && \
+	rm ./analytics.exe && \
+	rm tailwindcss"
 
 # === Quality & Linting ===
 lint:
