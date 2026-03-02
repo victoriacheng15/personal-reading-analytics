@@ -11,7 +11,7 @@ graph TD
     B -->|Send Stats| H[Gemini AI]
     H -->|Return Summary| B
     B -->|Append Summary| C
-    C -->|Read Latest| D(Analytics Generator<br/>cmd/analytics)
+    C -->|Read Latest| D(Analytics Generator<br/>cmd/web)
     G[evolution.yml] -->|Read| D
     D -->|Hydrate Templates| E[Static Site<br/>index, analytics, evolution]
     E -->|Deploy| F[GitHub Pages]
@@ -26,7 +26,7 @@ Fetches raw data from Google Sheets and performs all heavy aggregation logic.
 - **Responsibility:** Data sanitization, calculating stats (by year, source, read rates), and serialization.
 - **Output:** A timestamped JSON file acting as an immutable snapshot (e.g., `metrics/2025-12-31.json`).
 
-### 2. Analytics Generator (`cmd/analytics`)
+### 2. Analytics Generator (`cmd/web`)
 
 Reads archived metrics and evolution data to render the static site.
 
@@ -37,7 +37,7 @@ Reads archived metrics and evolution data to render the static site.
   - Executing Go HTML templates to generate the current site and historical archives.
 - **Key Feature:** Multi-pass generation. It iterates over every snapshot to build a browsable history, while the latest snapshot populates the root dashboard.
 
-### 3. UI & Templates (`cmd/internal/analytics/templates/`)
+### 3. UI & Templates (`cmd/internal/web/templates/`)
 
 The source templates used by the Analytics Generator to produce the final site.
 
@@ -67,7 +67,7 @@ Manages interactions with the Google Gemini API to perform **AI Delta Analysis**
 
 ```mermaid
 sequenceDiagram
-    participant Main as cmd/analytics
+    participant Main as cmd/web
     participant FS as File System
     participant Tmpl as HTML Templates
     participant Output as dist/

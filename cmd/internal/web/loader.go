@@ -1,4 +1,4 @@
-package analytics
+package web
 
 import (
 	"fmt"
@@ -16,11 +16,11 @@ func GetTemplatesDir() (string, error) {
 	// Define canonical paths in priority order
 	possibleDirs := []string{
 		// When running from project root (most common during development)
-		"cmd/internal/analytics/templates",
-		// When binary is in cmd/analytics directory
-		"internal/analytics/templates",
+		"cmd/internal/web/templates",
+		// When binary is in cmd/web directory
+		"internal/web/templates",
 		// Fallback: explicit relative path construction
-		filepath.Join(".", "cmd", "internal", "analytics", "templates"),
+		filepath.Join(".", "cmd", "internal", "web", "templates"),
 	}
 
 	var cwd string
@@ -57,9 +57,9 @@ func findAndReadFile(possiblePaths []string) ([]byte, string, error) {
 // LoadEvolutionData reads the evolution.yml file and parses it into EvolutionData struct
 func LoadEvolutionData() (schema.EvolutionData, error) {
 	possiblePaths := []string{
-		"cmd/internal/analytics/content/evolution.yml",
-		"internal/analytics/content/evolution.yml",
-		filepath.Join(".", "cmd", "internal", "analytics", "content", "evolution.yml"),
+		"cmd/internal/web/content/evolution.yml",
+		"internal/web/content/evolution.yml",
+		filepath.Join(".", "cmd", "internal", "web", "content", "evolution.yml"),
 	}
 
 	var data schema.EvolutionData
@@ -102,9 +102,9 @@ func LoadEvolutionData() (schema.EvolutionData, error) {
 // LoadIndexContent reads the index.yml file and parses it into IndexContent struct
 func LoadIndexContent() (schema.IndexContent, error) {
 	possiblePaths := []string{
-		"cmd/internal/analytics/content/index.yml",
-		"internal/analytics/content/index.yml",
-		filepath.Join(".", "cmd", "internal", "analytics", "content", "index.yml"),
+		"cmd/internal/web/content/index.yml",
+		"internal/web/content/index.yml",
+		filepath.Join(".", "cmd", "internal", "web", "content", "index.yml"),
 	}
 
 	var data schema.IndexContent

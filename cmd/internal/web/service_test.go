@@ -1,4 +1,4 @@
-package analytics
+package web
 
 import (
 	"os"
@@ -44,7 +44,7 @@ func TestAnalyticsService_Generate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tmpDir, err := os.MkdirTemp("", "analytics_service_test")
+			tmpDir, err := os.MkdirTemp("", "web_service_test")
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -52,7 +52,7 @@ func TestAnalyticsService_Generate(t *testing.T) {
 
 			// The service looks for templates relative to CWD or in specific paths.
 			// For testing, we'll create a mock structure.
-			templateDir := filepath.Join(tmpDir, "cmd", "internal", "analytics", "templates")
+			templateDir := filepath.Join(tmpDir, "cmd", "internal", "web", "templates")
 			if err := os.MkdirAll(templateDir, 0755); err != nil {
 				t.Fatal(err)
 			}
@@ -60,13 +60,13 @@ func TestAnalyticsService_Generate(t *testing.T) {
 			// Create required template files
 			baseTmpl := `{{define "base"}}<html><head><title>{{.AnalyticsTitle}} - {{.PageTitle}}</title></head><body><div id="app"><header><h1>{{.PageTitle}}</h1><nav><ul><li><a href="{{.BaseURL}}index.html">Home</a></li></ul></nav></header>{{block "content" .}}{{end}}</div></body></html>{{end}}`
 			indexTmpl := `{{define "content"}}<h1>Home</h1>{{end}}{{template "base" .}}`
-			analyticsTmpl := `{{define "content"}}<h1>Analytics</h1>{{end}}{{template "base" .}}`
+			webTmpl := `{{define "content"}}<h1>Analytics</h1>{{end}}{{template "base" .}}`
 			evolutionTmpl := `{{define "content"}}<h1>Evolution</h1>{{end}}{{template "base" .}}`
 
 			templates := map[string]string{
 				"base.html":      baseTmpl,
 				"index.html":     indexTmpl,
-				"analytics.html": analyticsTmpl,
+				"analytics.html": webTmpl,
 				"evolution.html": evolutionTmpl,
 			}
 
@@ -78,7 +78,7 @@ func TestAnalyticsService_Generate(t *testing.T) {
 
 			// Mock evolution.yml
 			evolutionData := `chapters: []`
-			contentDir := filepath.Join(tmpDir, "cmd", "internal", "analytics", "content")
+			contentDir := filepath.Join(tmpDir, "cmd", "internal", "web", "content")
 			if err := os.MkdirAll(contentDir, 0755); err != nil {
 				t.Fatal(err)
 			}

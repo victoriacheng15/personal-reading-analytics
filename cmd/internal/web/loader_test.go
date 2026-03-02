@@ -1,4 +1,4 @@
-package analytics
+package web
 
 import (
 	"os"
@@ -35,7 +35,7 @@ func TestGetTemplatesDir(t *testing.T) {
 				}
 
 				// Create directory structure for primary path
-				templatesDir := filepath.Join("cmd", "internal", "analytics", "templates")
+				templatesDir := filepath.Join("cmd", "internal", "web", "templates")
 				if err := os.MkdirAll(templatesDir, 0755); err != nil {
 					t.Fatalf("failed to create directories: %v", err)
 				}
@@ -54,7 +54,7 @@ func TestGetTemplatesDir(t *testing.T) {
 				}
 
 				// Create directory structure for secondary path
-				templatesDir := filepath.Join("internal", "analytics", "templates")
+				templatesDir := filepath.Join("internal", "web", "templates")
 				if err := os.MkdirAll(templatesDir, 0755); err != nil {
 					t.Fatalf("failed to create directories: %v", err)
 				}
@@ -137,7 +137,7 @@ func TestLoadEvolutionData(t *testing.T) {
 					t.Fatalf("failed to change directory: %v", err)
 				}
 
-				dir := filepath.Join("cmd", "internal", "analytics", "content")
+				dir := filepath.Join("cmd", "internal", "web", "content")
 				if err := os.MkdirAll(dir, 0755); err != nil {
 					t.Fatal(err)
 				}

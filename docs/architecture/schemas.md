@@ -45,7 +45,7 @@ classDiagram
 
 ## 2. Go Metrics Schema
 
-The `Metrics` struct is the JSON contract between the **Metrics Generator** (`cmd/metrics`) and the **Analytics Generator** (`cmd/analytics`). Defined in `cmd/internal/schema.go`.
+The `Metrics` struct is the JSON contract between the **Metrics Generator** (`cmd/metrics`) and the **Analytics Generator** (`cmd/web`). Defined in `cmd/internal/schema.go`.
 
 ```go
 type Metrics struct {
