@@ -1,46 +1,33 @@
 {{define "content"}}
-<main class="flex flex-col gap-16">
+<main class="flex flex-col gap-12">
     {{ if .IsHistorical }}
-    <aside
-        class="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 text-amber-900 font-medium flex items-center gap-2"
-        aria-label="Archive notice">
+    <aside class="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 text-amber-900 font-medium flex items-center gap-2" aria-label="Archive notice">
         <p>
-            <span role="img" aria-hidden="true">📂</span> Viewing archived report from <time
-                datetime="{{.ReportDate}}">{{.ReportDate}}</time>.
-            <a href="{{.BaseURL}}analytics.html"
-                class="ml-2 text-amber-700 hover:text-amber-900 underline font-bold transition-colors">Return to latest
-                snapshot</a>
+            <span role="img" aria-hidden="true">📂</span> Viewing archived report from <time datetime="{{.ReportDate}}">{{.ReportDate}}</time>. 
+            <a href="{{.BaseURL}}analytics.html" class="ml-2 text-amber-700 hover:text-amber-900 underline font-bold transition-colors">Return to latest snapshot</a>
         </p>
     </aside>
     {{ end }}
-
-    <section class="grid grid-cols-1 gap-6">
-        <aside
-            class="bg-slate-50 border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col gap-4 border-l-8 border-l-sky-700 relative overflow-hidden"
-            role="note" aria-label="AI Delta Analysis">
-            <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><span role="img" aria-label="Robot"
-                    class="text-3xl">🤖</span> AI Delta Analysis</h3>
-            <p class="text-xs text-slate-500 italic opacity-80">
-                Comparative analysis between the current and the previous snapshots.
-            </p>
-            <div class="text-lg text-slate-700 leading-relaxed tracking-wide">
-                {{ if .AIDeltaAnalysis }}
-                <p>{{.AIDeltaAnalysis}}</p>
-                {{ else }}
-                <p class="italic text-slate-400">AI delta analysis unavailable for this snapshot.</p>
-                {{ end }}
-            </div>
-        </aside>
-    </section>
+<section class="grid grid-cols-1 gap-6">
+    <aside class="bg-slate-50 border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col gap-4 border-l-8 border-l-sky-700 relative overflow-hidden" role="note" aria-label="AI Delta Analysis">
+        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><span role="img" aria-label="Robot" class="text-3xl">🤖</span> AI Delta Analysis</h3>
+        <p class="text-xs text-slate-500 italic opacity-80">
+            Comparative analysis between the current and the previous snapshots.
+        </p>
+        {{ if .AIDeltaAnalysis }}
+        <p class="text-lg text-slate-700 leading-relaxed tracking-wide">{{.AIDeltaAnalysis}}</p>
+        {{ else }}
+        <p class="italic text-slate-400">AI delta analysis unavailable for this snapshot.</p>
+        {{ end }}
+    </aside>
+</section>
 
     {{ if .KeyMetrics }}
     <section aria-label="Key Metrics" class="flex flex-col gap-8">
-        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
-            <span role="img" aria-label="Key" class="text-3xl">🔑</span> Key Metrics</h2>
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2"><span role="img" aria-label="Key" class="text-3xl">🔑</span> Key Metrics</h2>
         <div class="flex flex-wrap justify-center gap-6 w-full text-center">
             {{range .KeyMetrics}}
-            <article
-                class="bg-gradient-to-br from-sky-700 to-sky-800 text-white p-6 rounded-2xl flex flex-col gap-1 shadow-lg border-2 border-sky-600/50 hover:-translate-y-1 transition-all min-w-[160px] flex-1">
+            <article class="bg-gradient-to-br from-sky-700 to-sky-800 text-white p-6 rounded-2xl flex flex-col gap-1 shadow-lg border-2 border-sky-600/50 hover:-translate-y-1 transition-all min-w-[160px] flex-1">
                 <h3 class="text-xs font-bold uppercase tracking-widest opacity-90">{{.Title}}</h3>
                 <p class="text-xl font-bold">{{.Value}}</p>
             </article>
@@ -51,12 +38,10 @@
 
     {{ if .HighlightMetrics }}
     <section aria-label="Highlights & Badges" class="flex flex-col gap-8">
-        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
-            <span role="img" aria-label="Trophy" class="text-3xl">🏆</span> Highlights</h2>
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2"><span role="img" aria-label="Trophy" class="text-3xl">🏆</span> Highlights</h2>
         <div class="flex flex-wrap justify-center gap-6 w-full text-center">
             {{range .HighlightMetrics}}
-            <article
-                class="bg-gradient-to-br from-sky-700 to-sky-800 text-white p-6 rounded-2xl flex flex-col gap-1 shadow-xl border-2 border-sky-600/50 hover:-translate-y-1 transition-all min-w-[200px] flex-1">
+            <article class="bg-gradient-to-br from-sky-700 to-sky-800 text-white p-6 rounded-2xl flex flex-col gap-1 shadow-xl border-2 border-sky-600/50 hover:-translate-y-1 transition-all min-w-[200px] flex-1">
                 <h3 class="text-xs font-bold uppercase tracking-widest opacity-90">{{.Title}}</h3>
                 <p class="text-xl font-bold">{{.Value}}</p>
             </article>
@@ -67,25 +52,18 @@
 
     {{ if .Sources }}
     <section aria-label="Sources" class="flex flex-col gap-6">
-        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
-            <span role="img" aria-label="Pushpin" class="text-3xl">📌</span> Sources</h2>
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2"><span role="img" aria-label="Pushpin" class="text-3xl">📌</span> Sources</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {{range .Sources}}
-            <article
-                class="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col gap-4 border-l-8 transition-all hover:shadow-md"
-                style="border-left-color: {{if .Color}}{{.Color}}{{else}}#0369a1{{end}};">
+            <article class="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col gap-4 border-l-8 transition-all hover:shadow-md" style="border-left-color: {{if .Color}}{{.Color}}{{else}}#0369a1{{end}};">
                 <h3 class="text-xl font-bold text-slate-900 border-b border-slate-100 pb-2">{{.Name}}</h3>
                 <dl class="grid grid-cols-2 gap-y-2 text-sm leading-relaxed text-slate-600">
-                    <dt>Total:</dt>
-                    <dd class="text-right text-slate-900 font-bold">{{.Count}}</dd>
-                    <dt>Read:</dt>
-                    <dd class="text-right text-slate-900 font-bold">{{.Read}} ({{printf "%.1f" .ReadPct}}%)</dd>
-                    <dt>Unread:</dt>
-                    <dd class="text-right text-slate-900 font-bold">{{.Unread}}</dd>
+                    <dt>Total:</dt> <dd class="text-right text-slate-900 font-bold">{{.Count}}</dd>
+                    <dt>Read:</dt> <dd class="text-right text-slate-900 font-bold">{{.Read}} ({{printf "%.1f" .ReadPct}}%)</dd>
+                    <dt>Unread:</dt> <dd class="text-right text-slate-900 font-bold">{{.Unread}}</dd>
                     {{if gt .AuthorCount 0}}
                     <dt class="mt-2 pt-2 border-t border-slate-100 opacity-60 italic">Per author:</dt>
-                    <dd class="mt-2 pt-2 border-t border-slate-100 text-right text-slate-900 font-bold">{{printf "%.0f"
-                        (divideFloat .Count .AuthorCount)}} articles</dd>
+                    <dd class="mt-2 pt-2 border-t border-slate-100 text-right text-slate-900 font-bold">{{printf "%.0f" (divideFloat .Count .AuthorCount)}} articles</dd>
                     {{end}}
                 </dl>
             </article>
@@ -97,10 +75,8 @@
     <!-- Top N Oldest Unread Articles Section -->
     {{ if .TopOldestUnreadArticles }}
     <section aria-label="Top Oldest Unread Articles" class="flex flex-col gap-6">
-        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
-            <span role="img" aria-label="Top" class="text-3xl">🔝</span> Top 3 Oldest Unread Articles</h2>
-        <div
-            class="bg-slate-50 border-2 border-slate-200 rounded-2xl shadow-sm overflow-hidden border-b-8 border-b-slate-100">
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2"><span role="img" aria-label="Top" class="text-3xl">🔝</span> Top 3 Oldest Unread Articles</h2>
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl shadow-sm overflow-hidden border-b-8 border-b-slate-100">
             <table class="w-full text-sm text-left border-collapse">
                 <thead class="bg-sky-700 text-white uppercase text-xs font-bold tracking-widest">
                     <tr>
@@ -115,8 +91,7 @@
                         <td class="p-4 font-mono text-slate-400 text-xs">{{.Date}}</td>
                         <td class="p-4 font-medium text-slate-900">
                             {{if .Link}}
-                            <a href="{{.Link}}" target="_blank" rel="noopener noreferrer"
-                                class="hover:text-sky-700 underline decoration-slate-200 group-hover:decoration-sky-300 transition-all line-clamp-1">{{.Title}}</a>
+                            <a href="{{.Link}}" target="_blank" rel="noopener noreferrer" class="hover:text-sky-700 underline decoration-slate-200 group-hover:decoration-sky-300 transition-all line-clamp-1">{{.Title}}</a>
                             {{else}}
                             {{.Title}}
                             {{end}}
@@ -133,15 +108,12 @@
     {{ if .YearChartData }}
     <section aria-label="Yearly Breakdown" class="flex flex-col gap-6">
         <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
-            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img"
-                    aria-label="Chart Increasing" class="text-3xl">📈</span> Yearly Breakdown</h2>
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img" aria-label="Chart Increasing" class="text-3xl">📈</span> Yearly Breakdown</h2>
             <div class="flex items-center gap-6">
-                <input type="range" id="yearChartRangeSlider" min="5" max="50" value="5"
-                    class="w-32 accent-sky-700 cursor-pointer" title="Adjust how many recent years to display">
-                <span id="yearChartRangeLabel"
-                    class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
-                <select id="yearViewToggle"
-                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
+                <input type="range" id="yearChartRangeSlider" min="5" max="50" value="5" class="w-32 accent-sky-700 cursor-pointer"
+                    title="Adjust how many recent years to display">
+                <span id="yearChartRangeLabel" class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
+                <select id="yearViewToggle" class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="bar">Bar Chart</option>
                     <option value="line">Line Chart</option>
                 </select>
@@ -158,16 +130,13 @@
     {{ if .MonthChartDatasets }}
     <section aria-label="Monthly Breakdown" class="flex flex-col gap-6">
         <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
-            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img"
-                    aria-label="Bar Chart" class="text-3xl">📊</span> Monthly Breakdown</h2>
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img" aria-label="Bar Chart" class="text-3xl">📊</span> Monthly Breakdown</h2>
             <div class="flex items-center gap-6">
-                <select id="sourceFilter"
-                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
+                <select id="sourceFilter" class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="all">All Sources</option>
                     {{range .AllSources}}<option value="{{.}}">{{.}}</option>{{end}}
                 </select>
-                <select id="monthViewToggle"
-                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
+                <select id="monthViewToggle" class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="total">Total Articles</option>
                     <option value="stacked">By Source</option>
                 </select>
@@ -184,15 +153,12 @@
     {{ if .ReadUnreadByMonthJSON }}
     <section aria-label="Read/Unread Breakdown" class="flex flex-col gap-6">
         <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
-            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img"
-                    aria-label="Open Book" class="text-3xl">📖</span> Read/Unread Breakdown</h2>
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img" aria-label="Open Book" class="text-3xl">📖</span> Read/Unread Breakdown</h2>
             <div class="flex items-center gap-6">
                 <input type="range" id="yearRangeSlider" min="5" max="50" value="5" style="display: none;"
                     class="w-32 accent-sky-700 cursor-pointer" title="Adjust how many recent years to display">
-                <span id="yearRangeLabel" style="display: none;"
-                    class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
-                <select id="readUnreadViewToggle"
-                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
+                <span id="yearRangeLabel" style="display: none;" class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
+                <select id="readUnreadViewToggle" class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="byYear">By Year</option>
                     <option value="byMonth">By Month</option>
                     <option value="bySource">By Source</option>
@@ -210,15 +176,12 @@
     {{ if .UnreadByYearJSON }}
     <section aria-label="Unread Articles by Year" id="unreadByYearSection" class="flex flex-col gap-6">
         <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
-            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img" aria-label="Calendar"
-                    class="text-3xl">📅</span> Unread Articles by Year</h2>
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img" aria-label="Calendar" class="text-3xl">📅</span> Unread Articles by Year</h2>
             <div class="flex items-center gap-6">
-                <input type="range" id="unreadYearChartRangeSlider" min="5" max="50" value="5"
-                    class="w-32 accent-sky-700 cursor-pointer" title="Adjust how many recent years to display">
-                <span id="unreadYearChartRangeLabel"
-                    class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
-                <select id="unreadYearViewToggle"
-                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
+                <input type="range" id="unreadYearChartRangeSlider" min="5" max="50" value="5" class="w-32 accent-sky-700 cursor-pointer"
+                    title="Adjust how many recent years to display">
+                <span id="unreadYearChartRangeLabel" class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
+                <select id="unreadYearViewToggle" class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="bar">Bar Chart</option>
                     <option value="line">Line Chart</option>
                 </select>
@@ -233,10 +196,8 @@
     {{ end }}
 
     {{ if .UnreadArticleAgeDistributionJSON }}
-    <section aria-label="Unread Articles Age Distribution" id="unreadArticleAgeDistributionSection"
-        class="flex flex-col gap-6">
-        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
-            <span role="img" aria-label="Alarm Clock" class="text-3xl">⏰</span> Unread Articles Age Distribution</h2>
+    <section aria-label="Unread Articles Age Distribution" id="unreadArticleAgeDistributionSection" class="flex flex-col gap-6">
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2"><span role="img" aria-label="Alarm Clock" class="text-3xl">⏰</span> Unread Articles Age Distribution</h2>
         <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 shadow-sm">
             <div class="h-[400px] w-full">
                 <canvas id="ageDistributionChart"></canvas>
