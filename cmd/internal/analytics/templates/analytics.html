@@ -1,35 +1,48 @@
 {{define "content"}}
-<main class="analytics-page">
+<main class="flex flex-col gap-16">
     {{ if .IsHistorical }}
-    <aside class="historical-banner" aria-label="Archive notice">
+    <aside
+        class="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 text-amber-900 font-medium flex items-center gap-2"
+        aria-label="Archive notice">
         <p>
-            <span role="img" aria-hidden="true">📂</span> Viewing archived report from <time datetime="{{.ReportDate}}">{{.ReportDate}}</time>. 
-            <a href="{{.BaseURL}}analytics.html">Return to latest snapshot</a>
+            <span role="img" aria-hidden="true">📂</span> Viewing archived report from <time
+                datetime="{{.ReportDate}}">{{.ReportDate}}</time>.
+            <a href="{{.BaseURL}}analytics.html"
+                class="ml-2 text-amber-700 hover:text-amber-900 underline font-bold transition-colors">Return to latest
+                snapshot</a>
         </p>
     </aside>
     {{ end }}
-<section class="metrics-grid">
-    <aside class="ai-summary-card full-width" role="note" aria-label="AI Delta Analysis">
-        <h3 class="ai-card-title"><span role="img" aria-label="Robot">🤖</span> AI Delta Analysis</h3>
-        <p class="ai-card-subtitle">
-            Comparative analysis between the current and the previous snapshots.
-        </p>
-        {{ if .AIDeltaAnalysis }}
-        <p>{{.AIDeltaAnalysis}}</p>
-        {{ else }}
-        <p>AI delta analysis unavailable for this snapshot.</p>
-        {{ end }}
-    </aside>
-</section>
+
+    <section class="grid grid-cols-1 gap-6">
+        <aside
+            class="bg-slate-50 border-2 border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col gap-4 border-l-8 border-l-sky-700 relative overflow-hidden"
+            role="note" aria-label="AI Delta Analysis">
+            <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><span role="img" aria-label="Robot"
+                    class="text-3xl">🤖</span> AI Delta Analysis</h3>
+            <p class="text-xs text-slate-500 italic opacity-80">
+                Comparative analysis between the current and the previous snapshots.
+            </p>
+            <div class="text-lg text-slate-700 leading-relaxed tracking-wide">
+                {{ if .AIDeltaAnalysis }}
+                <p>{{.AIDeltaAnalysis}}</p>
+                {{ else }}
+                <p class="italic text-slate-400">AI delta analysis unavailable for this snapshot.</p>
+                {{ end }}
+            </div>
+        </aside>
+    </section>
 
     {{ if .KeyMetrics }}
-    <section aria-label="Key Metrics">
-        <h2  class="section-title"><span role="img" aria-label="Key">🔑</span> Key Metrics</h2>
-        <div class="metrics-grid">
+    <section aria-label="Key Metrics" class="flex flex-col gap-8">
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
+            <span role="img" aria-label="Key" class="text-3xl">🔑</span> Key Metrics</h2>
+        <div class="flex flex-wrap justify-center gap-6 w-full text-center">
             {{range .KeyMetrics}}
-            <article class="metric-card">
-                <h3 class="metric-title">{{.Title}}</h3>
-                <p class="metric-value">{{.Value}}</p>
+            <article
+                class="bg-gradient-to-br from-sky-700 to-sky-800 text-white p-6 rounded-2xl flex flex-col gap-1 shadow-lg border-2 border-sky-600/50 hover:-translate-y-1 transition-all min-w-[160px] flex-1">
+                <h3 class="text-xs font-bold uppercase tracking-widest opacity-90">{{.Title}}</h3>
+                <p class="text-xl font-bold">{{.Value}}</p>
             </article>
             {{end}}
         </div>
@@ -37,13 +50,15 @@
     {{ end }}
 
     {{ if .HighlightMetrics }}
-    <section aria-label="Highlights & Badges">
-        <h2  class="section-title"><span role="img" aria-label="Trophy">🏆</span> Highlights</h2>
-        <div class="badges-grid">
+    <section aria-label="Highlights & Badges" class="flex flex-col gap-8">
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
+            <span role="img" aria-label="Trophy" class="text-3xl">🏆</span> Highlights</h2>
+        <div class="flex flex-wrap justify-center gap-6 w-full text-center">
             {{range .HighlightMetrics}}
-            <article class="badge-card">
-                <h3 class="badge-title">{{.Title}}</h3>
-                <p class="badge-value">{{.Value}}</p>
+            <article
+                class="bg-gradient-to-br from-sky-700 to-sky-800 text-white p-6 rounded-2xl flex flex-col gap-1 shadow-xl border-2 border-sky-600/50 hover:-translate-y-1 transition-all min-w-[200px] flex-1">
+                <h3 class="text-xs font-bold uppercase tracking-widest opacity-90">{{.Title}}</h3>
+                <p class="text-xl font-bold">{{.Value}}</p>
             </article>
             {{end}}
         </div>
@@ -51,19 +66,26 @@
     {{ end }}
 
     {{ if .Sources }}
-    <section aria-label="Sources">
-        <h2  class="section-title"><span role="img" aria-label="Pushpin">📌</span> Sources</h2>
-        <div class="sources-grid">
+    <section aria-label="Sources" class="flex flex-col gap-6">
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
+            <span role="img" aria-label="Pushpin" class="text-3xl">📌</span> Sources</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {{range .Sources}}
-            <article class="source-card">
-                <h3>{{.Name}}</h3>
-                <dl class="source-stats">
-                    <dt>Total:</dt> <dd><strong>{{.Count}}</strong></dd>
-                    <dt>Read:</dt> <dd><strong>{{.Read}} ({{printf "%.1f" .ReadPct}}%)</strong></dd>
-                    <dt>Unread:</dt> <dd><strong>{{.Unread}}</strong></dd>
+            <article
+                class="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col gap-4 border-l-8 transition-all hover:shadow-md"
+                style="border-left-color: {{if .Color}}{{.Color}}{{else}}#0369a1{{end}};">
+                <h3 class="text-xl font-bold text-slate-900 border-b border-slate-100 pb-2">{{.Name}}</h3>
+                <dl class="grid grid-cols-2 gap-y-2 text-sm leading-relaxed text-slate-600">
+                    <dt>Total:</dt>
+                    <dd class="text-right text-slate-900 font-bold">{{.Count}}</dd>
+                    <dt>Read:</dt>
+                    <dd class="text-right text-slate-900 font-bold">{{.Read}} ({{printf "%.1f" .ReadPct}}%)</dd>
+                    <dt>Unread:</dt>
+                    <dd class="text-right text-slate-900 font-bold">{{.Unread}}</dd>
                     {{if gt .AuthorCount 0}}
-                    <dt class="per-author-label">Per author:</dt>
-                    <dd class="per-author-value"><strong>{{printf "%.0f" (divideFloat .Count .AuthorCount)}} articles</strong></dd>
+                    <dt class="mt-2 pt-2 border-t border-slate-100 opacity-60 italic">Per author:</dt>
+                    <dd class="mt-2 pt-2 border-t border-slate-100 text-right text-slate-900 font-bold">{{printf "%.0f"
+                        (divideFloat .Count .AuthorCount)}} articles</dd>
                     {{end}}
                 </dl>
             </article>
@@ -74,58 +96,59 @@
 
     <!-- Top N Oldest Unread Articles Section -->
     {{ if .TopOldestUnreadArticles }}
-    <section aria-label="Top Oldest Unread Articles">
-        <h2  class="section-title"><span role="img" aria-label="Top">🔝</span> Top 3 Oldest Unread Articles</h2>
-        {{if .TopOldestUnreadArticles}}
-        <div class="articles-list">
-            <table class="articles-table">
-                <thead>
+    <section aria-label="Top Oldest Unread Articles" class="flex flex-col gap-6">
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
+            <span role="img" aria-label="Top" class="text-3xl">🔝</span> Top 3 Oldest Unread Articles</h2>
+        <div
+            class="bg-slate-50 border-2 border-slate-200 rounded-2xl shadow-sm overflow-hidden border-b-8 border-b-slate-100">
+            <table class="w-full text-sm text-left border-collapse">
+                <thead class="bg-sky-700 text-white uppercase text-xs font-bold tracking-widest">
                     <tr>
-                        <th>Published Date</th>
-                        <th>Title</th>
-                        <th>Source</th>
+                        <th class="p-4">Published Date</th>
+                        <th class="p-4">Title</th>
+                        <th class="p-4">Source</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
                     {{range .TopOldestUnreadArticles}}
-                    <tr>
-                        <td>{{.Date}}</td>
-                        <td>
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="p-4 font-mono text-slate-400 text-xs">{{.Date}}</td>
+                        <td class="p-4 font-medium text-slate-900">
                             {{if .Link}}
-                            <a href="{{.Link}}" target="_blank" rel="noopener noreferrer">{{.Title}}</a>
+                            <a href="{{.Link}}" target="_blank" rel="noopener noreferrer"
+                                class="hover:text-sky-700 underline decoration-slate-200 group-hover:decoration-sky-300 transition-all line-clamp-1">{{.Title}}</a>
                             {{else}}
                             {{.Title}}
                             {{end}}
                         </td>
-                        <td>{{.Category}}</td>
+                        <td class="p-4 italic text-slate-500">{{.Category}}</td>
                     </tr>
                     {{end}}
                 </tbody>
             </table>
         </div>
-        {{else}}
-        <p class="no-data">No unread articles found.</p>
-        {{end}}
     </section>
     {{ end }}
 
     {{ if .YearChartData }}
-    <section aria-label="Yearly Breakdown">
-        <div class="section-header-row">
-            <h2  class="section-title"><span role="img" aria-label="Chart Increasing">📈</span> Yearly Breakdown</h2>
-            <div class="section-controls">
-                <input type="range" id="yearChartRangeSlider" min="5" max="50" value="5" class="range-slider"
-                    title="Adjust how many recent years to display">
-                <span id="yearChartRangeLabel" class="range-label">Last
-                    5 years</span>
-                <select id="yearViewToggle" class="view-toggle-select">
+    <section aria-label="Yearly Breakdown" class="flex flex-col gap-6">
+        <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img"
+                    aria-label="Chart Increasing" class="text-3xl">📈</span> Yearly Breakdown</h2>
+            <div class="flex items-center gap-6">
+                <input type="range" id="yearChartRangeSlider" min="5" max="50" value="5"
+                    class="w-32 accent-sky-700 cursor-pointer" title="Adjust how many recent years to display">
+                <span id="yearChartRangeLabel"
+                    class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
+                <select id="yearViewToggle"
+                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="bar">Bar Chart</option>
                     <option value="line">Line Chart</option>
                 </select>
             </div>
         </div>
-        <div class="chart-container">
-            <div class="chart-wrapper">
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="h-[400px] w-full">
                 <canvas id="yearChart"></canvas>
             </div>
         </div>
@@ -133,22 +156,25 @@
     {{ end }}
 
     {{ if .MonthChartDatasets }}
-    <section aria-label="Monthly Breakdown">
-        <div class="section-header-row">
-            <h2  class="section-title"><span role="img" aria-label="Bar Chart">📊</span> Monthly Breakdown</h2>
-            <div class="section-controls">
-                <select id="sourceFilter" class="view-toggle-select">
+    <section aria-label="Monthly Breakdown" class="flex flex-col gap-6">
+        <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img"
+                    aria-label="Bar Chart" class="text-3xl">📊</span> Monthly Breakdown</h2>
+            <div class="flex items-center gap-6">
+                <select id="sourceFilter"
+                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="all">All Sources</option>
                     {{range .AllSources}}<option value="{{.}}">{{.}}</option>{{end}}
                 </select>
-                <select id="monthViewToggle" class="view-toggle-select">
+                <select id="monthViewToggle"
+                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="total">Total Articles</option>
                     <option value="stacked">By Source</option>
                 </select>
             </div>
         </div>
-        <div class="chart-container">
-            <div class="chart-wrapper">
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="h-[400px] w-full">
                 <canvas id="monthChart"></canvas>
             </div>
         </div>
@@ -156,23 +182,25 @@
     {{ end }}
 
     {{ if .ReadUnreadByMonthJSON }}
-    <section aria-label="Read/Unread Breakdown">
-        <div class="section-header-row">
-            <h2  class="section-title"><span role="img" aria-label="Open Book">📖</span> Read/Unread Breakdown</h2>
-            <div class="section-controls">
+    <section aria-label="Read/Unread Breakdown" class="flex flex-col gap-6">
+        <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img"
+                    aria-label="Open Book" class="text-3xl">📖</span> Read/Unread Breakdown</h2>
+            <div class="flex items-center gap-6">
                 <input type="range" id="yearRangeSlider" min="5" max="50" value="5" style="display: none;"
-                    class="range-slider" title="Adjust how many recent years to display">
-                <span id="yearRangeLabel" style="display: none;" class="range-label">Last 5
-                    years</span>
-                <select id="readUnreadViewToggle" class="view-toggle-select">
+                    class="w-32 accent-sky-700 cursor-pointer" title="Adjust how many recent years to display">
+                <span id="yearRangeLabel" style="display: none;"
+                    class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
+                <select id="readUnreadViewToggle"
+                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="byYear">By Year</option>
                     <option value="byMonth">By Month</option>
                     <option value="bySource">By Source</option>
                 </select>
             </div>
         </div>
-        <div class="chart-container">
-            <div class="chart-wrapper">
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="h-[400px] w-full">
                 <canvas id="readUnreadChart"></canvas>
             </div>
         </div>
@@ -180,21 +208,24 @@
     {{ end }}
 
     {{ if .UnreadByYearJSON }}
-    <section aria-label="Unread Articles by Year" id="unreadByYearSection">
-        <div class="section-header-row">
-            <h2  class="section-title"><span role="img" aria-label="Calendar">📅</span> Unread Articles by Year</h2>
-            <div class="section-controls">
-                <input type="range" id="unreadYearChartRangeSlider" min="5" max="50" value="5" class="range-slider"
-                    title="Adjust how many recent years to display">
-                <span id="unreadYearChartRangeLabel" class="range-label">Last 5 years</span>
-                <select id="unreadYearViewToggle" class="view-toggle-select">
+    <section aria-label="Unread Articles by Year" id="unreadByYearSection" class="flex flex-col gap-6">
+        <div class="flex flex-wrap justify-between items-center gap-4 border-b-4 border-sky-700 pb-2">
+            <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span role="img" aria-label="Calendar"
+                    class="text-3xl">📅</span> Unread Articles by Year</h2>
+            <div class="flex items-center gap-6">
+                <input type="range" id="unreadYearChartRangeSlider" min="5" max="50" value="5"
+                    class="w-32 accent-sky-700 cursor-pointer" title="Adjust how many recent years to display">
+                <span id="unreadYearChartRangeLabel"
+                    class="text-sm font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Last 5 years</span>
+                <select id="unreadYearViewToggle"
+                    class="bg-slate-50 border-2 border-sky-700 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 cursor-pointer hover:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all">
                     <option value="bar">Bar Chart</option>
                     <option value="line">Line Chart</option>
                 </select>
             </div>
         </div>
-        <div class="chart-container">
-            <div class="chart-wrapper">
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="h-[400px] w-full">
                 <canvas id="unreadByYearChart"></canvas>
             </div>
         </div>
@@ -202,10 +233,12 @@
     {{ end }}
 
     {{ if .UnreadArticleAgeDistributionJSON }}
-    <section aria-label="Unread Articles Age Distribution" id="unreadArticleAgeDistributionSection">
-        <h2  class="section-title"><span role="img" aria-label="Alarm Clock">⏰</span> Unread Articles Age Distribution</h2>
-        <div class="chart-container">
-            <div class="chart-wrapper">
+    <section aria-label="Unread Articles Age Distribution" id="unreadArticleAgeDistributionSection"
+        class="flex flex-col gap-6">
+        <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start flex items-center gap-2">
+            <span role="img" aria-label="Alarm Clock" class="text-3xl">⏰</span> Unread Articles Age Distribution</h2>
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="h-[400px] w-full">
                 <canvas id="ageDistributionChart"></canvas>
             </div>
         </div>
@@ -227,6 +260,16 @@
     const readUnreadByYearData = {{.ReadUnreadByYearJSON }};
     const unreadArticleAgeDistributionData = {{.UnreadArticleAgeDistributionJSON }};
     const unreadByYearData = {{.UnreadByYearJSON }};
+
+    // Tailwind-inspired colors for Chart.js
+    const colors = {
+        primary: 'rgb(3, 105, 161)',      // sky-700
+        secondary: 'rgb(194, 65, 12)',    // orange-700
+        accent: 'rgb(5, 150, 105)',       // emerald-600
+        muted: 'rgb(100, 116, 139)',      // slate-500
+        grid: 'rgba(226, 232, 240, 0.5)', // slate-200
+        text: 'rgb(15, 23, 42)'           // slate-900
+    };
 
     // Helper functions
     const updateLabel = (el, val) => el.textContent = `Last ${val} year${val > 1 ? 's' : ''}`;
@@ -261,7 +304,7 @@
         const chartConfigs = {
             bar: {
                 ...baseConfig,
-                backgroundColor: ['#2b6cb0', '#60a5fa', '#3b82f6', '#fb923c', '#f97316', '#93c5fd', '#60a5fa'],
+                backgroundColor: '#2b6cb0',
                 borderRadius: 8,
                 type: 'bar'
             },
@@ -284,26 +327,28 @@
         yearChart = new Chart(yCtx, createChartConfig(config.type, labels, [config], {
             plugins: { legend: { display: viewMode === 'line', labels: { font: { size: 12 }, usePointStyle: true } } },
             scales: {
-                x: { ticks: { font: { size: 12 } } },
-                y: { beginAtZero: true, ticks: { font: { size: 12 } } }
+                x: { ticks: { font: { size: 12 } }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { font: { size: 12 } }, grid: { color: colors.grid } }
             }
         }));
     }
 
     // Initialize year chart
-    updateYearChart('bar');
-    const ySlider = document.getElementById('yearChartRangeSlider'), yLabel = document.getElementById('yearChartRangeLabel');
-    ySlider.max = yearChartLabels.length;
-    ySlider.value = Math.min(5, yearChartLabels.length);
-    updateLabel(yLabel, ySlider.value);
-    document.getElementById('yearViewToggle').addEventListener('change', e => {
-        currentYearViewMode = e.target.value;
-        updateYearChart(currentYearViewMode);
-    });
-    ySlider.addEventListener('input', e => {
-        updateLabel(yLabel, e.target.value);
-        updateYearChart(currentYearViewMode);
-    });
+    if (document.getElementById('yearChart')) {
+        updateYearChart('bar');
+        const ySlider = document.getElementById('yearChartRangeSlider'), yLabel = document.getElementById('yearChartRangeLabel');
+        ySlider.max = yearChartLabels.length;
+        ySlider.value = Math.min(5, yearChartLabels.length);
+        updateLabel(yLabel, ySlider.value);
+        document.getElementById('yearViewToggle').addEventListener('change', e => {
+            currentYearViewMode = e.target.value;
+            updateYearChart(currentYearViewMode);
+        });
+        ySlider.addEventListener('input', e => {
+            updateLabel(yLabel, e.target.value);
+            updateYearChart(currentYearViewMode);
+        });
+    }
 
     function filterMonthData() {
         const filtered = currentSourceFilter === 'all' ? monthChartDatasets :
@@ -318,8 +363,8 @@
         const baseOpts = {
             plugins: { legend: { display: true, labels: { font: { size: 12 }, usePointStyle: true } } },
             scales: {
-                x: { ticks: { font: { size: 11 } } },
-                y: { beginAtZero: true, ticks: { font: { size: 12 } } }
+                x: { ticks: { font: { size: 11 } }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { font: { size: 12 } }, grid: { color: colors.grid } }
             }
         };
 
@@ -327,13 +372,13 @@
             monthChart = new Chart(mCtx, createChartConfig('line', labels, [{
                 label: 'Total Articles',
                 data: totalData,
-                borderColor: '#2b6cb0',
-                backgroundColor: 'rgba(43, 108, 176, 0.08)',
+                borderColor: colors.primary,
+                backgroundColor: 'rgba(3, 105, 161, 0.08)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
                 pointRadius: 5,
-                pointBackgroundColor: '#2b6cb0',
+                pointBackgroundColor: colors.primary,
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointHoverRadius: 7
@@ -347,20 +392,22 @@
     }
 
     // Initialize month chart
-    updateMonthChart('total');
-    document.getElementById('sourceFilter').addEventListener('change', e => {
-        currentSourceFilter = e.target.value;
-        const toggle = document.getElementById('monthViewToggle');
-        toggle.value = currentSourceFilter !== 'all' ? 'stacked' : 'total';
-        updateMonthChart(toggle.value);
-    });
-    document.getElementById('monthViewToggle').addEventListener('change', e => {
-        if (e.target.value === 'total') {
-            currentSourceFilter = 'all';
-            document.getElementById('sourceFilter').value = 'all';
-        }
-        updateMonthChart(e.target.value);
-    });
+    if (document.getElementById('monthChart')) {
+        updateMonthChart('total');
+        document.getElementById('sourceFilter').addEventListener('change', e => {
+            currentSourceFilter = e.target.value;
+            const toggle = document.getElementById('monthViewToggle');
+            toggle.value = currentSourceFilter !== 'all' ? 'stacked' : 'total';
+            updateMonthChart(toggle.value);
+        });
+        document.getElementById('monthViewToggle').addEventListener('change', e => {
+            if (e.target.value === 'total') {
+                currentSourceFilter = 'all';
+                document.getElementById('sourceFilter').value = 'all';
+            }
+            updateMonthChart(e.target.value);
+        });
+    }
 
     function updateReadUnreadChart(view) {
         if (readUnreadChart) readUnreadChart.destroy();
@@ -395,29 +442,31 @@
 
         readUnreadChart = new Chart(rCtx, createChartConfig('scatter', data.labels, datasets, {
             scales: {
-                x: { type: 'category', ticks: { font: { size: 11 } } },
-                y: { beginAtZero: true, ticks: { font: { size: 12 } } }
+                x: { type: 'category', ticks: { font: { size: 11 } }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { font: { size: 12 } }, grid: { color: colors.grid } }
             },
             plugins: { legend: { display: true, labels: { font: { size: 12 }, usePointStyle: true } } }
         }));
     }
 
     // Initialize read/unread chart
-    updateReadUnreadChart('byYear');
-    const rSlider = document.getElementById('yearRangeSlider'), rLabel = document.getElementById('yearRangeLabel');
-    rSlider.max = readUnreadByYearData.labels.length;
-    rSlider.value = Math.min(5, readUnreadByYearData.labels.length);
-    updateLabel(rLabel, rSlider.value);
-    toggleSlider(true, rSlider, rLabel);
-    document.getElementById('readUnreadViewToggle').addEventListener('change', e => {
-        currentReadUnreadView = e.target.value;
-        toggleSlider(e.target.value === 'byYear', rSlider, rLabel);
-        updateReadUnreadChart(currentReadUnreadView);
-    });
-    rSlider.addEventListener('input', e => {
-        updateLabel(rLabel, e.target.value);
+    if (document.getElementById('readUnreadChart')) {
         updateReadUnreadChart('byYear');
-    });
+        const rSlider = document.getElementById('yearRangeSlider'), rLabel = document.getElementById('yearRangeLabel');
+        rSlider.max = readUnreadByYearData.labels.length;
+        rSlider.value = Math.min(5, readUnreadByYearData.labels.length);
+        updateLabel(rLabel, rSlider.value);
+        toggleSlider(true, rSlider, rLabel);
+        document.getElementById('readUnreadViewToggle').addEventListener('change', e => {
+            currentReadUnreadView = e.target.value;
+            toggleSlider(e.target.value === 'byYear', rSlider, rLabel);
+            updateReadUnreadChart(currentReadUnreadView);
+        });
+        rSlider.addEventListener('input', e => {
+            updateLabel(rLabel, e.target.value);
+            updateReadUnreadChart('byYear');
+        });
+    }
 
     // Initialize unread by year chart
     let unreadByYearChart = null;
@@ -462,8 +511,8 @@
         unreadByYearChart = new Chart(uCtx, createChartConfig(config.type, labels, [config], {
             plugins: { legend: { display: viewMode === 'line', labels: { font: { size: 12 }, usePointStyle: true } } },
             scales: {
-                x: { ticks: { font: { size: 12 } } },
-                y: { beginAtZero: true, ticks: { font: { size: 12 } } }
+                x: { ticks: { font: { size: 12 } }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { font: { size: 12 } }, grid: { color: colors.grid } }
             }
         }));
     }
