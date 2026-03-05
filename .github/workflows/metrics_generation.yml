@@ -39,7 +39,8 @@ jobs:
           SHEET_ID: ${{ secrets.SHEET_ID }}
           CREDENTIALS_PATH: ./credentials.json
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          run: make metrics-build
+        run: make metrics-build
+
       - name: Clean up credentials.json
         run: rm -f credentials.json
 
