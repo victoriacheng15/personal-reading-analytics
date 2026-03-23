@@ -180,3 +180,8 @@ chapters:
         description: |
           - "Onboarded Netflix Tech Blog via RSS."
           - "Hardened extraction engine with custom headers, SSL resilience for CDNs."
+      - date: "2026-03-22"
+        title: "Onboarded Slack"
+        description: |
+          - "Onboarded Slack Engineering Blog via RSS."
+
