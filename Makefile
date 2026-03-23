@@ -75,8 +75,8 @@ py-run:
 	.venv/bin/python script/main.py
 
 # === Go (Analytics & Metrics) ===
-go-check:
-	if [ \$$(gofmt -l ./cmd/ ./internal/ | wc -l) -gt 0 ]; then exit 1; fi 
+go-vet:
+	go vet ./cmd/... ./internal/...
 
 go-format:
 	gofmt -w ./cmd ./internal 
