@@ -184,4 +184,8 @@ chapters:
         title: "Onboarded Slack"
         description: |
           - "Onboarded Slack Engineering Blog via RSS."
-
+      - date: "2026-03-23"
+        title: "Onboarded CNCF"
+        description: |
+          - "Onboarded the Cloud Native Computing Foundation (CNCF) Blog via RSS."
+          - "Integrated the primary source for cloud-native ecosystem updates and project graduation news."
