@@ -6,7 +6,8 @@ on:
       - main
     paths:
       - 'metrics/**'
-      - 'cmd/**'
+      - 'cmd/web/**'
+      - 'internal/web/**'
       - '.github/workflows/deployment.yml'
   workflow_dispatch:
 
