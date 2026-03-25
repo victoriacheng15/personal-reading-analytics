@@ -228,17 +228,34 @@ def extract_rss_item(article):
     Handles <title>, <link>, and <pubDate>.
     """
     # Title
-    title = clean_text(article.find("title").get_text())
+    title_elem = article.find("title")
+    title = clean_text(title_elem.get_text()) if title_elem else "<untitled>"
 
     # Link
     # BeautifulSoup's html.parser can be tricky with <link> in RSS
     link_elem = article.find("link")
     link = ""
     if link_elem:
+        # Try normal text first
         link = clean_text(link_elem.get_text())
-        # If link is empty, it might be due to self-closing tag behavior in html.parser
-        if not link and link_elem.next_sibling:
-            link = clean_text(str(link_elem.next_sibling))
+        
+        # If empty, it might be due to html.parser self-closing behavior
+        if not link:
+            # 1. Check next_sibling (common if it's <link/>URL)
+            if link_elem.next_sibling and isinstance(link_elem.next_sibling, str):
+                link = clean_text(link_elem.next_sibling)
+            
+            # 2. If still empty, check if the URL is somehow in an attribute
+            if not link and link_elem.get("href"):
+                link = clean_text(link_elem.get("href"))
+                
+            # 3. Last resort: regex on the raw article string
+            if not link:
+                raw_article = str(article)
+                # Look for the string immediately after <link/> or <link>
+                match = re.search(r"<link[^>]*?/>\s*([^\s<]+)", raw_article, re.I)
+                if match:
+                    link = clean_text(match.group(1))
 
     # Final strip to handle any remaining newlines or whitespace
     link = link.strip()
