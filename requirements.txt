@@ -30,7 +30,7 @@ protobuf==6.33.5
 pur==7.3.3
 pyasn1==0.6.2
 pyasn1_modules==0.4.2
-Pygments==2.19.2
+Pygments==2.20.0
 pymongo==4.16.0
 pyparsing==3.3.2
 pytest==9.0.2
