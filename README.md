@@ -1,92 +1,166 @@
 # 📚 Personal Reading Analytics
 
-A self-built, fully automated data pipeline with CI/CD governance, leveraging GitHub Actions and MongoDB event sourcing to transform raw reading data into actionable insights and interactive visualizations with zero infrastructure.
+## What is this?
 
-Beyond standard charts, it performs an **AI Delta Analysis** to generate a qualitative weekly narrative, answering three specific questions:
+This is a fully automated data pipeline that tracks and analyzes personal reading data.
 
-- **Velocity**: Are you reading faster or slower than usual?
-- **Backlog Health**: Are you clearing old debt (>1 year) or just adding new noise?
-- **Chronology**: Which specific years of content are you focusing on right now?
+It demonstrates how a real data + DevOps system would:
+- collect and process data automatically
+- generate analytics and visualizations
+- run on CI/CD without servers
+- produce both quantitative and AI-driven insights
 
----
+The goal is to show how to build a zero-infrastructure analytics system that is automated, observable, and cost-efficient.
 
-## 🔗 Live Analytics
-
-👉 [See Live Analytics](https://victoriacheng15.github.io/personal-reading-analytics/)
-
----
-
-## 🌿 Engineering Principles
-
-This project is built to reflect how I believe small, personal tools should work:
-
-- **Zero infrastructure** → No servers or hosting costs. Runs entirely on GitHub (Actions + Pages).  
-- **Fully automated** → Scheduled GitHub Actions keep data fresh, utilizing CI/CD governance for human-in-the-loop code review and merging.  
-- **Observability first** → Uses an Event Sourcing pattern (MongoDB) to decouple extraction from analytics, ensuring full auditability and health monitoring.
-- **Cost-effective** → Uses only free tiers (GitHub, Google Sheets API, MongoDB Atlas), proving powerful automation doesn’t require budget.
+👉 [Live Dashboard](https://victoriacheng15.github.io/personal-reading-analytics/)  
+📚 [Full Documentation](docs/README.md)
 
 ---
 
-## 📚 Documentation
+## 🔍 What I Built (Quick Proof)
 
-For all project documentation, including architectural diagrams, operational guides, and detailed schema specifications, please visit the **[Project Documentation](docs/README.md)**. This central hub includes details on the external **[Observability Hub](https://github.com/victoriacheng15/observability-hub)**, which processes events from this pipeline (MongoDB to PostgreSQL) for Grafana visualization. Note that the Grafana instance itself is not publicly exposed.
-
----
-
-## 🛠 Tech Stacks
-
-![Go](https://img.shields.io/badge/Go-00ADD8.svg?style=for-the-badge&logo=Go&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB.svg?style=for-the-badge&logo=Python&logoColor=white)
-![Google Sheets API](https://img.shields.io/badge/Google%20Sheets-34A853.svg?style=for-the-badge&logo=Google-Sheets&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248.svg?style=for-the-badge&logo=MongoDB&logoColor=white)
-![Google Gemini](https://img.shields.io/badge/Google%20Gemini-4285F4.svg?style=for-the-badge&logo=google-gemini&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED.svg?style=for-the-badge&logo=Docker&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=for-the-badge&logo=GitHub-Actions&logoColor=white)
+- Fully automated data pipeline using GitHub Actions (no servers)
+- Event-driven data ingestion using MongoDB (event sourcing pattern)
+- Data extraction from Google Sheets API
+- Interactive analytics dashboard using Chart.js
+- Weekly AI-generated insights (Velocity, Backlog, Chronology)
+- Historical snapshot tracking for trend analysis
+- CI/CD pipeline with scheduled workflows
+- Integrated with external observability platform (Observability Hub)
+- Zero-cost infrastructure using free-tier cloud services
 
 ---
 
-## 📊 What It Shows
+## 📦 Platform Projects
 
-**Key Metrics Section:**
+This system is built as a collection of smaller data and platform projects:
 
-- **Total articles**: Tracking total articles across currently supported sources
-- **Read rate**: Percentage of articles completed with visual highlighting
-- **AI Delta Analysis**: Multi-dimensional analysis of reading **Velocity** (pace), **Backlog Health** (clearing old debt vs. new noise), and **Chronology** (era of content focus) to provide narrative context beyond raw numbers.
-- **Historical Archive**: A permanent record of past weekly snapshots, accessible via a context-aware selector to track progress over time.
-- **Reading statistics**: Read count, unread count, and average articles per month
-- **Highlight badges**: Top read rate source, most unread source, current month's read articles
+1. **Data Ingestion Pipeline**
+   - Extracts reading data from Google Sheets
 
-**7 Interactive Visualizations (Chart.js):**
+2. **Event Sourcing System**
+   - Stores events in MongoDB for auditability and decoupling
 
-1. **Year Breakdown**: Bar chart showing article distribution by publication year
-2. **Read/Unread by Year**: Stacked bar chart with reading progress across years
-3. **Monthly Breakdown**: Toggle between total articles (line chart) and by-source distribution (stacked bar)
-4. **Read/Unread by Month**: Seasonal reading patterns across all months
-5. **Read/Unread by Source**: Horizontal stacked bars comparing progress per provider
-6. **Unread Age Distribution**: Age buckets (<1 month, 1-3 months, 3-6 months, 6-12 months, >1 year)
-7. **Unread by Year**: Identifies which years have the most unread backlog
+3. **CI/CD Automation**
+   - Scheduled GitHub Actions for data processing and updates
 
-**Source Analytics:**
+4. **Analytics Engine**
+   - Computes reading statistics and trends
 
-- Per-source statistics with read/unread split and read percentages
-- Substack per-author average calculation (total articles ÷ author count)
-- Top 3 oldest unread articles with clickable links, dates, and age calculations
-- Source metadata showing when each provider was added to tracking
+5. **Visualization Layer**
+   - Interactive dashboards using Chart.js
 
----
+6. **AI Insight Engine**
+   - Generates weekly narrative analysis (velocity, backlog, chronology)
 
-## 📖 How This Project Evolved
+7. **Historical Tracking System**
+   - Stores snapshots for long-term trend comparison
 
-Learn about the journey of this project: from local-only execution, to Docker containerization, to automated GitHub Actions workflows.
+8. **Zero-Infrastructure Deployment**
+   - Fully hosted on GitHub Pages (no backend servers)
 
-- [Part 1: From Pi to Cloud Automation](https://victoriacheng15.vercel.app/blog/from-pi-to-cloud-automation)
-- [Part 2: From Links to Reading insights](https://victoriacheng15.vercel.app/blog/from-links-to-reading-insights)
-- [Part 3: From Metrics to Milestones](https://victoriacheng15.vercel.app/blog/from-metrics-to-milestones)
+9. **Observability Integration**
+   - Sends events to external observability system for monitoring
+
+10. **Cost-Optimized Architecture**
+   - Uses only free-tier services (GitHub, MongoDB, Google API)
 
 ---
 
-## 🚀 Ready to Explore?
+## 🧠 Problems I Solved
 
-Don't just take my word for it, interact with the real data.
+- Manual tracking → automated data pipeline
+- No historical visibility → added snapshot tracking
+- Raw data only → added analytics + visualizations
+- Hard to interpret trends → added AI-generated insights
+- Infrastructure overhead → built zero-server architecture
+- Tight coupling → used event sourcing for flexibility
 
-👉 **[Launch Personal Reading Analytics](https://victoriacheng15.github.io/personal-reading-analytics/)**
+---
+
+## 🛠️ Tech Stack
+
+**Languages**
+- Go, Python
+
+**Data & APIs**
+- MongoDB (event storage)
+- Google Sheets API
+
+**Frontend**
+- Chart.js
+
+**DevOps**
+- GitHub Actions (CI/CD)
+- Docker
+
+**AI**
+- Google Gemini (insight generation)
+
+---
+
+## 🏗️ System Architecture (High-Level)
+
+Flow:
+
+- Data source (Google Sheets)
+- CI/CD pipeline (GitHub Actions)
+- Event storage (MongoDB)
+- Analytics processing
+- Dashboard (GitHub Pages)
+- Optional observability integration
+
+---
+
+## 🔎 Example: Data Flow
+
+### Step 1 — Data Collection
+- Reading data stored in Google Sheets
+
+### Step 2 — Pipeline Execution
+- GitHub Actions runs on schedule
+
+### Step 3 — Processing
+- Data transformed into metrics and events
+
+### Step 4 — Output
+- Dashboard updated with new analytics
+- AI generates weekly insights
+
+---
+
+## ⚠️ Challenges
+
+I read blogs from many different sites, and checking each one manually for new content was time-consuming.
+
+To solve this, I built a data pipeline that centralizes content extraction into one place using automated scraping and scheduled workflows.
+
+This allows me to track all reading data in a single system instead of visiting multiple sources manually.
+ 
+---
+
+## 🚀 Project Evolution
+
+This project evolved through multiple stages:
+
+- Local scripts → automated pipeline  
+- Manual tracking → structured data ingestion  
+- Static data → interactive dashboards  
+- Raw metrics → AI-generated insights  
+- Standalone system → integrated observability  
+
+👉 [Read Full Evolution](docs/README.md)
+
+---
+
+## 📌 Summary
+
+This project demonstrates how to build a data analytics system using:
+
+- CI/CD-driven automation (GitHub Actions)
+- event sourcing architecture (MongoDB)
+- interactive visualization (Chart.js)
+- AI-powered insights
+- zero-infrastructure deployment
+
+It reflects how modern data pipelines can be built with minimal cost and high automation.
