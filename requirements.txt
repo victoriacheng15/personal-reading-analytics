@@ -27,7 +27,7 @@ packaging==26.0
 pluggy==1.6.0
 proto-plus==1.27.1
 protobuf==6.33.5
-pur==7.3.3
+pur==7.4.0
 pyasn1==0.6.2
 pyasn1_modules==0.4.2
 Pygments==2.20.0
