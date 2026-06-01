@@ -1,4 +1,4 @@
-name: Python Ruff and Test Checking
+name: CI - Python Linter and Tests
 
 on:
   pull_request:
