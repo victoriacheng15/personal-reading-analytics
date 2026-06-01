@@ -11,7 +11,10 @@ jobs:
   markdownlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: victoriacheng15hub/platform-actions/markdown-linter@v0
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          paths: |
-            **/*.md
+          node-version: '24'
+
+      - name: Run Markdown Lint
+        run: make lint

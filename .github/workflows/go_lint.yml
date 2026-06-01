@@ -1,4 +1,4 @@
-name: Go Lint & Test Checking
+name: CI - Go Linter and Tests
 
 on:
   pull_request:

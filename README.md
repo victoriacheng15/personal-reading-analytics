@@ -1,166 +1,120 @@
-# 📚 Personal Reading Analytics
+# Personal Reading Analytics
 
-## What is this?
+Personal Reading Analytics is a fully automated data pipeline and static dashboard built with Go, Python, MongoDB, Google Sheets, and Google Gemini.
 
-This is a fully automated data pipeline that tracks and analyzes personal reading data.
+It supports asynchronous configuration-driven extraction, multi-pass historical static site generation, and AI-powered weekly narrative insights, all operating within a serverless CI/CD workflow.
 
-It demonstrates how a real data + DevOps system would:
-- collect and process data automatically
-- generate analytics and visualizations
-- run on CI/CD without servers
-- produce both quantitative and AI-driven insights
-
-The goal is to show how to build a zero-infrastructure analytics system that is automated, observable, and cost-efficient.
-
-👉 [Live Dashboard](https://victoriacheng15.github.io/personal-reading-analytics/)  
-📚 [Full Documentation](docs/README.md)
+[Live Project](https://victoriacheng15.github.io/personal-reading-analytics/) | [Full Documentation](./docs/README.md)
 
 ---
 
-## 🔍 What I Built (Quick Proof)
+## Case Studies
 
-- Fully automated data pipeline using GitHub Actions (no servers)
-- Event-driven data ingestion using MongoDB (event sourcing pattern)
-- Data extraction from Google Sheets API
-- Interactive analytics dashboard using Chart.js
-- Weekly AI-generated insights (Velocity, Backlog, Chronology)
-- Historical snapshot tracking for trend analysis
-- CI/CD pipeline with scheduled workflows
-- Integrated with external observability platform (Observability Hub)
-- Zero-cost infrastructure using free-tier cloud services
+| Case Study | Problem | How it was diagnosed | Result |
+| :--- | :--- | :--- | :--- |
+| [Dual-mode RSS/HTML extraction](./docs/decisions/001-prefer-rss-over-html-scraping.md) | Brittle HTML DOM scraping frequently broke when class names changed, increasing bandwidth and maintenance overhead. | Tracked selector-based pipeline failures and compared payload size and stability against XML endpoints as documented in [ADR 001](./docs/decisions/001-prefer-rss-over-html-scraping.md). | Priority is shifted to stable RSS/Atom feeds with a Dual-Mode Extractor that dynamically branches logic based on the feed type. |
+| [Static historical archives](./docs/decisions/003-static-historical-metrics.md) | Previous reading metrics were overwritten and lost to the frontend on each update, preventing historical browsing. | Identified that building only the latest metrics JSON limited long-term visual trends as analyzed in [ADR 003](./docs/decisions/003-static-historical-metrics.md). | Re-engineered the Go generator to run a multi-pass build over all archived snapshots, generating a browsable relative-linked history under `/history/`. |
+| [Configuration-driven extraction engine](./docs/decisions/004-universal-configuration-driven-extraction.md) | Site-specific Python parsing functions caused significant bottlenecks and code duplication when onboarding new sources. | Measured scaling bottlenecks as tracked blogs reached dozens, requiring a new code deployment for each source in [ADR 004](./docs/decisions/004-universal-configuration-driven-extraction.md). | Replaced site-specific logic with a heuristic-driven extraction engine (`universal_html_extractor`) controlled via the Google Sheets SSOT. |
 
 ---
 
-## 📦 Platform Projects
+## Architecture
 
-This system is built as a collection of smaller data and platform projects:
+The platform executes three primary data and analytics pipelines:
 
-1. **Data Ingestion Pipeline**
-   - Extracts reading data from Google Sheets
+| Stage | Operational Purpose | Flow |
+| :--- | :--- | :--- |
+| **Extraction (Python)** | Asynchronous metadata harvesting from RSS and HTML feeds | Google Sheets (SSOT) -> Python Extractor -> MongoDB Event Store & Google Sheets |
+| **Metrics (Go)** | Quantitative processing and AI delta narrative generation | Google Sheets -> metrics.exe -> Gemini AI Delta -> JSON Snapshots |
+| **Dashboard (Go)** | Multi-pass static site generation and asset compilation | JSON Snapshots -> analytics.exe -> Static HTML -> GitHub Pages |
 
-2. **Event Sourcing System**
-   - Stores events in MongoDB for auditability and decoupling
+```mermaid
+graph TD
+    SSOT["Google Sheets (SSOT)"]
+    Ext["Python Extractor (asyncio)"]
+    Mongo["MongoDB (Event Log)"]
+    Metrics["Metrics Engine (Go)"]
+    Gemini["Gemini API (AI Delta)"]
+    JSON["JSON Snapshots"]
+    Gen["Static Site Generator (Go)"]
+    Page["Static HTML (GitHub Pages)"]
+    Hub["Observability Hub"]
 
-3. **CI/CD Automation**
-   - Scheduled GitHub Actions for data processing and updates
-
-4. **Analytics Engine**
-   - Computes reading statistics and trends
-
-5. **Visualization Layer**
-   - Interactive dashboards using Chart.js
-
-6. **AI Insight Engine**
-   - Generates weekly narrative analysis (velocity, backlog, chronology)
-
-7. **Historical Tracking System**
-   - Stores snapshots for long-term trend comparison
-
-8. **Zero-Infrastructure Deployment**
-   - Fully hosted on GitHub Pages (no backend servers)
-
-9. **Observability Integration**
-   - Sends events to external observability system for monitoring
-
-10. **Cost-Optimized Architecture**
-   - Uses only free-tier services (GitHub, MongoDB, Google API)
-
----
-
-## 🧠 Problems I Solved
-
-- Manual tracking → automated data pipeline
-- No historical visibility → added snapshot tracking
-- Raw data only → added analytics + visualizations
-- Hard to interpret trends → added AI-generated insights
-- Infrastructure overhead → built zero-server architecture
-- Tight coupling → used event sourcing for flexibility
+    SSOT --> Ext
+    Ext --> SSOT
+    Ext --> Mongo
+    SSOT --> Metrics
+    Metrics --> Gemini
+    Gemini --> Metrics
+    Metrics --> JSON
+    JSON --> Gen
+    Gen --> Page
+    Mongo -.-> Hub
+```
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-**Languages**
-- Go, Python
-
-**Data & APIs**
-- MongoDB (event storage)
-- Google Sheets API
-
-**Frontend**
-- Chart.js
-
-**DevOps**
-- GitHub Actions (CI/CD)
-- Docker
-
-**AI**
-- Google Gemini (insight generation)
+| Layer | Tools |
+| :--- | :--- |
+| Languages | Go, Python, HTML, CSS |
+| Data & APIs | Google Sheets API, MongoDB (event store), Google Gemini API |
+| Visualization | Chart.js (interactive dashboards) |
+| DevOps & CI/CD | GitHub Actions (scheduled execution), GitHub Pages (hosting), Docker, Nix |
+| Testing & Quality | pytest (Python), go test (Go), ruff, markdownlint |
 
 ---
 
-## 🏗️ System Architecture (High-Level)
+## Documentation
 
-Flow:
-
-- Data source (Google Sheets)
-- CI/CD pipeline (GitHub Actions)
-- Event storage (MongoDB)
-- Analytics processing
-- Dashboard (GitHub Pages)
-- Optional observability integration
+- [Architecture](./docs/architecture/README.md)
+- [Operations and CI/CD](./docs/operations.md)
+- [Decisions](./docs/decisions/README.md)
+- [Experiments](./docs/experiments/jenkins.md)
 
 ---
 
-## 🔎 Example: Data Flow
+## Local Setup
 
-### Step 1 — Data Collection
-- Reading data stored in Google Sheets
+### Python (Extraction)
 
-### Step 2 — Pipeline Execution
-- GitHub Actions runs on schedule
+Setup local virtual environment:
 
-### Step 3 — Processing
-- Data transformed into metrics and events
+```bash
+make install
+```
 
-### Step 4 — Output
-- Dashboard updated with new analytics
-- AI generates weekly insights
+Run extraction locally:
 
----
+```bash
+make py-run
+```
 
-## ⚠️ Challenges
+Run Python linting and tests:
 
-I read blogs from many different sites, and checking each one manually for new content was time-consuming.
+```bash
+make py-check
+make py-test
+```
 
-To solve this, I built a data pipeline that centralizes content extraction into one place using automated scraping and scheduled workflows.
+### Go (Metrics & Dashboard)
 
-This allows me to track all reading data in a single system instead of visiting multiple sources manually.
- 
----
+Calculate metrics locally:
 
-## 🚀 Project Evolution
+```bash
+make metrics-build
+```
 
-This project evolved through multiple stages:
+Build the static dashboard locally:
 
-- Local scripts → automated pipeline  
-- Manual tracking → structured data ingestion  
-- Static data → interactive dashboards  
-- Raw metrics → AI-generated insights  
-- Standalone system → integrated observability  
+```bash
+make web-build
+```
 
-👉 [Read Full Evolution](docs/README.md)
+Run Go formatting and tests:
 
----
-
-## 📌 Summary
-
-This project demonstrates how to build a data analytics system using:
-
-- CI/CD-driven automation (GitHub Actions)
-- event sourcing architecture (MongoDB)
-- interactive visualization (Chart.js)
-- AI-powered insights
-- zero-infrastructure deployment
-
-It reflects how modern data pipelines can be built with minimal cost and high automation.
+```bash
+make go-format
+make go-test
+```
