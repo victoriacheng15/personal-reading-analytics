@@ -31,9 +31,9 @@ The `Makefile` automatically uses `nix-shell` if available.
 | :--- | :--- |
 | `make web-build` | Builds and runs the dashboard generator (`analytics.exe`). |
 | `make metrics-build` | Builds and runs the metrics calculator (`metricsjson.exe`). |
-| `make go-test` | Runs all Go unit tests. |
-| `make go-format` | Formats Go code using `gofmt`. |
-| `make go-cov` | Runs Go tests with coverage summary in the terminal. |
+| `make test-go` | Runs all Go unit tests. |
+| `make fmt-go` | Formats Go code using `gofmt`. |
+| `make cov-go` | Runs Go tests with coverage summary in the terminal. |
 | `make go-update` | Updates Go dependencies and runs `go mod tidy`. |
 
 ### Python (Local venv)
@@ -47,10 +47,10 @@ Ensure you have run `make install` first to set up the environment.
 | `make install` | Create .venv and install dependencies. |
 | `make freeze` | Freeze current Python dependencies to `requirements.txt`. |
 | `make update` | Update Python dependencies in .venv from `requirements.txt`. |
-| `make py-check` | Run ruff check (lint). |
-| `make py-format` | Format files with ruff. |
-| `make py-test` | Run Python tests via `pytest`. |
-| `make py-cov` | Run Python coverage report with missing lines. |
+| `make lint-py` | Run ruff check (lint). |
+| `make fmt-py` | Format files with ruff. |
+| `make test-py` | Run Python tests via `pytest`. |
+| `make cov-py` | Run Python coverage report with missing lines. |
 
 ### General Utilities
 
@@ -86,11 +86,11 @@ Ensure you have run `make install` first to set up the environment.
 ## 5. Testing Instructions
 
 - **Unit Tests**:
-  - Go: `make go-test`
-  - Python: `make py-test`
+  - Go: `make test-go`
+  - Python: `make test-py`
 - **Coverage**:
-  - Go: `make go-cov`
-  - Python: `make py-cov`
+  - Go: `make cov-go`
+  - Python: `make cov-py`
 - **New Features**: All new logic (extractors, metrics, templates) **must** include accompanying unit tests.
 
 ## 6. Security & Automation

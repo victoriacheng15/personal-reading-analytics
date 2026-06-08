@@ -131,6 +131,7 @@ def insert_articles_event_mongo(client, articles):
             logger.info(f"[DRY RUN] Prepared {len(documents)} events for MongoDB.")
             if documents:
                 import json
+
                 pretty_doc = json.dumps(documents[0], indent=2)
                 logger.info(f"[DRY RUN] Example MongoDB document:\n{pretty_doc}")
             return

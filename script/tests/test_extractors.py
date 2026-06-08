@@ -67,7 +67,13 @@ def test_get_articles_yields_new_articles():
     results = list(generator)
 
     assert len(results) == 1
-    assert results[0] == ("2025-01-01", "New Title", "http://link.com", "Sheet Source", 1)
+    assert results[0] == (
+        "2025-01-01",
+        "New Title",
+        "http://link.com",
+        "Sheet Source",
+        1,
+    )
 
 
 def test_get_articles_skips_existing_titles():

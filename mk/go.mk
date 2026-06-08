@@ -1,30 +1,40 @@
 # === Go Variables ===
 BIN_DIR = bin
 
-# === Go Development Targets ===
-.PHONY: go-vet go-format go-update go-test go-cov metrics-build setup-tailwind web-build
+.PHONY: lint-go fmt-go test-go cov-go go-check go-update metrics-build setup-tailwind web-build
 
-go-vet:
+# ==============================================================================
+# GO DEVELOPMENT TARGETS
+# ==============================================================================
+
+lint-go: ## Verify Go code quality via vet
 	go vet ./cmd/... ./internal/...
 
-go-format:
-	gofmt -w ./cmd ./internal 
+fmt-go: ## Format Go files with gofmt
+	gofmt -w ./cmd ./internal
 
-go-update:
-	go get -u ./... && go mod tidy 
+test-go: ## Run all Go unit tests
+	go test -v ./cmd/... ./internal/...
 
-go-test:
-	go test -v ./cmd/... ./internal/... 
+cov-go: ## Run Go tests with coverage summary
+	go test -coverprofile=coverage.out ./cmd/... ./internal/... && go tool cover -func=coverage.out && rm -f coverage.out || exit 1
 
-go-cov:
-	go test -coverprofile=coverage.out ./cmd/... ./internal/... && go tool cover -func=coverage.out && rm coverage.out || exit 1
+go-check: ## Check Go code formatting without modifying files
+	@if [ -n "$$(gofmt -l ./cmd ./internal)" ]; then \
+		echo "Go files not formatted! Run 'make fmt-go'"; \
+		gofmt -d ./cmd ./internal; \
+		exit 1; \
+	fi
 
-metrics-build:
+go-update: ## Update Go dependencies and run go mod tidy
+	go get -u ./... && go mod tidy
+
+metrics-build: ## Build and run the metrics calculator
 	mkdir -p $(BIN_DIR)
 	go build -o $(BIN_DIR)/metricsjson ./cmd/metrics
 	./$(BIN_DIR)/metricsjson
 
-setup-tailwind:
+setup-tailwind: ## Set up Tailwind CSS CLI
 	@mkdir -p $(BIN_DIR)
 	@if [ ! -f $(BIN_DIR)/tailwindcss ]; then \
 		echo "Downloading tailwind css cli v4..."; \
@@ -32,7 +42,7 @@ setup-tailwind:
 		chmod +x $(BIN_DIR)/tailwindcss; \
 	fi
 
-web-build: setup-tailwind
+web-build: setup-tailwind ## Build and run the dashboard generator
 	echo 'Running analytics build...'
 	rm -rf dist
 	mkdir -p dist

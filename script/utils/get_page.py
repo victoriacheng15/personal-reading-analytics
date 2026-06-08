@@ -67,7 +67,7 @@ async def fetch_page(state, url):
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             return soup, state
-        
+
         logger.warning(f"Failed to fetch {url}: Status {response.status_code}")
         return None, state
 

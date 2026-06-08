@@ -38,6 +38,7 @@ def test_get_mongo_client_with_mongodb_atlas_uri(mock_mongo_client):
 # Tests for insert_articles_event_mongo function
 @patch("utils.mongo._get_collection")
 @patch("utils.mongo.datetime")
+@patch("utils.mongo.DRY_RUN", False)
 def test_insert_articles_event_mongo_success(mock_datetime, mock_get_collection):
     """Test successful insertion of articles into MongoDB"""
     # Mock datetime
@@ -57,7 +58,13 @@ def test_insert_articles_event_mongo_success(mock_datetime, mock_get_collection)
     articles = [
         ("2025-12-20", "Test Article 1", "https://example.com/article1", "GitHub", 1),
         ("2025-12-21", "Test Article 2", "https://stripe.com/article2", "Stripe", 2),
-        ("2025-12-22", "Test Article 3", "https://substack.com/article3", "Substack", 0),
+        (
+            "2025-12-22",
+            "Test Article 3",
+            "https://substack.com/article3",
+            "Substack",
+            0,
+        ),
     ]
 
     insert_articles_event_mongo(mock_client, articles)
@@ -109,6 +116,7 @@ def test_insert_articles_event_mongo_empty_articles(mock_logger):
 @patch("utils.mongo._get_collection")
 @patch("utils.mongo.logger")
 @patch("utils.mongo.datetime")
+@patch("utils.mongo.DRY_RUN", False)
 def test_insert_articles_event_mongo_insertion_error(
     mock_datetime, mock_logger, mock_get_collection
 ):
@@ -136,6 +144,7 @@ def test_insert_articles_event_mongo_insertion_error(
 
 @patch("utils.mongo._get_collection")
 @patch("utils.mongo.datetime")
+@patch("utils.mongo.DRY_RUN", False)
 def test_insert_articles_event_mongo_document_structure(
     mock_datetime, mock_get_collection
 ):
