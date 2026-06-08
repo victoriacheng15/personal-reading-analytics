@@ -1,0 +1,96 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  GO_VERSION: '1.25'
+  PYTHON_VERSION: '3.12'
+  NODE_VERSION: '24'
+
+jobs:
+  filter:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.filter.outputs.go }}
+      python: ${{ steps.filter.outputs.python }}
+      markdown: ${{ steps.filter.outputs.markdown }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            go:
+              - 'cmd/**'
+              - 'internal/**'
+              - 'go.mod'
+              - 'go.sum'
+              - 'mk/go.mk'
+              - 'Makefile'
+            python:
+              - 'script/**'
+              - 'requirements.txt'
+              - 'mk/python.mk'
+              - 'Makefile'
+            markdown:
+              - '**/*.md'
+
+  go:
+    name: Go Lint & Test
+    needs: filter
+    if: needs.filter.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Run tests
+        run: make test-go
+
+      - name: Check formatting
+        run: make go-check
+
+      - name: Run go vet
+        run: go vet ./cmd/... ./internal/...
+
+  python:
+    name: Python Lint & Test
+    needs: filter
+    if: needs.filter.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Check Ruff formatting
+        run: make lint-py
+
+      - name: Run tests
+        run: make test-py
+
+  markdown:
+    name: Markdown Lint
+    needs: filter
+    if: needs.filter.outputs.markdown == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run Markdown Lint
+        run: make lint-md

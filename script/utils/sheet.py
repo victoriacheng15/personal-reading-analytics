@@ -94,8 +94,7 @@ def batch_append_articles(sheet: Worksheet, articles: List[tuple]) -> None:
     # Ensure source is lowercased for consistency
     # The 'tier' (5th element) is ignored for Google Sheets as it's only for MongoDB
     rows = [
-        [date, title, link, source.lower()]
-        for date, title, link, source, _ in articles
+        [date, title, link, source.lower()] for date, title, link, source, _ in articles
     ]
 
     if DRY_RUN:

@@ -89,8 +89,3 @@ sequenceDiagram
         end
     end
 ```
-
-## References
-
-- **Data Schemas:** See [schemas.md](schemas.md) for the `Metrics` struct and JSON definitions.
-- **CI/CD & Deployment:** See [operations.md](operations.md) for the automated weekly workflow.

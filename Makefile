@@ -1,42 +1,68 @@
+# Global Makefile configurations and flags
+MAKEFLAGS += --no-print-directory
+
 # === Base Variables ===
-LINT_IMAGE = ghcr.io/igorshubovych/markdownlint-cli:v0.44.0
 DOCKER ?= podman
 
-# Include language-specific Makefiles
+# Include modular makefiles
 include mk/go.mk
-include mk/py.mk
+include mk/python.mk
 
-.PHONY: help lint clean
+.PHONY: all lint test fmt cov lint-md fmt-md clean help
 
-# === Help ===
-help:
-	@echo "Available commands:"
-	@echo "  make help             - Show this help message"
-	@echo ""
-	@echo "  make run              - [Python] Build and run extraction via Docker"
-	@echo "  make py-run           - [Python] Run extraction via local venv"
-	@echo "  make install          - [Python] Create .venv and install dependencies"
-	@echo "  make py-check         - [Python] Run ruff check (lint)"
-	@echo "  make py-format        - [Python] Format files with ruff"
-	@echo "  make py-test          - [Python] Run tests"
-	@echo ""
-	@echo "  make go-vet           - [Go] Verify Go code quality via vet"
-	@echo "  make go-format        - [Go] Format files with gofmt"
-	@echo "  make go-test          - [Go] Run tests"
-	@echo "  make go-cov           - [Go] Run tests with coverage summary"
-	@echo "  make metrics-build    - [Go] Build metrics json"
-	@echo "  make web-build        - [Go] Build web site"
-	@echo ""
-	@echo "  make lint             - [Quality] Run markdownlint via Docker"
-	@echo "  make clean            - [Utils] Remove build artifacts and caches"
+all: lint test fmt
 
-# === Quality & Linting ===
-lint:
-	$(DOCKER) run --rm -v "$(PWD):/data:Z" -w /data $(LINT_IMAGE) --fix "**/*.md"
+# ==============================================================================
+# MARKDOWN TARGETS (LINTING, FORMATTING)
+# ==============================================================================
 
-# === Utilities ===
-clean:
+lint-md: ## Lint Markdown files
+	@echo "==> Linting Markdown files..."
+	npx markdownlint-cli '**/*.md' --ignore .venv
+
+fmt-md: ## Format Markdown files using markdownlint-cli
+	@echo "==> Formatting Markdown files..."
+	npx markdownlint-cli '**/*.md' --ignore .venv --fix
+
+# ==============================================================================
+# COMPOSITE & AUTOMATION TARGETS
+# ==============================================================================
+
+lint: ## Run all linters
+	@$(MAKE) lint-go
+	@$(MAKE) lint-py
+	@$(MAKE) lint-md
+
+test: ## Run all tests
+	@$(MAKE) test-go
+	@$(MAKE) test-py
+
+fmt: ## Format all code
+	@$(MAKE) fmt-go
+	@$(MAKE) fmt-py
+	@$(MAKE) fmt-md
+
+cov: ## Run all test coverages
+	@$(MAKE) cov-go
+	@$(MAKE) cov-py
+
+# ==============================================================================
+# UTILITIES
+# ==============================================================================
+
+clean: ## Remove build artifacts and caches
+	@echo "==> Cleaning build artifacts and caches..."
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null
 	find . -type f -name "*.py[co]" -delete 2>/dev/null
-	rm -rf $(BIN_DIR) dist
+	rm -rf bin dist
 	rm -f coverage.out coverage.html *.exe
+
+# ==============================================================================
+# DOCUMENTATION
+# ==============================================================================
+
+help: ## Show this help menu
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'

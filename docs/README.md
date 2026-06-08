@@ -25,7 +25,7 @@ Welcome to the technical documentation hub for the **Personal Reading Analytics 
 
 ## ⚙️ Operations & DevOps
 
-- **[Operations & CI/CD Guide](operations.md)**
+- **[Platform Workflows](workflows.md)**
   - The primary guide for maintaining the project.
   - Covers local development commands (`Makefile`), GitHub Actions workflows, secrets management, and failure recovery.
 

@@ -238,17 +238,17 @@ def extract_rss_item(article):
     if link_elem:
         # Try normal text first
         link = clean_text(link_elem.get_text())
-        
+
         # If empty, it might be due to html.parser self-closing behavior
         if not link:
             # 1. Check next_sibling (common if it's <link/>URL)
             if link_elem.next_sibling and isinstance(link_elem.next_sibling, str):
                 link = clean_text(link_elem.next_sibling)
-            
+
             # 2. If still empty, check if the URL is somehow in an attribute
             if not link and link_elem.get("href"):
                 link = clean_text(link_elem.get("href"))
-                
+
             # 3. Last resort: regex on the raw article string
             if not link:
                 raw_article = str(article)

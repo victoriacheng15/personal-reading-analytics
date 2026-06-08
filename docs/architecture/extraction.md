@@ -74,8 +74,3 @@ sequenceDiagram
     Orchestrator->>Mongo: Log Extraction Events (including Discovery Tier)
     Orchestrator->>Mongo: Log Summary & Error Events
 ```
-
-## References
-
-- **Data Schemas:** See [schemas.md](schemas.md) for Article tuples and MongoDB document definitions.
-- **Automation:** See [operations.md](operations.md) for the daily extraction schedule.

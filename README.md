@@ -69,7 +69,7 @@ graph TD
 ## Documentation
 
 - [Architecture](./docs/architecture/README.md)
-- [Operations and CI/CD](./docs/operations.md)
+- [Platform Workflows](./docs/workflows.md)
 - [Decisions](./docs/decisions/README.md)
 - [Experiments](./docs/experiments/jenkins.md)
 
@@ -94,8 +94,8 @@ make py-run
 Run Python linting and tests:
 
 ```bash
-make py-check
-make py-test
+make lint-py
+make test-py
 ```
 
 ### Go (Metrics & Dashboard)
@@ -115,6 +115,6 @@ make web-build
 Run Go formatting and tests:
 
 ```bash
-make go-format
-make go-test
+make fmt-go
+make test-go
 ```
