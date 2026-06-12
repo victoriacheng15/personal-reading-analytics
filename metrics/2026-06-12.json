@@ -1,0 +1,684 @@
+{
+  "total_articles": 3723,
+  "by_source": {
+    "CNCF": 10,
+    "GitHub": 148,
+    "Netflix": 27,
+    "Shopify": 97,
+    "Slack": 12,
+    "Stripe": 21,
+    "Substack": 1832,
+    "freeCodeCamp": 1576
+  },
+  "by_source_read_status": {
+    "CNCF": [
+      10,
+      0
+    ],
+    "GitHub": [
+      86,
+      62
+    ],
+    "Netflix": [
+      12,
+      15
+    ],
+    "Shopify": [
+      72,
+      25
+    ],
+    "Slack": [
+      3,
+      9
+    ],
+    "Stripe": [
+      16,
+      5
+    ],
+    "Substack": [
+      987,
+      845
+    ],
+    "freeCodeCamp": [
+      907,
+      669
+    ],
+    "substack_author_count": [
+      6,
+      0
+    ]
+  },
+  "by_year": {
+    "2011": 1,
+    "2013": 2,
+    "2014": 3,
+    "2015": 2,
+    "2016": 2,
+    "2017": 3,
+    "2018": 9,
+    "2019": 8,
+    "2020": 11,
+    "2021": 8,
+    "2022": 11,
+    "2023": 234,
+    "2024": 1353,
+    "2025": 1490,
+    "2026": 586
+  },
+  "by_month": {
+    "01": 341,
+    "02": 438,
+    "03": 526,
+    "04": 415,
+    "05": 350,
+    "06": 254,
+    "07": 217,
+    "08": 212,
+    "09": 219,
+    "10": 275,
+    "11": 247,
+    "12": 229
+  },
+  "by_year_and_month": {
+    "2011": {
+      "07": 1
+    },
+    "2013": {
+      "03": 1,
+      "09": 1
+    },
+    "2014": {
+      "07": 1,
+      "10": 1,
+      "11": 1
+    },
+    "2015": {
+      "01": 1,
+      "05": 1
+    },
+    "2016": {
+      "03": 1,
+      "10": 1
+    },
+    "2017": {
+      "02": 2,
+      "06": 1
+    },
+    "2018": {
+      "02": 2,
+      "03": 2,
+      "08": 2,
+      "11": 1,
+      "12": 2
+    },
+    "2019": {
+      "02": 1,
+      "05": 1,
+      "07": 1,
+      "09": 1,
+      "10": 2,
+      "11": 2
+    },
+    "2020": {
+      "02": 2,
+      "05": 2,
+      "08": 2,
+      "09": 1,
+      "12": 4
+    },
+    "2021": {
+      "01": 1,
+      "02": 1,
+      "04": 2,
+      "07": 1,
+      "09": 1,
+      "10": 1,
+      "12": 1
+    },
+    "2022": {
+      "01": 2,
+      "03": 2,
+      "04": 1,
+      "05": 2,
+      "07": 1,
+      "09": 2,
+      "10": 1
+    },
+    "2023": {
+      "01": 2,
+      "02": 4,
+      "03": 6,
+      "04": 3,
+      "05": 2,
+      "06": 4,
+      "07": 9,
+      "08": 18,
+      "09": 13,
+      "10": 25,
+      "11": 54,
+      "12": 94
+    },
+    "2024": {
+      "01": 150,
+      "02": 257,
+      "03": 207,
+      "04": 116,
+      "05": 77,
+      "06": 79,
+      "07": 79,
+      "08": 72,
+      "09": 76,
+      "10": 100,
+      "11": 81,
+      "12": 59
+    },
+    "2025": {
+      "01": 90,
+      "02": 94,
+      "03": 170,
+      "04": 163,
+      "05": 152,
+      "06": 134,
+      "07": 124,
+      "08": 118,
+      "09": 124,
+      "10": 144,
+      "11": 108,
+      "12": 69
+    },
+    "2026": {
+      "01": 95,
+      "02": 75,
+      "03": 137,
+      "04": 130,
+      "05": 113,
+      "06": 36
+    }
+  },
+  "by_month_and_source_read_status": {
+    "01": {
+      "GitHub": [
+        10,
+        10
+      ],
+      "Netflix": [
+        0,
+        1
+      ],
+      "Shopify": [
+        4,
+        5
+      ],
+      "Substack": [
+        159,
+        46
+      ],
+      "freeCodeCamp": [
+        67,
+        39
+      ]
+    },
+    "02": {
+      "GitHub": [
+        14,
+        6
+      ],
+      "Netflix": [
+        4,
+        0
+      ],
+      "Shopify": [
+        7,
+        2
+      ],
+      "Stripe": [
+        1,
+        1
+      ],
+      "Substack": [
+        119,
+        95
+      ],
+      "freeCodeCamp": [
+        124,
+        65
+      ]
+    },
+    "03": {
+      "CNCF": [
+        10,
+        0
+      ],
+      "GitHub": [
+        20,
+        10
+      ],
+      "Netflix": [
+        1,
+        1
+      ],
+      "Shopify": [
+        9,
+        1
+      ],
+      "Slack": [
+        1,
+        1
+      ],
+      "Stripe": [
+        3,
+        0
+      ],
+      "Substack": [
+        114,
+        136
+      ],
+      "freeCodeCamp": [
+        131,
+        88
+      ]
+    },
+    "04": {
+      "GitHub": [
+        22,
+        3
+      ],
+      "Netflix": [
+        3,
+        3
+      ],
+      "Shopify": [
+        6,
+        2
+      ],
+      "Slack": [
+        1,
+        1
+      ],
+      "Stripe": [
+        0,
+        1
+      ],
+      "Substack": [
+        53,
+        101
+      ],
+      "freeCodeCamp": [
+        131,
+        88
+      ]
+    },
+    "05": {
+      "GitHub": [
+        8,
+        21
+      ],
+      "Netflix": [
+        2,
+        3
+      ],
+      "Shopify": [
+        5,
+        2
+      ],
+      "Slack": [
+        0,
+        2
+      ],
+      "Stripe": [
+        3,
+        1
+      ],
+      "Substack": [
+        56,
+        66
+      ],
+      "freeCodeCamp": [
+        73,
+        108
+      ]
+    },
+    "06": {
+      "GitHub": [
+        3,
+        6
+      ],
+      "Netflix": [
+        0,
+        2
+      ],
+      "Shopify": [
+        5,
+        1
+      ],
+      "Stripe": [
+        1,
+        0
+      ],
+      "Substack": [
+        63,
+        52
+      ],
+      "freeCodeCamp": [
+        63,
+        58
+      ]
+    },
+    "07": {
+      "GitHub": [
+        2,
+        2
+      ],
+      "Shopify": [
+        8,
+        1
+      ],
+      "Stripe": [
+        2,
+        0
+      ],
+      "Substack": [
+        44,
+        73
+      ],
+      "freeCodeCamp": [
+        47,
+        38
+      ]
+    },
+    "08": {
+      "GitHub": [
+        2,
+        1
+      ],
+      "Shopify": [
+        6,
+        4
+      ],
+      "Stripe": [
+        1,
+        0
+      ],
+      "Substack": [
+        69,
+        42
+      ],
+      "freeCodeCamp": [
+        58,
+        29
+      ]
+    },
+    "09": {
+      "GitHub": [
+        2,
+        1
+      ],
+      "Shopify": [
+        4,
+        1
+      ],
+      "Slack": [
+        0,
+        1
+      ],
+      "Stripe": [
+        3,
+        1
+      ],
+      "Substack": [
+        53,
+        61
+      ],
+      "freeCodeCamp": [
+        53,
+        39
+      ]
+    },
+    "10": {
+      "GitHub": [
+        2,
+        0
+      ],
+      "Netflix": [
+        0,
+        3
+      ],
+      "Shopify": [
+        7,
+        2
+      ],
+      "Slack": [
+        1,
+        1
+      ],
+      "Stripe": [
+        1,
+        0
+      ],
+      "Substack": [
+        69,
+        64
+      ],
+      "freeCodeCamp": [
+        81,
+        44
+      ]
+    },
+    "11": {
+      "GitHub": [
+        0,
+        2
+      ],
+      "Netflix": [
+        0,
+        1
+      ],
+      "Shopify": [
+        6,
+        0
+      ],
+      "Slack": [
+        0,
+        2
+      ],
+      "Stripe": [
+        1,
+        0
+      ],
+      "Substack": [
+        81,
+        68
+      ],
+      "freeCodeCamp": [
+        46,
+        40
+      ]
+    },
+    "12": {
+      "GitHub": [
+        1,
+        0
+      ],
+      "Netflix": [
+        2,
+        1
+      ],
+      "Shopify": [
+        5,
+        4
+      ],
+      "Slack": [
+        0,
+        1
+      ],
+      "Stripe": [
+        0,
+        1
+      ],
+      "Substack": [
+        107,
+        41
+      ],
+      "freeCodeCamp": [
+        33,
+        33
+      ]
+    }
+  },
+  "by_category": {
+    "CNCF": [
+      10,
+      0
+    ],
+    "GitHub": [
+      86,
+      62
+    ],
+    "Netflix": [
+      12,
+      15
+    ],
+    "Shopify": [
+      72,
+      25
+    ],
+    "Slack": [
+      3,
+      9
+    ],
+    "Stripe": [
+      16,
+      5
+    ],
+    "Substack": [
+      987,
+      845
+    ],
+    "freeCodeCamp": [
+      907,
+      669
+    ]
+  },
+  "by_category_and_source": {},
+  "read_unread_totals": [
+    2093,
+    1630
+  ],
+  "unread_by_month": {
+    "01": 101,
+    "02": 169,
+    "03": 237,
+    "04": 199,
+    "05": 203,
+    "06": 119,
+    "07": 114,
+    "08": 76,
+    "09": 104,
+    "10": 114,
+    "11": 113,
+    "12": 81
+  },
+  "unread_by_category": {
+    "GitHub": 62,
+    "Netflix": 15,
+    "Shopify": 25,
+    "Slack": 9,
+    "Stripe": 5,
+    "Substack": 845,
+    "freeCodeCamp": 669
+  },
+  "unread_by_source": {
+    "GitHub": 62,
+    "Netflix": 15,
+    "Shopify": 25,
+    "Slack": 9,
+    "Stripe": 5,
+    "Substack": 845,
+    "freeCodeCamp": 669
+  },
+  "unread_by_year": {
+    "2020": 6,
+    "2021": 8,
+    "2022": 2,
+    "2024": 652,
+    "2025": 692,
+    "2026": 270
+  },
+  "unread_article_age_distribution": {
+    "1_to_3_months": 100,
+    "3_to_6_months": 87,
+    "6_to_12_months": 334,
+    "less_than_1_month": 99,
+    "older_than_1year": 1010
+  },
+  "oldest_unread_article": {
+    "title": "Using DNS Traffic Management to Add Resiliency to Shopify’s Services",
+    "date": "2020-08-05",
+    "link": "https://shopify.engineering/using-dns-traffic-management-add-resiliency-shopify-services",
+    "category": "Shopify",
+    "read": false
+  },
+  "top_oldest_unread_articles": [
+    {
+      "title": "Using DNS Traffic Management to Add Resiliency to Shopify’s Services",
+      "date": "2020-08-05",
+      "link": "https://shopify.engineering/using-dns-traffic-management-add-resiliency-shopify-services",
+      "category": "Shopify",
+      "read": false
+    },
+    {
+      "title": "To design and develop an interactive globe",
+      "date": "2020-09-01",
+      "link": "https://stripe.com/blog/globe",
+      "category": "Stripe",
+      "read": false
+    },
+    {
+      "title": "Pummelling the Platform–Performance Testing Shopify",
+      "date": "2020-12-02",
+      "link": "https://shopify.engineering/performance-testing-shopify",
+      "category": "Shopify",
+      "read": false
+    }
+  ],
+  "source_metadata": {
+    "CNCF": {
+      "added": "2026-03-24",
+      "color": "#0078D4"
+    },
+    "GitHub": {
+      "added": "2024-03-18",
+      "color": "#f093fb"
+    },
+    "Netflix": {
+      "added": "2026-02-15",
+      "color": "#E50914"
+    },
+    "Shopify": {
+      "added": "2025-03-05",
+      "color": "#4facfe"
+    },
+    "Slack": {
+      "added": "2026-03-22",
+      "color": "#E50914"
+    },
+    "Stripe": {
+      "added": "2025-11-19",
+      "color": "#00f2fe"
+    },
+    "Substack": {
+      "added": "initial",
+      "color": "#667eea"
+    },
+    "freeCodeCamp": {
+      "added": "initial",
+      "color": "#764ba2"
+    }
+  },
+  "read_count": 2093,
+  "unread_count": 1630,
+  "read_rate": 56.21810367982809,
+  "avg_articles_per_month": 20.75250836120401,
+  "last_updated": "2026-06-12T01:47:36.074277554Z",
+  "ai_delta_analysis": "Reading velocity has slightly increased, but the read rate has marginally decreased, indicating a growing backlog of unread content. There has been an increase in the volume of older unread articles, particularly those exceeding one year in age. The focus this week shifted slightly towards content from 2026, with a decrease in engagement with content from 2025."
+}
