@@ -108,13 +108,12 @@ type Author struct {
 }
 
 type Landing struct {
-	Header        Header              `yaml:"header"`
-	SystemSpec    SystemSpecification `yaml:"system_specification"`
-	Hero          Hero                `yaml:"hero"`
-	WhatIsReading WhatIsReading       `yaml:"what_is_reading_analytics"`
-	KeyFeatures   KeyFeatures         `yaml:"key_features"`
-	WhyItMatters  WhyItMatters        `yaml:"why_it_matters"`
-	Footer        LandingFooter       `yaml:"footer"`
+	Header Header        `yaml:"header"`
+	LLMS   LLMS          `yaml:"llms"`
+	Tech   Tech          `yaml:"tech"`
+	Proof  Proof         `yaml:"proof"`
+	Reach  Reach         `yaml:"reach"`
+	Footer LandingFooter `yaml:"footer"`
 }
 
 type Header struct {
@@ -122,47 +121,50 @@ type Header struct {
 	SiteURL     string `yaml:"site_url"`
 }
 
-type SystemSpecification struct {
+type LLMS struct {
 	Objective           string `yaml:"objective"`
 	Stack               string `yaml:"stack"`
 	Pattern             string `yaml:"pattern"`
 	EntryPoint          string `yaml:"entry_point"`
 	PersistenceStrategy string `yaml:"persistence_strategy"`
 	Observability       string `yaml:"observability"`
-	MachineRegistry     string `yaml:"machine_registry"`
 }
 
-type Hero struct {
-	Headline         string `yaml:"headline"`
-	SubHeadline      string `yaml:"sub_headline"`
-	BriefDescription string `yaml:"brief_description"`
-	CTAText          string `yaml:"cta_text"`
-	CTALink          string `yaml:"cta_link"`
-	SecondaryCTAText string `yaml:"secondary_cta_text"`
-	SecondaryCTALink string `yaml:"secondary_cta_link"`
-	TertiaryCTAText  string `yaml:"tertiary_cta_text"`
-	TertiaryCTALink  string `yaml:"tertiary_cta_link"`
+type Tech struct {
+	Extractor Component `yaml:"extractor"`
+	Metrics   Component `yaml:"metrics"`
+	Dashboard Component `yaml:"dashboard"`
 }
 
-type WhatIsReading struct {
-	Title   string   `yaml:"title"`
-	Content []string `yaml:"content"`
-}
-
-type KeyFeatures struct {
-	Title    string    `yaml:"title"`
-	Features []Feature `yaml:"features"`
-}
-
-type Feature struct {
-	Name        string `yaml:"name"`
+type Component struct {
 	Description string `yaml:"description"`
-	Icon        string `yaml:"icon"`
 }
 
-type WhyItMatters struct {
-	Title  string   `yaml:"title"`
-	Points []string `yaml:"points"`
+type Proof struct {
+	Reproducibility       Component `yaml:"reproducibility"`
+	AutomatedVerification Component `yaml:"automated_verification"`
+	TelemetryPipeline     Component `yaml:"telemetry_pipeline"`
+}
+
+type Reach struct {
+	ArchitectureBlueprint Blueprint          `yaml:"architecture_blueprint"`
+	HumblePivots          []TradeOff         `yaml:"humble_pivots"`
+	ObjectiveClarity      Component          `yaml:"objective_clarity"`
+	VerifiableOutputs     []VerifiableOutput `yaml:"verifiable_outputs"`
+}
+
+type Blueprint struct {
+	DiagramASCII string `yaml:"diagram_ascii"`
+}
+
+type TradeOff struct {
+	Title       string `yaml:"title"`
+	Description string `yaml:"description"`
+}
+
+type VerifiableOutput struct {
+	Title          string `yaml:"title"`
+	TerminalOutput string `yaml:"terminal_output"`
 }
 
 type LandingFooter struct {

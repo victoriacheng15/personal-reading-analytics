@@ -2,58 +2,115 @@ header:
   project_name: "Personal Reading Analytics"
   site_url: "https://victoriacheng15.github.io/personal-reading-analytics"
 
-system_specification:
-  objective: "A zero-infrastructure reading analytics pipeline that transforms personal reading habits into actionable insights using Go, Python, and GitHub Actions."
+llms:
+  objective: "A zero-infrastructure reading analytics pipeline that tracks personal engineering blog consumption and generates insights via Go, Python, and Google Gemini."
   stack: "Go, Python, GitHub Actions, MongoDB Atlas, Google Sheets, Google Gemini"
   pattern: "Event Sourcing / Serverless Pipeline"
   entry_point: "cmd/web/main.go"
   persistence_strategy: "MongoDB (Event Log) + Google Sheets (Current State)"
   observability: "GitHub Actions Logs + MongoDB Event Sourcing"
-  machine_registry: "/api/evolution-registry.json"
 
-hero:
-  headline: "Your Reading, Visualized"
-  sub_headline: "No servers, no noise, just your data."
-  brief_description: "A lightweight analytics system designed to track engineering blog consumption and surface learning patterns without infrastructure overhead."
-  cta_text: "View Analytics"
-  cta_link: "analytics.html"
-  secondary_cta_text: "See the Evolution"
-  secondary_cta_link: "evolution.html"
-  tertiary_cta_text: "View on GitHub"
-  tertiary_cta_link: "https://github.com/victoriacheng15/personal-reading-analytics"
+# Core Components & Logic
+tech:
+  extractor:
+    description: "Universal, configuration-driven Python extractor that automates RSS/web metadata collection, logging event traces to MongoDB and syncing current state to Google Sheets."
+  metrics:
+    description: "Go metrics calculator that aggregates reading volumes, read rates, category distributions, and backlog age profiles into a structured JSON database."
+  dashboard:
+    description: "Go static site generator that compiles HTML templates and compiled Tailwind CSS to produce responsive analytics and historical progression dashboards."
 
-what_is_reading_analytics:
-  title: "Origin Story"
-  content:
-    - "I used to follow a handful of engineering blogs, but checking each one for new posts became a chore, too many tabs, too easy to miss something. (Yes, I’ve definitely had 20+ tabs open at once… 😅)"
-    - "So I built a simple script to automatically pull article titles, dates, and links into Google Sheets, inspired by early Levels.fyi’s “no database” approach. Everything in one place. No more tab-hopping."
-    - "Later, I got curious: What if I could actually see my reading habits over time? Not to “optimize” productivity, but to understand where my attention really goes… and which blogs still earn it."
-    - "That curiosity led me to build a lightweight analytics system in Go, powered by the same Python-collected data. The result? A personal reading analytics: a quiet mirror on my learning journey."
+# Validation & Resiliency Testing
+proof:
+  reproducibility:
+    description: "Standardized Go environments and local Python virtual environments bootstrapped predictably via Makefile automation."
+  automated_verification:
+    description: "Dual-layer testing architecture verifying data parsing logic via Go unit tests and RSS/web extraction routines via Python pytest suites."
+  telemetry_pipeline:
+    description: "Event-sourced pipeline that pushes extraction telemetry, database updates, and failure logs directly to MongoDB Atlas for decoupled auditing."
 
-key_features:
-  title: "Engineering Principles"
-  features:
-    - name: "Zero Infrastructure"
-      description: "No servers or hosting costs. Runs entirely on GitHub Actions and Pages."
-      icon: "🚀"
-    - name: "Fully Automated"
-      description: "Scheduled workflows keep data fresh, utilizing CI/CD governance for human-in-the-loop oversight."
-      icon: "🤖"
-    - name: "Observability First"
-      description: "Uses an Event Sourcing pattern to decouple extraction from analytics, ensuring full auditability."
-      icon: "🛡️"
-    - name: "Cost Effective"
-      description: "Leverages free tiers (GitHub, MongoDB Atlas, Google Sheets) for powerful, budget-free automation."
-      icon: "💰"
+# Design Trade-offs & Verification Logs
+reach:
+  # Architecture Blueprint
+  architecture_blueprint:
+    diagram_ascii: |4
+             ┌───────────────┐
+             │  Google Sheet │
+             └───────────────┘
+                     ▲
+                     │ (Read/Write Articles & Sources)
+                     ▼
+             ┌───────────────┐     (Fetch Metadata)     ┌──────────────────────┐
+             │  Python Extr  │ ───────────────────────> │ RSS/Web Blogs        │
+             │  (Extraction) │                          └──────────────────────┘
+             └───────────────┘
+                     │
+                     │ (Log events)
+                     ▼
+             ┌───────────────┐
+             │  MongoDB      │
+             └───────────────┘
+                     ▲
+                     │ (Query stats)
+                     ▼
+             ┌───────────────┐
+             │  Go Metrics   │
+             └───────────────┘
+                     │
+                     │ (Generate JSON)
+                     ▼
+             ┌───────────────┐
+             │ Go Dashboard  │ ───────────────────────> [ Static HTML/CSS ]
+             │ (Generator)   │                          (GitHub Pages)
+             └───────────────┘
+  humble_pivots:
+    - title: "Caching Google Sheets to Avoid API Rate Limits"
+      description: "Originally, Go metrics queried Google Sheets directly during page builds. This routinely hit API rate limits. Pivoted to using Google Sheets as the SSOT database but logging sync events to MongoDB, letting Go query cached data for stability and speed."
+    - title: "Integrating Generative AI for Qualitative Trend Analysis (ADR 002)"
+      description: "Initially, the system only surfaced quantitative metrics (totals, read rates). Pivoted to integrating Google Gemini (GenAI) to analyze the differences (deltas) between pipeline runs, generating qualitative learning insights."
+    - title: "Decoupling Dashboard Generation from Live Database Queries"
+      description: "Originally, the Go static site generator queried MongoDB Atlas directly during compilation to retrieve historical trends. Pivoted to reading pre-computed local daily JSON metrics files, allowing the dashboard generator to build instantly and offline without database network dependencies."
+  objective_clarity:
+    description: "Serves strictly as a personal, static, read-only dashboard. Does not support multi-user authenticated views, write operations outside of the extraction scheduler, or high-concurrency database queries."
+  verifiable_outputs:
+    - title: "Go Test Suite (make test-go)"
+      terminal_output: |
+        go test -v ./cmd/... ./internal/...
+        === RUN   TestCalculateTopReadRateSource
+        --- PASS: TestCalculateTopReadRateSource (0.00s)
+        === RUN   TestCalculateMostUnreadSource
+        --- PASS: TestCalculateMostUnreadSource (0.00s)
+        === RUN   TestCalculateThisMonthArticles
+        --- PASS: TestCalculateThisMonthArticles (0.00s)
+        PASS
+        ok  	github.com/victoriacheng15/personal-reading-analytics/internal/metrics	0.003s
+        === RUN   TestGetTemplatesDir
+        === RUN   TestGetTemplatesDir/finds_templates_directory_from_primary_path
+        === RUN   TestGetTemplatesDir/finds_templates_directory_from_relative_path
+        === RUN   TestGetTemplatesDir/returns_error_when_templates_directory_not_found
+        --- PASS: TestGetTemplatesDir (0.00s)
+            --- PASS: TestGetTemplatesDir/finds_templates_directory_from_primary_path (0.00s)
+            --- PASS: TestGetTemplatesDir/finds_templates_directory_from_relative_path (0.00s)
+            --- PASS: TestGetTemplatesDir/returns_error_when_templates_directory_not_found (0.00s)
+        === RUN   TestLoadEvolutionData
+        === RUN   TestLoadEvolutionData/loads_evolution_data_successfully
+        === RUN   TestLoadEvolutionData/returns_error_when_file_missing
+        --- PASS: TestLoadEvolutionData (0.00s)
+            --- PASS: TestLoadEvolutionData/loads_evolution_data_successfully (0.00s)
+            --- PASS: TestLoadEvolutionData/returns_error_when_file_missing (0.00s)
+        PASS
+        ok  	github.com/victoriacheng15/personal-reading-analytics/internal/web	0.010s
+    - title: "Python Test Suite (make test-py)"
+      terminal_output: |
+        .venv/bin/pytest script/
+        ============================= test session starts ==============================
+        platform linux -- Python 3.12.3, pytest-8.3.4, pluggy-1.5.1
+        configfile: pyproject.toml
+        plugins: cov-6.0.0
+        collected 3 items
 
-why_it_matters:
-  title: "Mastering the Information Stream"
-  points:
-    - "Data Ownership: Complete control over your reading history and metrics."
-    - "Operational Simplicity: Proves that sophisticated automation doesn't require a large budget."
-    - "Actionable Insights: Identifies high-value sources and reading trends over time."
-    - "Educational Laboratory: A playground for testing Go, Python, and Event Sourcing patterns."
-    - "Minimalist Design: Focuses on domain value by eliminating infrastructure 'plumbing'."
+        script/test_extractor.py ...                                             [100%]
+
+        ============================== 3 passed in 0.32s ================================================
 
 footer:
   author: "Victoria Cheng"
