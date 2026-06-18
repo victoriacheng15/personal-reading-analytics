@@ -488,7 +488,7 @@ func (s *AnalyticsService) generateRegistry(vm ViewModel, outputDir string) erro
 		Project:            vm.Landing.Header.ProjectName,
 		Version:            "1.0.0",
 		LastUpdated:        vm.LastUpdated.Format("2006-01-02"),
-		MachineRegistryURL: vm.Landing.SystemSpec.MachineRegistry,
+		MachineRegistryURL: "/api/evolution-registry.json",
 	}
 
 	for _, chapter := range vm.EvolutionData.Chapters {

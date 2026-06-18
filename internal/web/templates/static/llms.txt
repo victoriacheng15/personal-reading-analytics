@@ -1,24 +1,16 @@
-# {{ .Landing.Header.ProjectName }} - System Specification
+# {{ .Landing.Header.ProjectName }}
 
 ## Objective
-
-{{ .Landing.SystemSpec.Objective }}
+{{ .Landing.LLMS.Objective }}
 
 ## Technical Stack
-
-{{ .Landing.SystemSpec.Stack }}
+{{ .Landing.LLMS.Stack }}
 
 ## Core Architecture
+- **Pattern:** {{ .Landing.LLMS.Pattern }}
+- **Entry Point:** {{ .Landing.LLMS.EntryPoint }}
+- **Persistence Strategy:** {{ .Landing.LLMS.PersistenceStrategy }}
+- **Observability:** {{ .Landing.LLMS.Observability }}
 
-- **Pattern**: {{ .Landing.SystemSpec.Pattern }}
-- **Entry Point**: {{ .Landing.SystemSpec.EntryPoint }}
-- **Persistence Strategy**: {{ .Landing.SystemSpec.PersistenceStrategy }}
-- **Observability**: {{ .Landing.SystemSpec.Observability }}
-
-## Discovery & Registry
-
-- **Machine Registry**: {{ .Landing.Header.SiteURL }}{{ .Landing.SystemSpec.MachineRegistry }}
-
-## Key
-
-- **GitHub Repository**: {{ .Landing.Hero.CTALink }}
+## Resource Links
+- **Code Repository:** {{ .Landing.Footer.GitHubLink }}/personal-reading-analytics
