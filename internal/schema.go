@@ -108,12 +108,13 @@ type Author struct {
 }
 
 type Landing struct {
-	Header Header        `yaml:"header"`
-	LLMS   LLMS          `yaml:"llms"`
-	Tech   Tech          `yaml:"tech"`
-	Proof  Proof         `yaml:"proof"`
-	Reach  Reach         `yaml:"reach"`
-	Footer LandingFooter `yaml:"footer"`
+	Header       Header        `yaml:"header"`
+	LLMS         LLMS          `yaml:"llms"`
+	Architecture Architecture  `yaml:"architecture"`
+	Tech         []Tech        `yaml:"tech"`
+	Proof        []Proof       `yaml:"proof"`
+	Reach        Reach         `yaml:"reach"`
+	Footer       LandingFooter `yaml:"footer"`
 }
 
 type Header struct {
@@ -130,35 +131,32 @@ type LLMS struct {
 	Observability       string `yaml:"observability"`
 }
 
-type Tech struct {
-	Extractor Component `yaml:"extractor"`
-	Metrics   Component `yaml:"metrics"`
-	Dashboard Component `yaml:"dashboard"`
+type Architecture struct {
+	DiagramASCII string `yaml:"diagram_ascii"`
 }
 
-type Component struct {
+type Tech struct {
+	Title       string `yaml:"title"`
 	Description string `yaml:"description"`
 }
 
 type Proof struct {
-	Reproducibility       Component `yaml:"reproducibility"`
-	AutomatedVerification Component `yaml:"automated_verification"`
-	TelemetryPipeline     Component `yaml:"telemetry_pipeline"`
+	Title       string `yaml:"title"`
+	Description string `yaml:"description"`
 }
 
 type Reach struct {
-	ArchitectureBlueprint Blueprint          `yaml:"architecture_blueprint"`
-	HumblePivots          []TradeOff         `yaml:"humble_pivots"`
-	ObjectiveClarity      Component          `yaml:"objective_clarity"`
-	VerifiableOutputs     []VerifiableOutput `yaml:"verifiable_outputs"`
+	HumblePivots      []Pivot            `yaml:"humble_pivots"`
+	ObjectiveClarity  ObjectiveClarity   `yaml:"objective_clarity"`
+	VerifiableOutputs []VerifiableOutput `yaml:"verifiable_outputs"`
 }
 
-type Blueprint struct {
-	DiagramASCII string `yaml:"diagram_ascii"`
-}
-
-type TradeOff struct {
+type Pivot struct {
 	Title       string `yaml:"title"`
+	Description string `yaml:"description"`
+}
+
+type ObjectiveClarity struct {
 	Description string `yaml:"description"`
 }
 
