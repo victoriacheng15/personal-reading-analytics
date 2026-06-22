@@ -10,29 +10,9 @@ llms:
   persistence_strategy: "MongoDB (Event Log) + Google Sheets (Current State)"
   observability: "GitHub Actions Logs + MongoDB Event Sourcing"
 
-# Core Components & Logic
-tech:
-  extractor:
-    description: "Universal, configuration-driven Python extractor that automates RSS/web metadata collection, logging event traces to MongoDB and syncing current state to Google Sheets."
-  metrics:
-    description: "Go metrics calculator that aggregates reading volumes, read rates, category distributions, and backlog age profiles into a structured JSON database."
-  dashboard:
-    description: "Go static site generator that compiles HTML templates and compiled Tailwind CSS to produce responsive analytics and historical progression dashboards."
-
-# Validation & Resiliency Testing
-proof:
-  reproducibility:
-    description: "Standardized Go environments and local Python virtual environments bootstrapped predictably via Makefile automation."
-  automated_verification:
-    description: "Dual-layer testing architecture verifying data parsing logic via Go unit tests and RSS/web extraction routines via Python pytest suites."
-  telemetry_pipeline:
-    description: "Event-sourced pipeline that pushes extraction telemetry, database updates, and failure logs directly to MongoDB Atlas for decoupled auditing."
-
-# Design Trade-offs & Verification Logs
-reach:
-  # Architecture Blueprint
-  architecture_blueprint:
-    diagram_ascii: |4
+# Architecture Blueprint
+architecture:
+  diagram_ascii: |4
              ┌───────────────┐
              │  Google Sheet │
              └───────────────┘
@@ -62,6 +42,27 @@ reach:
              │ Go Dashboard  │ ───────────────────────> [ Static HTML/CSS ]
              │ (Generator)   │                          (GitHub Pages)
              └───────────────┘
+
+# Core Components & Logic
+tech:
+  - title: "extractor"
+    description: "Universal, configuration-driven Python extractor that automates RSS/web metadata collection, logging event traces to MongoDB and syncing current state to Google Sheets."
+  - title: "metrics"
+    description: "Go metrics calculator that aggregates reading volumes, read rates, category distributions, and backlog age profiles into a structured JSON database."
+  - title: "dashboard"
+    description: "Go static site generator that compiles HTML templates and compiled Tailwind CSS to produce responsive analytics and historical progression dashboards."
+
+# Validation & Resiliency Testing
+proof:
+  - title: "Reproducibility"
+    description: "Standardized Go environments and local Python virtual environments bootstrapped predictably via Makefile automation."
+  - title: "Automated Verification"
+    description: "Dual-layer testing architecture verifying data parsing logic via Go unit tests and RSS/web extraction routines via Python pytest suites."
+  - title: "Telemetry Pipeline"
+    description: "Event-sourced pipeline that pushes extraction telemetry, database updates, and failure logs directly to MongoDB Atlas for decoupled auditing."
+
+# Design Trade-offs & Verification Logs
+reach:
   humble_pivots:
     - title: "Caching Google Sheets to Avoid API Rate Limits"
       description: "Originally, Go metrics queried Google Sheets directly during page builds. This routinely hit API rate limits. Pivoted to using Google Sheets as the SSOT database but logging sync events to MongoDB, letting Go query cached data for stability and speed."

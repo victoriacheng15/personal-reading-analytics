@@ -22,7 +22,7 @@
     <section aria-label="Architecture Blueprint" class="flex flex-col gap-8">
         <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start">Architecture Blueprint</h2>
         <div class="flex flex-col gap-4 bg-slate-100/70 border-2 border-slate-200 rounded-2xl p-6 shadow-sm">
-            <pre class="bg-slate-900 text-cyan-400 p-6 rounded-xl font-mono text-xs overflow-x-auto leading-normal whitespace-pre"><code>{{.Landing.Reach.ArchitectureBlueprint.DiagramASCII}}</code></pre>
+            <pre class="bg-slate-900 text-cyan-400 p-6 rounded-xl font-mono text-xs overflow-x-auto leading-normal whitespace-pre"><code>{{.Landing.Architecture.DiagramASCII}}</code></pre>
         </div>
     </section>
 
@@ -30,18 +30,12 @@
     <section aria-label="Core Components" class="flex flex-col gap-8">
         <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start">Core Components</h2>
         <div class="flex flex-col gap-6">
+            {{range .Landing.Tech}}
             <article class="bg-slate-100/70 border-2 border-slate-200 rounded-2xl p-8 flex flex-col gap-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-sky-700">
-                <h3 class="text-xl font-bold text-sky-800 tracking-wide uppercase">Extractor</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">{{.Landing.Tech.Extractor.Description}}</p>
+                <h3 class="text-xl font-bold text-sky-800 tracking-wide uppercase">{{.Title}}</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">{{.Description}}</p>
             </article>
-            <article class="bg-slate-100/70 border-2 border-slate-200 rounded-2xl p-8 flex flex-col gap-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-sky-700">
-                <h3 class="text-xl font-bold text-sky-800 tracking-wide uppercase">Metrics</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">{{.Landing.Tech.Metrics.Description}}</p>
-            </article>
-            <article class="bg-slate-100/70 border-2 border-slate-200 rounded-2xl p-8 flex flex-col gap-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-sky-700">
-                <h3 class="text-xl font-bold text-sky-800 tracking-wide uppercase">Dashboard</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">{{.Landing.Tech.Dashboard.Description}}</p>
-            </article>
+            {{end}}
         </div>
     </section>
 
@@ -49,27 +43,23 @@
     <section aria-label="Validation and Resiliency" class="flex flex-col gap-8">
         <h2 class="text-2xl font-bold text-slate-800 border-b-4 border-sky-700 pb-2 self-start">Validation & Resiliency</h2>
         <div class="flex flex-col gap-6">
+            {{range .Landing.Proof}}
             <div class="bg-slate-100/70 border-2 border-slate-200 rounded-2xl p-8 flex flex-col gap-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-sky-700">
                 <div class="flex items-center gap-3">
+                    {{if eq .Title "Reproducibility"}}
                     <span role="img" aria-label="Reproducibility" class="text-2xl">🛠️</span>
-                    <h3 class="font-bold text-slate-800 text-lg uppercase tracking-wide">Reproducibility</h3>
-                </div>
-                <p class="text-slate-600 text-sm leading-relaxed">{{.Landing.Proof.Reproducibility.Description}}</p>
-            </div>
-            <div class="bg-slate-100/70 border-2 border-slate-200 rounded-2xl p-8 flex flex-col gap-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-sky-700">
-                <div class="flex items-center gap-3">
+                    {{else if or (eq .Title "Automated Verification") (eq .Title "Verification")}}
                     <span role="img" aria-label="Verification" class="text-2xl">✅</span>
-                    <h3 class="font-bold text-slate-800 text-lg uppercase tracking-wide">Verification</h3>
-                </div>
-                <p class="text-slate-600 text-sm leading-relaxed">{{.Landing.Proof.AutomatedVerification.Description}}</p>
-            </div>
-            <div class="bg-slate-100/70 border-2 border-slate-200 rounded-2xl p-8 flex flex-col gap-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-sky-700">
-                <div class="flex items-center gap-3">
+                    {{else if or (eq .Title "Telemetry Pipeline") (eq .Title "Telemetry")}}
                     <span role="img" aria-label="Telemetry" class="text-2xl">📡</span>
-                    <h3 class="font-bold text-slate-800 text-lg uppercase tracking-wide">Telemetry</h3>
+                    {{else}}
+                    <span role="img" aria-label="Info" class="text-2xl">📋</span>
+                    {{end}}
+                    <h3 class="font-bold text-slate-800 text-lg uppercase tracking-wide">{{.Title}}</h3>
                 </div>
-                <p class="text-slate-600 text-sm leading-relaxed">{{.Landing.Proof.TelemetryPipeline.Description}}</p>
+                <p class="text-slate-600 text-sm leading-relaxed">{{.Description}}</p>
             </div>
+            {{end}}
         </div>
     </section>
 
