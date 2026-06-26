@@ -1,11 +1,55 @@
 package web
 
 import (
+	"encoding/json"
 	"html/template"
 	"time"
 
 	schema "github.com/victoriacheng15/personal-reading-analytics/internal"
 )
+
+// ==============================================================================
+// CONFIGURATION MODELS
+// ==============================================================================
+
+// GenConfig holds configuration for a specific generation pass
+type GenConfig struct {
+	OutputDir    string
+	BaseURL      string
+	IsHistorical bool
+	HistoryDates []string
+	ReportDate   string
+}
+
+// ==============================================================================
+// CHART DATA MODELS
+// ==============================================================================
+
+// ChartDataset represents a single dataset for Chart.js
+type ChartDataset struct {
+	Label           string      `json:"label"`
+	Data            interface{} `json:"data"`
+	BackgroundColor interface{} `json:"backgroundColor,omitempty"`
+	BorderColor     string      `json:"borderColor,omitempty"`
+	BorderWidth     int         `json:"borderWidth,omitempty"`
+}
+
+// YearChartData holds prepared year chart data
+type YearChartData struct {
+	LabelsJSON json.RawMessage
+	DataJSON   json.RawMessage
+}
+
+// MonthChartData holds prepared month chart data
+type MonthChartData struct {
+	LabelsJSON    json.RawMessage
+	DatasetsJSON  json.RawMessage
+	TotalDataJSON json.RawMessage
+}
+
+// ==============================================================================
+// VIEW MODELS
+// ==============================================================================
 
 // ViewModel represents the data structure passed to HTML templates
 type ViewModel struct {
