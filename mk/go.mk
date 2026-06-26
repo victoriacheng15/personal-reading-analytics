@@ -51,3 +51,4 @@ web-build: setup-tailwind ## Build and run the dashboard generator
 	./$(BIN_DIR)/web-ssg
 	mkdir -p dist/css
 	./$(BIN_DIR)/tailwindcss -i ./internal/web/templates/css/input.css -o ./dist/css/styles.css --minify
+	rm -rf $(BIN_DIR)
