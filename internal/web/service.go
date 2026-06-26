@@ -15,6 +15,7 @@ import (
 
 	schema "github.com/victoriacheng15/personal-reading-analytics/internal"
 	"github.com/victoriacheng15/personal-reading-analytics/internal/metrics"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -29,15 +30,6 @@ type AnalyticsService struct {
 // NewAnalyticsService creates a new AnalyticsService
 func NewAnalyticsService(outputDir string) *AnalyticsService {
 	return &AnalyticsService{outputDir: outputDir}
-}
-
-// GenConfig holds configuration for a specific generation pass
-type GenConfig struct {
-	OutputDir    string
-	BaseURL      string
-	IsHistorical bool
-	HistoryDates []string
-	ReportDate   string
 }
 
 // GenerateFullSite generates all pages (index, analytics, evolution)
@@ -519,4 +511,367 @@ func (s *AnalyticsService) generateRegistry(vm ViewModel, outputDir string) erro
 	}
 
 	return nil
+}
+
+// ==============================================================================
+// CHART PREPARATION HELPERS
+// ==============================================================================
+
+// PrepareYearChartData prepares year breakdown chart data
+func PrepareYearChartData(years []schema.YearInfo) *YearChartData {
+	labels := make([]string, 0)
+	data := make([]int, 0)
+
+	for _, year := range years {
+		labels = append(labels, year.Year)
+		data = append(data, year.Count)
+	}
+
+	labelsJSON, _ := json.Marshal(labels)
+	dataJSON, _ := json.Marshal(data)
+
+	return &YearChartData{
+		LabelsJSON: labelsJSON,
+		DataJSON:   dataJSON,
+	}
+}
+
+// PrepareMonthChartData prepares month breakdown chart data with source stacking
+func PrepareMonthChartData(months []schema.MonthInfo, sources []schema.SourceInfo) *MonthChartData {
+	monthLabels := make([]string, 0)
+	for _, month := range months {
+		// Just use the month name for aggregated monthly view (no year)
+		monthLabels = append(monthLabels, month.Name)
+	}
+	monthLabelsJSON, _ := json.Marshal(monthLabels)
+
+	datasetsMap := make(map[string][]int)
+
+	// Initialize all sources with data for each month
+	for _, source := range sources {
+		datasetsMap[source.Name] = make([]int, len(months))
+	}
+
+	// Populate data from month.Sources
+	for monthIdx, month := range months {
+		for sourceName, articleCount := range month.Sources {
+			if _, exists := datasetsMap[sourceName]; exists {
+				datasetsMap[sourceName][monthIdx] = articleCount
+			}
+		}
+	}
+
+	// Create Chart.js datasets
+	var datasets []map[string]interface{}
+	for _, source := range sources {
+		if data, exists := datasetsMap[source.Name]; exists && len(data) > 0 {
+			color := source.Color
+			if color == "" {
+				color = "#" + colorHash(source.Name)
+			}
+			dataset := map[string]interface{}{
+				"label":           source.Name,
+				"data":            data,
+				"backgroundColor": color,
+				"borderColor":     "#2d3748",
+				"borderWidth":     1,
+			}
+			datasets = append(datasets, dataset)
+		}
+	}
+
+	datasetsJSON, _ := json.Marshal(datasets)
+
+	// Prepare total data for months (for the line chart view)
+	monthTotalData := make([]int, 0)
+	for _, month := range months {
+		monthTotalData = append(monthTotalData, month.Total)
+	}
+	monthTotalDataJSON, _ := json.Marshal(monthTotalData)
+
+	return &MonthChartData{
+		LabelsJSON:    monthLabelsJSON,
+		DatasetsJSON:  datasetsJSON,
+		TotalDataJSON: monthTotalDataJSON,
+	}
+}
+
+// colorHash generates a simple hash for generating colors
+func colorHash(s string) string {
+	h := uint32(5381)
+	for i := 0; i < len(s); i++ {
+		h = ((h << 5) + h) + uint32(s[i])
+	}
+	return formatHex(h % 16777215)
+}
+
+// formatHex formats a number as a 6-digit hex string
+func formatHex(n uint32) string {
+	const hex = "0123456789abcdef"
+	b := make([]byte, 6)
+	for i := 5; i >= 0; i-- {
+		b[i] = hex[n%16]
+		n /= 16
+	}
+	return string(b)
+}
+
+// ==============================================================================
+// TEMPLATE & ASSET LOADER HELPERS
+// ==============================================================================
+
+// GetTemplatesDir finds the directory containing HTML templates
+// It tries multiple path configurations to handle different execution contexts
+func GetTemplatesDir() (string, error) {
+	// Define canonical paths in priority order
+	possibleDirs := []string{
+		// When running from project root (most common during development)
+		"internal/web/templates",
+		// Fallback: explicit relative path construction
+		filepath.Join(".", "internal", "web", "templates"),
+	}
+
+	var cwd string
+	if wd, err := os.Getwd(); err == nil {
+		cwd = wd
+	}
+
+	// Try each path
+	for _, dir := range possibleDirs {
+		info, err := os.Stat(dir)
+		if err == nil && info.IsDir() {
+			return dir, nil
+		}
+	}
+
+	// Enhanced error message with debugging info
+	return "", fmt.Errorf(
+		"templates directory not found. Current working directory: %s. Tried paths: %v",
+		cwd, possibleDirs,
+	)
+}
+
+// findAndReadFile searches for a file in a list of possible relative paths and reads it.
+func findAndReadFile(possiblePaths []string) ([]byte, string, error) {
+	for _, path := range possiblePaths {
+		content, err := os.ReadFile(path)
+		if err == nil {
+			return content, path, nil
+		}
+	}
+	return nil, "", fmt.Errorf("file not found in any of the paths: %v", possiblePaths)
+}
+
+// LoadEvolutionData reads the evolution.yml file and parses it into EvolutionData struct
+func LoadEvolutionData() (schema.EvolutionData, error) {
+	possiblePaths := []string{
+		"internal/web/content/evolution.yml",
+		filepath.Join(".", "internal", "web", "content", "evolution.yml"),
+	}
+
+	var data schema.EvolutionData
+
+	content, _, err := findAndReadFile(possiblePaths)
+	if err != nil {
+		return schema.EvolutionData{}, fmt.Errorf("evolution.yml not found. Tried paths: %v", possiblePaths)
+	}
+
+	err = yaml.Unmarshal(content, &data)
+	if err != nil {
+		return schema.EvolutionData{}, fmt.Errorf("failed to parse evolution.yml: %w", err)
+	}
+
+	// Post-process descriptions into lines for each chapter's timeline
+	for c := range data.Chapters {
+		for i := range data.Chapters[c].Timeline {
+			lines := strings.Split(strings.TrimSpace(data.Chapters[c].Timeline[i].Description), "\n")
+			data.Chapters[c].Timeline[i].DescriptionLines = make([]string, 0, len(lines))
+			for _, line := range lines {
+				line = strings.TrimSpace(line)
+				if line == "" {
+					continue
+				}
+				// Remove leading "- " if present
+				line = strings.TrimPrefix(line, "- ")
+				line = strings.TrimSpace(line)
+				// Remove surrounding quotes if present
+				if len(line) >= 2 && line[0] == '"' && line[len(line)-1] == '"' {
+					line = line[1 : len(line)-1]
+				}
+				data.Chapters[c].Timeline[i].DescriptionLines = append(data.Chapters[c].Timeline[i].DescriptionLines, line)
+			}
+		}
+	}
+
+	return data, nil
+}
+
+// LoadLanding reads the landing.yml file and parses it into Landing struct
+func LoadLanding() (schema.Landing, error) {
+	possiblePaths := []string{
+		"internal/web/content/landing.yml",
+		filepath.Join(".", "internal", "web", "content", "landing.yml"),
+	}
+
+	var data schema.Landing
+
+	content, _, err := findAndReadFile(possiblePaths)
+	if err != nil {
+		return schema.Landing{}, fmt.Errorf("landing.yml not found. Tried paths: %v", possiblePaths)
+	}
+
+	err = yaml.Unmarshal(content, &data)
+	if err != nil {
+		return schema.Landing{}, fmt.Errorf("failed to parse landing.yml: %w", err)
+	}
+
+	return data, nil
+}
+
+// ==============================================================================
+// METRICS FORMATTING HELPERS
+// ==============================================================================
+
+var shortMonthNames = []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
+
+// PrepareReadUnreadByYear creates JSON data for read/unread yearly breakdown chart
+func PrepareReadUnreadByYear(metrics schema.Metrics) template.JS {
+	// Get sorted years in descending order (latest first)
+	years := make([]string, 0)
+	for year := range metrics.ByYear {
+		years = append(years, year)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(years)))
+
+	readByYearArray := make([]int, 0)
+	unreadByYearArray := make([]int, 0)
+
+	for _, year := range years {
+		yearRead := 0
+		yearUnread := 0
+
+		// Sum up read/unread from all months in this year
+		if yearMonthData, exists := metrics.ByYearAndMonth[year]; exists {
+			for month, count := range yearMonthData {
+				yearRead += count
+				// Get unread for this month (if available, otherwise calculate from total)
+				if monthUnread, unreadExists := metrics.UnreadByMonth[month]; unreadExists {
+					yearUnread += monthUnread
+				}
+			}
+		}
+
+		readByYearArray = append(readByYearArray, yearRead)
+		unreadByYearArray = append(unreadByYearArray, yearUnread)
+	}
+
+	data := map[string]interface{}{
+		"labels":     years,
+		"readData":   readByYearArray,
+		"unreadData": unreadByYearArray,
+	}
+	jsonData, _ := json.Marshal(data)
+	return template.JS(jsonData)
+}
+
+// PrepareReadUnreadByMonth creates JSON data for read/unread monthly breakdown chart
+func PrepareReadUnreadByMonth(metrics schema.Metrics) template.JS {
+	readByMonthArray := make([]int, 12)
+	unreadByMonthArray := make([]int, 12)
+
+	for month := 1; month <= 12; month++ {
+		monthStr := fmt.Sprintf("%02d", month)
+		unread := 0
+		if u, exists := metrics.UnreadByMonth[monthStr]; exists {
+			unread = u
+		}
+		// Calculate read for this month
+		read := 0
+		if monthData, exists := metrics.ByMonth[monthStr]; exists {
+			read = monthData - unread
+		}
+		readByMonthArray[month-1] = read
+		unreadByMonthArray[month-1] = unread
+	}
+
+	data := map[string]interface{}{
+		"labels":     shortMonthNames,
+		"readData":   readByMonthArray,
+		"unreadData": unreadByMonthArray,
+	}
+	jsonData, _ := json.Marshal(data)
+	return template.JS(jsonData)
+}
+
+// PrepareReadUnreadBySource creates JSON data for read/unread by source chart
+func PrepareReadUnreadBySource(sources []schema.SourceInfo) template.JS {
+	readUnreadBySourceLabels := make([]string, 0)
+	readBySourceData := make([]int, 0)
+	unreadBySourceData := make([]int, 0)
+	for _, source := range sources {
+		readUnreadBySourceLabels = append(readUnreadBySourceLabels, source.Name)
+		readBySourceData = append(readBySourceData, source.Read)
+		unreadBySourceData = append(unreadBySourceData, source.Unread)
+	}
+
+	data := map[string]interface{}{
+		"labels":     readUnreadBySourceLabels,
+		"readData":   readBySourceData,
+		"unreadData": unreadBySourceData,
+	}
+	jsonData, _ := json.Marshal(data)
+	return template.JS(jsonData)
+}
+
+// PrepareUnreadArticleAgeDistribution creates JSON data for unread articles by age chart
+func PrepareUnreadArticleAgeDistribution(metrics schema.Metrics) template.JS {
+	// Define age bucket labels in display order
+	bucketLabels := []struct {
+		key   string
+		label string
+	}{
+		{"less_than_1_month", "Less than 1 month"},
+		{"1_to_3_months", "1-3 months"},
+		{"3_to_6_months", "3-6 months"},
+		{"6_to_12_months", "6-12 months"},
+		{"older_than_1year", "Older than 1 year"},
+	}
+
+	labels := make([]string, 0)
+	data := make([]int, 0)
+
+	for _, bucket := range bucketLabels {
+		labels = append(labels, bucket.label)
+		count := metrics.UnreadArticleAgeDistribution[bucket.key]
+		data = append(data, count)
+	}
+
+	chartData := map[string]interface{}{
+		"labels": labels,
+		"data":   data,
+	}
+	jsonData, _ := json.Marshal(chartData)
+	return template.JS(jsonData)
+}
+
+// PrepareUnreadByYear creates JSON data for unread articles by year chart
+func PrepareUnreadByYear(metrics schema.Metrics) template.JS {
+	// Get sorted years in descending order (latest first)
+	var years []string
+	for year := range metrics.UnreadByYear {
+		years = append(years, year)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(years)))
+
+	unreadData := make([]int, 0)
+	for _, year := range years {
+		unreadData = append(unreadData, metrics.UnreadByYear[year])
+	}
+
+	data := map[string]interface{}{
+		"labels": years,
+		"data":   unreadData,
+	}
+	jsonData, _ := json.Marshal(data)
+	return template.JS(jsonData)
 }
