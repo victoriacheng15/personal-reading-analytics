@@ -875,3 +875,47 @@ func PrepareUnreadByYear(metrics schema.Metrics) template.JS {
 	jsonData, _ := json.Marshal(data)
 	return template.JS(jsonData)
 }
+
+// ==============================================================================
+// METRICS IO HELPERS
+// ==============================================================================
+
+// GetMetricsDates returns all YYYY-MM-DD dates from JSON files in metrics/ folder, sorted descending
+func GetMetricsDates() ([]string, error) {
+	entries, err := os.ReadDir("metrics")
+	if err != nil {
+		return nil, fmt.Errorf("unable to read metrics directory: %w", err)
+	}
+
+	var dates []string
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".json") {
+			date := strings.TrimSuffix(entry.Name(), ".json")
+			dates = append(dates, date)
+		}
+	}
+
+	if len(dates) == 0 {
+		return nil, fmt.Errorf("no valid metrics files found")
+	}
+
+	sort.Sort(sort.Reverse(sort.StringSlice(dates)))
+	return dates, nil
+}
+
+// LoadMetricsByDate reads a specific metrics JSON file from metrics/ folder
+func LoadMetricsByDate(date string) (schema.Metrics, error) {
+	filename := fmt.Sprintf("metrics/%s.json", date)
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return schema.Metrics{}, fmt.Errorf("unable to read metrics file %s: %w", filename, err)
+	}
+
+	var metrics schema.Metrics
+	err = json.Unmarshal(data, &metrics)
+	if err != nil {
+		return schema.Metrics{}, fmt.Errorf("unable to parse metrics JSON from %s: %w", filename, err)
+	}
+
+	return metrics, nil
+}
