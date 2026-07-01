@@ -34,7 +34,7 @@ Pygments==2.20.0
 pymongo==4.16.0
 pyparsing==3.3.2
 pytest==9.0.2
-pytest-cov==7.0.0
+pytest-cov==7.1.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 requests==2.34.2
